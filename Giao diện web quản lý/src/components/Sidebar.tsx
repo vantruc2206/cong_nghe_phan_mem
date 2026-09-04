@@ -10,6 +10,7 @@ const NAV_ITEMS: { screen: Screen; label: string; icon: React.ReactNode; roles: 
   { screen: 'failed',      label: 'Xử lý thất bại',       icon: Icon.alert,    roles: ['admin','dispatcher'] },
   { screen: 'station-ops', label: 'Vận hành trạm',        icon: Icon.box,      roles: ['admin','operator'], section: 'VẬN HÀNH' },
   { screen: 'tracking',    label: 'Theo dõi giao hàng',   icon: Icon.map,      roles: ['admin','dispatcher','operator'] },
+  { screen: 'drones',      label: 'Quản lý Drone',        icon: Icon.drone,    roles: ['admin','dispatcher','operator'], section: 'QUẢN TRỊ' },
   { screen: 'stations',    label: 'Quản lý trạm',         icon: Icon.station,  roles: ['admin','dispatcher'], section: 'QUẢN TRỊ' },
   { screen: 'drones',      label: 'Quản lý Drone',        icon: Icon.drone,    roles: ['admin','dispatcher'] },
   { screen: 'reports',     label: 'Báo cáo & Thống kê',   icon: Icon.chart,    roles: ['admin','manager'] },

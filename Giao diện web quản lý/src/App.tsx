@@ -16,6 +16,7 @@ import SchedulingScreen from './pages/SchedulingScreen'
 import FailedScreen from './pages/FailedScreen'
 import StationOpsScreen from './pages/StationOpsScreen'
 import TrackingScreen from './pages/TrackingScreen'
+import DronesScreen from './pages/DronesScreen'
 import StationsScreen from './pages/StationsScreen'
 import ReportsScreen from './pages/ReportsScreen'
 import AIEtaScreen from './pages/AIEtaScreen'
@@ -107,6 +108,7 @@ export function App() {
           {screen === 'failed'       && <FailedScreen showToast={showToast} />}
           {screen === 'station-ops'  && <StationOpsScreen showToast={showToast} />}
           {screen === 'tracking'     && <TrackingScreen />}
+          {screen === 'drones'       && <DronesScreen showToast={showToast} />}
           {screen === 'stations'     && <StationsScreen showToast={showToast} />}
           {screen === 'reports'      && <ReportsScreen />}
           {screen === 'ai-eta'       && <AIEtaScreen />}

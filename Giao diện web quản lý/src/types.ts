@@ -7,6 +7,7 @@ export type Screen =
   | 'failed'
   | 'station-ops'
   | 'tracking'
+  | 'drones'
   | 'stations'
   | 'drones'
   | 'reports'
