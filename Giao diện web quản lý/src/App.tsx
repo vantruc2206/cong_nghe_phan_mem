@@ -21,7 +21,6 @@ import StationsScreen from './pages/StationsScreen'
 import ReportsScreen from './pages/ReportsScreen'
 import AIEtaScreen from './pages/AIEtaScreen'
 import UsersScreen from './pages/UsersScreen'
-import DronesScreen from './pages/DronesScreen'
 
 function mapRole(vaiTro?: string): Role {
   if (!vaiTro) return 'dispatcher'
