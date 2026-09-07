@@ -1,11 +1,17 @@
-// ─── API Service Layer ────────────────────────────────────────────────────────
-// Kết nối với SmartDroneDelivery Backend (Flask, port 9999)
+// ─── API Service Layer for Admin Web Portal ─────────────────────────────────
+// Kết nối với SmartDroneDelivery Backend (Flask API)
 
 export const LOCAL_URL = 'http://localhost:9999'
 export const RENDER_URL = 'https://smartdronedelivery-api.onrender.com'
 
+// Helper to determine active API URL
 export function getBaseUrl(): string {
-  return localStorage.getItem('sdd_custom_api_url') || RENDER_URL
+  const custom = localStorage.getItem('sdd_custom_api_url')
+  if (custom) return custom
+  if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
+    return LOCAL_URL
+  }
+  return (import.meta as any).env?.VITE_API_URL || RENDER_URL
 }
 
 export function setBaseUrl(url: string): void {

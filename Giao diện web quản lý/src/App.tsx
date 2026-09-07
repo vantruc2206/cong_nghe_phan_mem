@@ -22,6 +22,7 @@ import ReportsScreen from './pages/ReportsScreen'
 import AIEtaScreen from './pages/AIEtaScreen'
 import UsersScreen from './pages/UsersScreen'
 
+
 function mapRole(vaiTro?: string): Role {
   if (!vaiTro) return 'dispatcher'
   const v = vaiTro.toLowerCase()
@@ -112,7 +113,6 @@ export function App() {
           {screen === 'reports'      && <ReportsScreen />}
           {screen === 'ai-eta'       && <AIEtaScreen />}
           {screen === 'users'        && <UsersScreen showToast={showToast} />}
-          {screen === 'drones'       && <DronesScreen showToast={showToast} />}
         </main>
       </div>
 
