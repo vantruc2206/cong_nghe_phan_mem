@@ -12,7 +12,12 @@ class StationRepository(IStationRepository):
         self.session = session
 
     def get_all(self) -> List[TramHaCanhModel]:
-        return self.session.query(TramHaCanhModel).all()
+        from infrastructure.databases.postgres import SessionLocal
+        db = SessionLocal()
+        try:
+            return db.query(TramHaCanhModel).all()
+        finally:
+            db.close()
 
     def get_by_id(self, ma_tram: str) -> Optional[TramHaCanhModel]:
         return self.session.query(TramHaCanhModel).filter_by(ma_tram=ma_tram).first()
