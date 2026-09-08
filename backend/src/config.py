@@ -1,8 +1,11 @@
 # Configuration settings for the Flask application
 
 import os
-from dotenv import load_dotenv
-load_dotenv()
+from dotenv import load_dotenv, find_dotenv
+load_dotenv(find_dotenv(usecwd=True))
+_env_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '.env')
+if os.path.exists(_env_path):
+    load_dotenv(_env_path)
 
 class FactoryConfig:
     """Factory to get configuration based on environment."""

@@ -189,3 +189,11 @@ celerybeat.pid
 # SageMath
 *.sage.py
 
+# Node / Web UI dependencies & build artifacts
+node_modules/
+**/node_modules/
+dist/
+**/dist/
+.vite/
+.next/
+*.log
