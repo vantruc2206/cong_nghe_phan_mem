@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import * as API from './api'
 import { Screen, Role, Toast } from './types'
-import { ORDERS, STATIONS, USERS } from './mockData'
 
 // Share components
 import Sidebar from './components/Sidebar'
@@ -21,7 +20,7 @@ import StationsScreen from './pages/StationsScreen'
 import ReportsScreen from './pages/ReportsScreen'
 import AIEtaScreen from './pages/AIEtaScreen'
 import UsersScreen from './pages/UsersScreen'
-import ActivityLogScreen from './pages/ActivityLogScreen'
+import DronesScreen from './pages/DronesScreen'
 
 function mapRole(vaiTro?: string): Role {
   if (!vaiTro) return 'dispatcher'
@@ -39,11 +38,7 @@ export function App() {
   const [currentUser, setCurrentUser] = useState<API.UserInfo | null>(null)
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [toast, setToast] = useState<Toast | null>(null)
-
-  // Real backend states
-  const [apiOrders, setApiOrders] = useState<API.Order[]>([])
-  const [apiStations, setApiStations] = useState<API.Station[]>([])
-  const [apiUsers, setApiUsers] = useState<API.UserInfo[]>([])
+  const [selectedOrderId, setSelectedOrderId] = useState<string | undefined>(undefined)
 
   const showToast = (msg: string, type: 'success' | 'error' | 'info' = 'success') => {
     setToast({ msg, type })
@@ -58,7 +53,8 @@ export function App() {
       try {
         const u = JSON.parse(userStr) as API.UserInfo
         setCurrentUser(u)
-        const mapped = mapRole(u.vai_tro?.ten_vai_tro)
+        const vaiTro = typeof u.vai_tro === 'object' ? u.vai_tro?.ten_vai_tro : (u.vai_tro as string | undefined)
+        const mapped = mapRole(vaiTro)
         setRole(mapped)
         setScreen(mapped === 'operator' ? 'station-ops' : 'dashboard')
       } catch {
@@ -66,39 +62,6 @@ export function App() {
       }
     }
   }, [])
-
-  // Combined fetch function
-  const fetchAllData = async () => {
-    try {
-      const orders = await API.listOrders()
-      setApiOrders(orders)
-    } catch {
-      // quiet fail
-    }
-
-    try {
-      const stations = await API.listStations()
-      setApiStations(stations)
-    } catch {
-      // quiet fail
-    }
-
-    if (role === 'admin') {
-      try {
-        const users = await API.listUsers()
-        setApiUsers(users)
-      } catch {
-        // quiet fail
-      }
-    }
-  }
-
-  // Load backend data after successful login
-  useEffect(() => {
-    if (screen !== 'login') {
-      void fetchAllData()
-    }
-  }, [screen, role])
 
   const handleLogin = (newRole: Role, user: API.UserInfo) => {
     setCurrentUser(user)
@@ -114,41 +77,10 @@ export function App() {
     setScreen('login')
   }
 
-  // Merge real backend data with mock arrays in-place to support mock pages
-  const mergedOrders = [...apiOrders.map(o => ({
-    id: o.ma_don_hang,
-    customer: o.ten_khach_hang || 'Ẩn danh',
-    address: o.dia_chi_giao || '',
-    weight: `${o.tong_trong_luong || 0} kg`,
-    status: o.trang_thai || 'pending',
-    created: o.created_at ? new Date(o.created_at).toLocaleString() : 'N/A',
-    station: o.ten_tram || 'Chưa gán',
-  })), ...ORDERS.filter(o => !apiOrders.some(ao => ao.ma_don_hang === o.id))]
-
-  const mergedStations = [...apiStations.map(s => ({
-    id: s.ma_tram,
-    name: s.ten_tram,
-    lat: `${s.vi_do || ''}°N`,
-    lng: `${s.kinh_do || ''}°E`,
-    capacity: s.suc_chua_toi_da || 5,
-    current: s.so_drone_hien_tai || 0,
-    status: s.trang_thai || 'active',
-    district: s.quan_huyen || 'N/A',
-  })), ...STATIONS.filter(s => !apiStations.some(as => as.ma_tram === s.id))]
-
-  const mergedUsers = [...apiUsers.map(u => ({
-    id: u.ma_nguoi_dung,
-    name: u.ho_ten,
-    email: u.email,
-    role: mapRole(u.vai_tro?.ten_vai_tro),
-    created: 'Khởi tạo',
-    status: u.trang_thai || 'active',
-  })), ...USERS.filter(u => !apiUsers.some(au => au.email === u.email))]
-
-  // Replace mocks in-place for screens that read them directly
-  if (apiOrders.length > 0) ORDERS.splice(0, ORDERS.length, ...mergedOrders)
-  if (apiStations.length > 0) STATIONS.splice(0, STATIONS.length, ...mergedStations)
-  if (apiUsers.length > 0) USERS.splice(0, USERS.length, ...mergedUsers)
+  const handleViewOrderDetail = (orderId?: string) => {
+    setSelectedOrderId(orderId)
+    setScreen('order-detail')
+  }
 
   if (screen === 'login') {
     return <LoginScreen onLogin={handleLogin} />
@@ -169,8 +101,8 @@ export function App() {
 
         <main style={{ flex: 1, overflowY: 'auto', padding: 24 }}>
           {screen === 'dashboard'    && <DashboardScreen onNav={setScreen} />}
-          {screen === 'orders'       && <OrdersScreen onDetail={() => setScreen('order-detail')} />}
-          {screen === 'order-detail' && <OrderDetailScreen onBack={() => setScreen('orders')} showToast={showToast} />}
+          {screen === 'orders'       && <OrdersScreen onDetail={handleViewOrderDetail} />}
+          {screen === 'order-detail' && <OrderDetailScreen orderId={selectedOrderId} onBack={() => setScreen('orders')} onNav={setScreen} showToast={showToast} />}
           {screen === 'scheduling'   && <SchedulingScreen showToast={showToast} />}
           {screen === 'failed'       && <FailedScreen showToast={showToast} />}
           {screen === 'station-ops'  && <StationOpsScreen showToast={showToast} />}
@@ -179,7 +111,7 @@ export function App() {
           {screen === 'reports'      && <ReportsScreen />}
           {screen === 'ai-eta'       && <AIEtaScreen />}
           {screen === 'users'        && <UsersScreen showToast={showToast} />}
-          {screen === 'activity-log' && <ActivityLogScreen />}
+          {screen === 'drones'       && <DronesScreen showToast={showToast} />}
         </main>
       </div>
 

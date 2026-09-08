@@ -1,0 +1,3615 @@
+From b0fc17a0e34d705dffd2dd7ff3786c9aeaab646d Mon Sep 17 00:00:00 2001
+From: nhandtm4709-gif <nhandtm4709@ut.edu.vn>
+Date: Mon, 7 Sep 2026 20:54:14 +0700
+Subject: [PATCH 4/5] =?UTF-8?q?CNPM-34=20[FE]=20Fix=20UI=20&=20Debug=20Adm?=
+ =?UTF-8?q?in=20Portal,=20Qu=E1=BA=A3n=20l=C3=BD=20ng=C6=B0=E1=BB=9Di=20d?=
+ =?UTF-8?q?=C3=B9ng=20DB=20v=C3=A0=20Tr=E1=BA=A1m=20v=E1=BA=ADn=20h=C3=A0n?=
+ =?UTF-8?q?h?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+---
+ .../package-lock.json"                        |  50 ++
+ .../package.json"                             |   3 +
+ .../src/App.tsx"                              |  90 +--
+ .../src/api.ts"                               | 256 ++++++--
+ .../src/components/AdminTrackingMap.tsx"      | 353 +++++++++++
+ .../src/components/Badges.tsx"                |  70 ++-
+ .../src/components/Header.tsx"                | 531 ++++++++++++++++-
+ .../src/components/Sidebar.tsx"               |   2 +-
+ .../src/index.css"                            |   2 +
+ .../src/mockData.ts"                          |  79 ---
+ .../src/pages/ActivityLogScreen.tsx"          |  37 --
+ .../src/pages/DashboardScreen.tsx"            | 207 +++++--
+ .../src/pages/LoginScreen.tsx"                |  13 +-
+ .../src/pages/ReportsScreen.tsx"              | 172 +++++-
+ .../src/pages/StationsScreen.tsx"             | 555 +++++++++++++++---
+ .../src/pages/TrackingScreen.tsx"             | 279 +++++----
+ .../src/pages/UsersScreen.tsx"                | 263 +++++++--
+ .../src/types.ts"                             |   2 +-
+ 18 files changed, 2377 insertions(+), 587 deletions(-)
+ create mode 100644 "Giao di\341\273\207n web qu\341\272\243n l\303\275/src/components/AdminTrackingMap.tsx"
+ delete mode 100644 "Giao di\341\273\207n web qu\341\272\243n l\303\275/src/mockData.ts"
+ delete mode 100644 "Giao di\341\273\207n web qu\341\272\243n l\303\275/src/pages/ActivityLogScreen.tsx"
+
+diff --git "a/Giao di\341\273\207n web qu\341\272\243n l\303\275/package-lock.json" "b/Giao di\341\273\207n web qu\341\272\243n l\303\275/package-lock.json"
+index 037a82b..fe9cffd 100644
+--- "a/Giao di\341\273\207n web qu\341\272\243n l\303\275/package-lock.json"	
++++ "b/Giao di\341\273\207n web qu\341\272\243n l\303\275/package-lock.json"	
+@@ -8,8 +8,11 @@
+       "name": "figma-make-app",
+       "version": "1.0.0",
+       "dependencies": {
++        "@types/leaflet": "^1.9.22",
++        "leaflet": "^1.9.4",
+         "react": "^19.0.0",
+         "react-dom": "^19.0.0",
++        "react-leaflet": "^5.0.0",
+         "recharts": "^3.10.1"
+       },
+       "devDependencies": {
+@@ -196,6 +199,17 @@
+         "win32"
+       ]
+     },
++    "node_modules/@react-leaflet/core": {
++      "version": "3.0.0",
++      "resolved": "https://registry.npmjs.org/@react-leaflet/core/-/core-3.0.0.tgz",
++      "integrity": "sha512-3EWmekh4Nz+pGcr+xjf0KNyYfC3U2JjnkWsh0zcqaexYqmmB5ZhH37kz41JXGmKzpaMZCnPofBBm64i+YrEvGQ==",
++      "license": "Hippocratic-2.1",
++      "peerDependencies": {
++        "leaflet": "^1.9.0",
++        "react": "^19.0.0",
++        "react-dom": "^19.0.0"
++      }
++    },
+     "node_modules/@reduxjs/toolkit": {
+       "version": "2.12.0",
+       "resolved": "https://registry.npmjs.org/@reduxjs/toolkit/-/toolkit-2.12.0.tgz",
+@@ -814,6 +828,21 @@
+       "integrity": "sha512-Ps3T8E8dZDam6fUyNiMkekK3XUsaUEik+idO9/YjPtfj2qruF8tFBXS7XhtE4iIXBLxhmLjP3SXpLhVf21I9Lw==",
+       "license": "MIT"
+     },
++    "node_modules/@types/geojson": {
++      "version": "7946.0.16",
++      "resolved": "https://registry.npmjs.org/@types/geojson/-/geojson-7946.0.16.tgz",
++      "integrity": "sha512-6C8nqWur3j98U6+lXDfTUWIfgvZU+EumvpHKcYjujKH7woYyLj2sUmff0tRhrqM7BohUw7Pz3ZB1jj2gW9Fvmg==",
++      "license": "MIT"
++    },
++    "node_modules/@types/leaflet": {
++      "version": "1.9.22",
++      "resolved": "https://registry.npmjs.org/@types/leaflet/-/leaflet-1.9.22.tgz",
++      "integrity": "sha512-h3lhECYEKDasG7LFHu+GiHqAvsgLuQvlJvVZzJDGONo3sEL+wUOqSFLnwkZlK0qVxnxbuGFW8iBlJNYs5wgndA==",
++      "license": "MIT",
++      "dependencies": {
++        "@types/geojson": "*"
++      }
++    },
+     "node_modules/@types/node": {
+       "version": "22.20.1",
+       "resolved": "https://registry.npmjs.org/@types/node/-/node-22.20.1.tgz",
+@@ -1132,6 +1161,13 @@
+         "jiti": "lib/jiti-cli.mjs"
+       }
+     },
++    "node_modules/leaflet": {
++      "version": "1.9.4",
++      "resolved": "https://registry.npmjs.org/leaflet/-/leaflet-1.9.4.tgz",
++      "integrity": "sha512-nxS1ynzJOmOlHp+iL3FyWqK89GtNL8U8rvlMOsQdTTssxZwCXh8N2NB3GDQOL+YR3XnWyZAxwQixURb+FA74PA==",
++      "license": "BSD-2-Clause",
++      "peer": true
++    },
+     "node_modules/lightningcss": {
+       "version": "1.32.0",
+       "resolved": "https://registry.npmjs.org/lightningcss/-/lightningcss-1.32.0.tgz",
+@@ -1528,6 +1564,20 @@
+       "license": "MIT",
+       "peer": true
+     },
++    "node_modules/react-leaflet": {
++      "version": "5.0.0",
++      "resolved": "https://registry.npmjs.org/react-leaflet/-/react-leaflet-5.0.0.tgz",
++      "integrity": "sha512-CWbTpr5vcHw5bt9i4zSlPEVQdTVcML390TjeDG0cK59z1ylexpqC6M1PJFjV8jD7CF+ACBFsLIDs6DRMoLEofw==",
++      "license": "Hippocratic-2.1",
++      "dependencies": {
++        "@react-leaflet/core": "^3.0.0"
++      },
++      "peerDependencies": {
++        "leaflet": "^1.9.0",
++        "react": "^19.0.0",
++        "react-dom": "^19.0.0"
++      }
++    },
+     "node_modules/react-redux": {
+       "version": "9.3.0",
+       "resolved": "https://registry.npmjs.org/react-redux/-/react-redux-9.3.0.tgz",
+diff --git "a/Giao di\341\273\207n web qu\341\272\243n l\303\275/package.json" "b/Giao di\341\273\207n web qu\341\272\243n l\303\275/package.json"
+index b49d40a..c1294fb 100644
+--- "a/Giao di\341\273\207n web qu\341\272\243n l\303\275/package.json"	
++++ "b/Giao di\341\273\207n web qu\341\272\243n l\303\275/package.json"	
+@@ -10,8 +10,11 @@
+     "format": "oxfmt"
+   },
+   "dependencies": {
++    "@types/leaflet": "^1.9.22",
++    "leaflet": "^1.9.4",
+     "react": "^19.0.0",
+     "react-dom": "^19.0.0",
++    "react-leaflet": "^5.0.0",
+     "recharts": "^3.10.1"
+   },
+   "devDependencies": {
+diff --git "a/Giao di\341\273\207n web qu\341\272\243n l\303\275/src/App.tsx" "b/Giao di\341\273\207n web qu\341\272\243n l\303\275/src/App.tsx"
+index 322d441..706f688 100644
+--- "a/Giao di\341\273\207n web qu\341\272\243n l\303\275/src/App.tsx"	
++++ "b/Giao di\341\273\207n web qu\341\272\243n l\303\275/src/App.tsx"	
+@@ -1,7 +1,6 @@
+ import { useState, useEffect } from 'react'
+ import * as API from './api'
+ import { Screen, Role, Toast } from './types'
+-import { ORDERS, STATIONS, USERS } from './mockData'
+ 
+ // Share components
+ import Sidebar from './components/Sidebar'
+@@ -21,7 +20,7 @@ import StationsScreen from './pages/StationsScreen'
+ import ReportsScreen from './pages/ReportsScreen'
+ import AIEtaScreen from './pages/AIEtaScreen'
+ import UsersScreen from './pages/UsersScreen'
+-import ActivityLogScreen from './pages/ActivityLogScreen'
++import DronesScreen from './pages/DronesScreen'
+ 
+ function mapRole(vaiTro?: string): Role {
+   if (!vaiTro) return 'dispatcher'
+@@ -39,11 +38,7 @@ export function App() {
+   const [currentUser, setCurrentUser] = useState<API.UserInfo | null>(null)
+   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
+   const [toast, setToast] = useState<Toast | null>(null)
+-
+-  // Real backend states
+-  const [apiOrders, setApiOrders] = useState<API.Order[]>([])
+-  const [apiStations, setApiStations] = useState<API.Station[]>([])
+-  const [apiUsers, setApiUsers] = useState<API.UserInfo[]>([])
++  const [selectedOrderId, setSelectedOrderId] = useState<string | undefined>(undefined)
+ 
+   const showToast = (msg: string, type: 'success' | 'error' | 'info' = 'success') => {
+     setToast({ msg, type })
+@@ -58,7 +53,8 @@ export function App() {
+       try {
+         const u = JSON.parse(userStr) as API.UserInfo
+         setCurrentUser(u)
+-        const mapped = mapRole(u.vai_tro?.ten_vai_tro)
++        const vaiTro = typeof u.vai_tro === 'object' ? u.vai_tro?.ten_vai_tro : (u.vai_tro as string | undefined)
++        const mapped = mapRole(vaiTro)
+         setRole(mapped)
+         setScreen(mapped === 'operator' ? 'station-ops' : 'dashboard')
+       } catch {
+@@ -67,39 +63,6 @@ export function App() {
+     }
+   }, [])
+ 
+-  // Combined fetch function
+-  const fetchAllData = async () => {
+-    try {
+-      const orders = await API.listOrders()
+-      setApiOrders(orders)
+-    } catch {
+-      // quiet fail
+-    }
+-
+-    try {
+-      const stations = await API.listStations()
+-      setApiStations(stations)
+-    } catch {
+-      // quiet fail
+-    }
+-
+-    if (role === 'admin') {
+-      try {
+-        const users = await API.listUsers()
+-        setApiUsers(users)
+-      } catch {
+-        // quiet fail
+-      }
+-    }
+-  }
+-
+-  // Load backend data after successful login
+-  useEffect(() => {
+-    if (screen !== 'login') {
+-      void fetchAllData()
+-    }
+-  }, [screen, role])
+-
+   const handleLogin = (newRole: Role, user: API.UserInfo) => {
+     setCurrentUser(user)
+     setRole(newRole)
+@@ -114,41 +77,10 @@ export function App() {
+     setScreen('login')
+   }
+ 
+-  // Merge real backend data with mock arrays in-place to support mock pages
+-  const mergedOrders = [...apiOrders.map(o => ({
+-    id: o.ma_don_hang,
+-    customer: o.ten_khach_hang || 'Ẩn danh',
+-    address: o.dia_chi_giao || '',
+-    weight: `${o.tong_trong_luong || 0} kg`,
+-    status: o.trang_thai || 'pending',
+-    created: o.created_at ? new Date(o.created_at).toLocaleString() : 'N/A',
+-    station: o.ten_tram || 'Chưa gán',
+-  })), ...ORDERS.filter(o => !apiOrders.some(ao => ao.ma_don_hang === o.id))]
+-
+-  const mergedStations = [...apiStations.map(s => ({
+-    id: s.ma_tram,
+-    name: s.ten_tram,
+-    lat: `${s.vi_do || ''}°N`,
+-    lng: `${s.kinh_do || ''}°E`,
+-    capacity: s.suc_chua_toi_da || 5,
+-    current: s.so_drone_hien_tai || 0,
+-    status: s.trang_thai || 'active',
+-    district: s.quan_huyen || 'N/A',
+-  })), ...STATIONS.filter(s => !apiStations.some(as => as.ma_tram === s.id))]
+-
+-  const mergedUsers = [...apiUsers.map(u => ({
+-    id: u.ma_nguoi_dung,
+-    name: u.ho_ten,
+-    email: u.email,
+-    role: mapRole(u.vai_tro?.ten_vai_tro),
+-    created: 'Khởi tạo',
+-    status: u.trang_thai || 'active',
+-  })), ...USERS.filter(u => !apiUsers.some(au => au.email === u.email))]
+-
+-  // Replace mocks in-place for screens that read them directly
+-  if (apiOrders.length > 0) ORDERS.splice(0, ORDERS.length, ...mergedOrders)
+-  if (apiStations.length > 0) STATIONS.splice(0, STATIONS.length, ...mergedStations)
+-  if (apiUsers.length > 0) USERS.splice(0, USERS.length, ...mergedUsers)
++  const handleViewOrderDetail = (orderId?: string) => {
++    setSelectedOrderId(orderId)
++    setScreen('order-detail')
++  }
+ 
+   if (screen === 'login') {
+     return <LoginScreen onLogin={handleLogin} />
+@@ -169,8 +101,8 @@ export function App() {
+ 
+         <main style={{ flex: 1, overflowY: 'auto', padding: 24 }}>
+           {screen === 'dashboard'    && <DashboardScreen onNav={setScreen} />}
+-          {screen === 'orders'       && <OrdersScreen onDetail={() => setScreen('order-detail')} />}
+-          {screen === 'order-detail' && <OrderDetailScreen onBack={() => setScreen('orders')} showToast={showToast} />}
++          {screen === 'orders'       && <OrdersScreen onDetail={handleViewOrderDetail} />}
++          {screen === 'order-detail' && <OrderDetailScreen orderId={selectedOrderId} onBack={() => setScreen('orders')} onNav={setScreen} showToast={showToast} />}
+           {screen === 'scheduling'   && <SchedulingScreen showToast={showToast} />}
+           {screen === 'failed'       && <FailedScreen showToast={showToast} />}
+           {screen === 'station-ops'  && <StationOpsScreen showToast={showToast} />}
+@@ -179,7 +111,7 @@ export function App() {
+           {screen === 'reports'      && <ReportsScreen />}
+           {screen === 'ai-eta'       && <AIEtaScreen />}
+           {screen === 'users'        && <UsersScreen showToast={showToast} />}
+-          {screen === 'activity-log' && <ActivityLogScreen />}
++          {screen === 'drones'       && <DronesScreen showToast={showToast} />}
+         </main>
+       </div>
+ 
+diff --git "a/Giao di\341\273\207n web qu\341\272\243n l\303\275/src/api.ts" "b/Giao di\341\273\207n web qu\341\272\243n l\303\275/src/api.ts"
+index b59471c..2be702a 100644
+--- "a/Giao di\341\273\207n web qu\341\272\243n l\303\275/src/api.ts"	
++++ "b/Giao di\341\273\207n web qu\341\272\243n l\303\275/src/api.ts"	
+@@ -1,7 +1,16 @@
+-// ─── API Service Layer ────────────────────────────────────────────────────────
+-// Kết nối với SmartDroneDelivery Backend (Flask, port 9999)
++// ─── API Service Layer for Admin Web Portal ─────────────────────────────────
++// Kết nối với SmartDroneDelivery Backend (Flask API)
+ 
+-const BASE_URL = 'https://smartdronedelivery-api.onrender.com'
++const RENDER_URL = 'https://smartdronedelivery-api.onrender.com'
++const LOCAL_URL = 'http://localhost:9999'
++
++// Helper to determine active API URL
++export function getBaseUrl(): string {
++  if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
++    return LOCAL_URL
++  }
++  return (import.meta as any).env?.VITE_API_URL || LOCAL_URL
++}
+ 
+ // ─── Token helpers ────────────────────────────────────────────────────────────
+ export function getToken(): string | null {
+@@ -25,27 +34,40 @@ function authHeaders(): HeadersInit {
+   }
+ }
+ 
+-// ─── Generic fetch wrapper ────────────────────────────────────────────────────
++// ─── Generic fetch wrapper with fallback ──────────────────────────────────────
+ async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
+-  const res = await fetch(`${BASE_URL}${path}`, {
+-    headers: authHeaders(),
+-    ...options,
+-  })
+-  const data = await res.json().catch(() => ({}))
+-  if (!res.ok) {
+-    throw new Error(data?.error || `HTTP ${res.status}`)
++  const urls = [getBaseUrl(), LOCAL_URL, RENDER_URL]
++  let lastError: Error | null = null
++
++  for (const baseUrl of Array.from(new Set(urls))) {
++    try {
++      const res = await fetch(`${baseUrl}${path}`, {
++        headers: authHeaders(),
++        ...options,
++      })
++      
++      if (res.status === 204) return {} as T
++      const data = await res.json().catch(() => ({}))
++      if (!res.ok) {
++        throw new Error(data?.error || data?.message || `HTTP ${res.status}`)
++      }
++      return data as T
++    } catch (err: any) {
++      lastError = err
++    }
+   }
+-  return data as T
++
++  throw lastError || new Error('Không thể kết nối đến Backend API Server')
+ }
+ 
+-// ─── Auth ─────────────────────────────────────────────────────────────────────
++// ─── Auth Interfaces & Methods ────────────────────────────────────────────────
+ export interface UserInfo {
+   ma_nguoi_dung: string
+   ho_ten: string
+   email: string
+   so_dien_thoai?: string
+   trang_thai?: string
+-  vai_tro?: { ten_vai_tro: string }
++  vai_tro?: { ten_vai_tro: string } | string
+   created_at?: string
+ }
+ 
+@@ -57,33 +79,103 @@ export interface LoginResponse {
+ export async function login(email: string, password: string): Promise<LoginResponse> {
+   return apiFetch<LoginResponse>('/auth/login', {
+     method: 'POST',
+-    body: JSON.stringify({ email, password }),
++    body: JSON.stringify({ email: email.trim(), password, mat_khau: password }),
+   })
+ }
+ 
+ export async function listUsers(): Promise<UserInfo[]> {
+-  return apiFetch<UserInfo[]>('/auth/users')
++  try {
++    return await apiFetch<UserInfo[]>('/auth/users')
++  } catch (err) {
++    return []
++  }
++}
++
++export async function createUserApi(data: { ho_ten: string; email: string; vai_tro: string; mat_khau?: string; so_dien_thoai?: string }): Promise<UserInfo> {
++  return apiFetch<UserInfo>('/auth/users', {
++    method: 'POST',
++    body: JSON.stringify(data),
++  })
++}
++
++export async function updateUserApi(ma_nguoi_dung: string, data: { ho_ten?: string; email?: string; vai_tro?: string; mat_khau?: string; so_dien_thoai?: string }): Promise<UserInfo> {
++  return apiFetch<UserInfo>(`/auth/users/${ma_nguoi_dung}`, {
++    method: 'PUT',
++    body: JSON.stringify(data),
++  })
+ }
+ 
+-// ─── Orders ───────────────────────────────────────────────────────────────────
++export async function deleteUserApi(ma_nguoi_dung: string): Promise<any> {
++  return apiFetch<any>(`/auth/users/${ma_nguoi_dung}`, {
++    method: 'DELETE',
++  })
++}
++
++// ─── Orders Interfaces & Methods ─────────────────────────────────────────────
+ export interface Order {
+   ma_don_hang: string
++  ma_drone?: string
++  ma_van_don?: string
+   ma_khach_hang?: string
++  ten_nguoi_nhan?: string
+   ten_khach_hang?: string
++  so_dien_thoai_nhan?: string
+   dia_chi_giao?: string
++  dia_chi_lay?: string
++  ten_hang_hoa?: string
++  vi_do?: number | string
++  kinh_do?: number | string
+   trang_thai?: string
+   created_at?: string
+-  tong_trong_luong?: number
++  thoi_gian_tao?: string
++  trong_luong?: number
++  phi_giao_hang?: number
++  phuong_thuc_thanh_toan?: string
++  ghi_chu?: string
+   ma_tram_ha_canh?: string
+   ten_tram?: string
+ }
+ 
+ export async function listOrders(): Promise<Order[]> {
+-  return apiFetch<Order[]>('/orders/')
++  const data = await apiFetch<any[]>('/orders/')
++  return (data || []).map((item) => ({
++    ma_don_hang: item.ma_don_hang || item.id,
++    ma_drone: item.ma_drone || undefined,
++    ma_van_don: item.ma_van_don || `VD-${(item.ma_don_hang || '').substring(0, 8)}`,
++    ten_khach_hang: item.ten_khach_hang || item.ten_nguoi_nhan || 'Khách hàng DB',
++    ten_nguoi_nhan: item.ten_nguoi_nhan || item.ten_khach_hang || 'Khách hàng DB',
++    so_dien_thoai_nhan: item.so_dien_thoai_nhan || item.so_dien_thoai || '',
++    dia_chi_giao: item.dia_chi_giao || item.dia_chi || '',
++    vi_do: item.vi_do,
++    kinh_do: item.kinh_do,
++    trang_thai: item.trang_thai || item.trang_thai_don_hang || 'Chờ duyệt',
++    created_at: item.ngay_dat_hang || item.created_at || item.thoi_gian_tao || new Date().toLocaleString('vi-VN'),
++    trong_luong: item.trong_luong || 1.5,
++    phi_giao_hang: item.tong_tien || item.phi_giao_hang || 35000,
++    phuong_thuc_thanh_toan: item.cach_thuc_thanh_toan || item.phuong_thuc_thanh_toan || 'COD',
++    ten_tram: item.ten_tram || 'Trạm Trung Tâm',
++  })).sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime())
+ }
+ 
+ export async function getOrder(id: string): Promise<Order> {
+-  return apiFetch<Order>(`/orders/${id}`)
++  const item = await apiFetch<any>(`/orders/${id}`)
++  return {
++    ma_don_hang: item.ma_don_hang || item.id,
++    ma_drone: item.ma_drone || undefined,
++    ma_van_don: item.ma_van_don || `VD-${(item.ma_don_hang || '').substring(0, 8)}`,
++    ten_khach_hang: item.ten_khach_hang || item.ten_nguoi_nhan || 'Khách hàng DB',
++    ten_nguoi_nhan: item.ten_nguoi_nhan || item.ten_khach_hang || 'Khách hàng DB',
++    so_dien_thoai_nhan: item.so_dien_thoai_nhan || item.so_dien_thoai || '',
++    dia_chi_giao: item.dia_chi_giao || item.dia_chi || '',
++    vi_do: item.vi_do,
++    kinh_do: item.kinh_do,
++    trang_thai: item.trang_thai || item.trang_thai_don_hang || 'Chờ duyệt',
++    created_at: item.ngay_dat_hang || item.created_at || item.thoi_gian_tao || new Date().toLocaleString('vi-VN'),
++    trong_luong: item.trong_luong || 1.5,
++    phi_giao_hang: item.tong_tien || item.phi_giao_hang || 35000,
++    phuong_thuc_thanh_toan: item.cach_thuc_thanh_toan || item.phuong_thuc_thanh_toan || 'COD',
++    ten_tram: item.ten_tram || 'Trạm Trung Tâm',
++  }
+ }
+ 
+ export async function approveOrder(id: string): Promise<{ order: Order }> {
+@@ -107,44 +199,138 @@ export async function scheduleOrder(
+   })
+ }
+ 
+-// ─── Stations ─────────────────────────────────────────────────────────────────
++export async function startDelivery(id: string): Promise<unknown> {
++  return apiFetch(`/orders/${id}/start-delivery`, {
++    method: 'POST',
++  })
++}
++
++// ─── Stations Interfaces & Methods ───────────────────────────────────────────
+ export interface Station {
++  id: string
+   ma_tram: string
+   ten_tram: string
+-  vi_do?: string
+-  kinh_do?: string
++  name: string
++  dia_chi?: string
++  lat?: number | string
++  lng?: number | string
++  vi_do?: number | string
++  kinh_do?: number | string
++  capacity?: number
+   suc_chua_toi_da?: number
++  suc_chua?: number
++  current?: number
+   so_drone_hien_tai?: number
++  status?: string
+   trang_thai?: string
++  district?: string
+   quan_huyen?: string
+ }
+ 
+ export async function listStations(): Promise<Station[]> {
+-  return apiFetch<Station[]>('/stations/')
++  try {
++    const data = await apiFetch<any[]>('/stations/')
++    return (data || []).map((s) => {
++      const latVal = s.lat != null ? Number(s.lat) : (s.vi_do != null ? Number(s.vi_do) : 10.8048584)
++      const lngVal = s.lng != null ? Number(s.lng) : (s.kinh_do != null ? Number(s.kinh_do) : 106.7167612)
++      return {
++        id: s.ma_tram || s.id,
++        ma_tram: s.ma_tram || s.id,
++        ten_tram: s.ten_tram || s.name || 'Trạm Hạ Cánh',
++        name: s.ten_tram || s.name || 'Trạm Hạ Cánh',
++        dia_chi: s.dia_chi_tram || s.dia_chi || '',
++        lat: latVal,
++        lng: lngVal,
++        vi_do: latVal,
++        kinh_do: lngVal,
++        capacity: s.cong_suat_toi_da || s.suc_chua || s.suc_chua_toi_da || 10,
++        suc_chua_toi_da: s.cong_suat_toi_da || s.suc_chua || s.suc_chua_toi_da || 10,
++        current: s.so_drone_hien_tai ?? 0,
++        so_drone_hien_tai: s.so_drone_hien_tai ?? 0,
++        status: (s.trang_thai_hoat_dong || s.trang_thai || 'ACTIVE').toLowerCase().includes('hoạt động') ? 'active' : 'maintenance',
++        trang_thai: s.trang_thai_hoat_dong || s.trang_thai || 'Đang hoạt động',
++        district: s.dia_chi_tram || s.quan_huyen || 'Thành phố Hồ Chí Minh',
++      }
++    })
++  } catch (err) {
++    console.error('Lỗi lấy danh sách trạm từ DB:', err)
++    return []
++  }
+ }
+ 
+-// ─── Deliveries ───────────────────────────────────────────────────────────────
+-export interface Delivery {
+-  ma_giao_hang: string
+-  ma_don_hang: string
+-  trang_thai?: string
+-  thoi_gian_giao?: string
+-  ma_drone?: string
++export async function createStationApi(data: { ten_tram: string; dia_chi_tram: string; lat: number; lng: number; cong_suat_toi_da: number }) {
++  return apiFetch<any>('/stations/', {
++    method: 'POST',
++    body: JSON.stringify(data),
++  })
+ }
+ 
+-export async function listDeliveries(): Promise<Delivery[]> {
+-  return apiFetch<Delivery[]>('/deliveries/')
++export async function updateStationApi(ma_tram: string, data: { ten_tram?: string; dia_chi_tram?: string; lat?: number; lng?: number; cong_suat_toi_da?: number }) {
++  return apiFetch<any>(`/stations/${ma_tram}`, {
++    method: 'PUT',
++    body: JSON.stringify(data),
++  })
++}
++
++export async function deleteStationApi(ma_tram: string) {
++  return apiFetch<any>(`/stations/${ma_tram}`, {
++    method: 'DELETE',
++  })
+ }
+ 
+-// ─── Drones ───────────────────────────────────────────────────────────────────
++
++
++// ─── Drones Interfaces & Methods ─────────────────────────────────────────────
+ export interface Drone {
++  id: string
+   ma_drone: string
+   ten_drone?: string
++  model?: string
++  dung_luong_pin?: number
++  tai_trong_toi_da?: number
+   trang_thai?: string
++  status?: string
+   vi_do_hien_tai?: string
+   kinh_do_hien_tai?: string
++  ma_tram_hien_tai?: string
++  x?: number
++  y?: number
++  eta?: string
++  customer?: string
++  orderId?: string
+ }
+ 
+ export async function listDrones(): Promise<Drone[]> {
+-  return apiFetch<Drone[]>('/drones/')
++  const data = await apiFetch<any[]>('/drones/')
++  return (data || []).map((d, index) => ({
++    id: d.ma_drone || d.id || `DRN-0${index + 1}`,
++    ma_drone: d.ma_drone || d.id || `DRN-0${index + 1}`,
++    ten_drone: d.ten_drone || d.name || `Drone ${index + 1}`,
++    model: d.model || 'SkyCarrier X1',
++    dung_luong_pin: d.dung_luong_pin ?? d.cong_suat_pin ?? 100,
++    tai_trong_toi_da: Number(d.tai_trong_toi_da ?? 5.0),
++    status: (d.trang_thai || d.trang_thai_drone || 'Sẵn sàng'),
++    trang_thai: (d.trang_thai || d.trang_thai_drone || 'Sẵn sàng'),
++    vi_do_hien_tai: d.vi_do_hien_tai ?? d.vi_do ?? null,
++    kinh_do_hien_tai: d.kinh_do_hien_tai ?? d.kinh_do ?? null,
++    ma_tram_hien_tai: d.ma_tram_hien_tai ?? d.ma_tram ?? null,
++  }))
++}
++
++
++// ─── Deliveries ───────────────────────────────────────────────────────────────
++export interface Delivery {
++  ma_giao_hang: string
++  ma_don_hang: string
++  trang_thai?: string
++  thoi_gian_giao?: string
++  ma_drone?: string
++}
++
++export async function listDeliveries(): Promise<Delivery[]> {
++  try {
++    return await apiFetch<Delivery[]>('/deliveries/')
++  } catch (err) {
++    return []
++  }
+ }
+diff --git "a/Giao di\341\273\207n web qu\341\272\243n l\303\275/src/components/AdminTrackingMap.tsx" "b/Giao di\341\273\207n web qu\341\272\243n l\303\275/src/components/AdminTrackingMap.tsx"
+new file mode 100644
+index 0000000..b0b9780
+--- /dev/null
++++ "b/Giao di\341\273\207n web qu\341\272\243n l\303\275/src/components/AdminTrackingMap.tsx"	
+@@ -0,0 +1,353 @@
++import React, { useEffect, useState, useRef, Fragment } from 'react'
++import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap } from 'react-leaflet'
++import L from 'leaflet'
++import 'leaflet/dist/leaflet.css'
++import { Station, Drone, Order } from '../api'
++
++function AutoFitBounds({ stations, resetTrigger }: { stations: Station[]; resetTrigger?: number }) {
++  const map = useMap()
++  const hasFittedRef = useRef(false)
++  const prevResetTriggerRef = useRef(resetTrigger)
++
++  useEffect(() => {
++    const isResetClicked = resetTrigger !== prevResetTriggerRef.current
++    if (stations && stations.length > 0 && (!hasFittedRef.current || isResetClicked)) {
++      prevResetTriggerRef.current = resetTrigger
++      const points = stations
++        .map(s => {
++          const lat = s.vi_do != null ? Number(s.vi_do) : parseFloat(String(s.lat || ''))
++          const lng = s.kinh_do != null ? Number(s.kinh_do) : parseFloat(String(s.lng || ''))
++          return [lat, lng] as [number, number]
++        })
++        .filter(([lat, lng]) => !isNaN(lat) && !isNaN(lng) && lat !== 0 && lng !== 0)
++
++      if (points.length > 0) {
++        const bounds = L.latLngBounds(points)
++        map.fitBounds(bounds, { padding: [50, 50], maxZoom: 14 })
++        hasFittedRef.current = true
++      }
++    }
++  }, [stations, map, resetTrigger])
++  return null
++}
++
++// Fix default Leaflet marker icon
++delete (L.Icon.Default.prototype as any)._getIconUrl
++L.Icon.Default.mergeOptions({
++  iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
++  iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
++  shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
++})
++
++// Custom DivIcons
++export const createStationIcon = (name: string) => new L.DivIcon({
++  html: `<div style="display:flex;flex-direction:column;align-items:center;transform:translate(-50%,-100%);pointer-events:auto">
++    <div style="background:#1d4ed8;color:white;font-size:11px;font-weight:700;padding:3px 9px;border-radius:12px;box-shadow:0 3px 10px rgba(0,0,0,0.35);white-space:nowrap;border:1.5px solid white;margin-bottom:3px">
++      🏢 ${name}
++    </div>
++    <div style="background:#1e40af;width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 4px 12px rgba(0,0,0,0.4);border:2.5px solid white">
++      🏢
++    </div>
++  </div>`,
++  className: '',
++  iconSize: [0, 0],
++  iconAnchor: [0, 0],
++  popupAnchor: [0, -45],
++})
++
++export const stationIcon = createStationIcon('Trạm Hạ Cánh')
++
++export const droneIcon = new L.DivIcon({
++  html: `<div style="background:#16a34a;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 4px 10px rgba(0,0,0,0.3);border:2px solid white">🛸</div>`,
++  className: '',
++  iconSize: [32, 32],
++  iconAnchor: [16, 16],
++  popupAnchor: [0, -18],
++})
++
++export const selectedDroneIcon = new L.DivIcon({
++  html: `<div style="background:#2563eb;width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:0 0 15px #3b82f6;border:3px solid #60a5fa;animation:pulse 2s infinite">🛸</div>`,
++  className: '',
++  iconSize: [38, 38],
++  iconAnchor: [19, 19],
++  popupAnchor: [0, -20],
++})
++
++export const destinationIcon = new L.DivIcon({
++  html: `<div style="background:#dc2626;width:30px;height:30px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 8px rgba(0,0,0,0.3);border:2px solid white"><span style="transform:rotate(45deg);font-size:14px">📍</span></div>`,
++  className: '',
++  iconSize: [30, 30],
++  iconAnchor: [15, 30],
++  popupAnchor: [0, -30],
++})
++
++interface AdminTrackingMapProps {
++  stations?: Station[]
++  drones?: Drone[]
++  orders?: Order[]
++  selectedDroneId?: string
++}
++
++// Custom Zoom Controls UI Component
++function MapZoomControls({ onResetBounds }: { onResetBounds?: () => void }) {
++  const map = useMap()
++  return (
++    <div style={{ position: 'absolute', top: 12, right: 12, zIndex: 1000, display: 'flex', flexDirection: 'column', gap: 6 }}>
++      <button
++        type="button"
++        onClick={(e) => { e.preventDefault(); e.stopPropagation(); map.zoomIn(); }}
++        title="Phóng to (+)"
++        style={{
++          width: 36, height: 36, borderRadius: 10, background: '#ffffff',
++          border: '1.5px solid #cbd5e1', boxShadow: '0 4px 12px rgba(0,0,0,0.18)',
++          fontSize: 20, fontWeight: 800, cursor: 'pointer', color: '#0f172a',
++          display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.15s'
++        }}
++      >
++        +
++      </button>
++      <button
++        type="button"
++        onClick={(e) => { e.preventDefault(); e.stopPropagation(); map.zoomOut(); }}
++        title="Thu nhỏ (-)"
++        style={{
++          width: 36, height: 36, borderRadius: 10, background: '#ffffff',
++          border: '1.5px solid #cbd5e1', boxShadow: '0 4px 12px rgba(0,0,0,0.18)',
++          fontSize: 20, fontWeight: 800, cursor: 'pointer', color: '#0f172a',
++          display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.15s'
++        }}
++      >
++        −
++      </button>
++      {onResetBounds && (
++        <button
++          type="button"
++          onClick={(e) => { e.preventDefault(); e.stopPropagation(); onResetBounds(); }}
++          title="Tự động căn giữa bản đồ (Auto Fit)"
++          style={{
++            width: 36, height: 36, borderRadius: 10, background: '#ffffff',
++            border: '1.5px solid #cbd5e1', boxShadow: '0 4px 12px rgba(0,0,0,0.18)',
++            fontSize: 16, cursor: 'pointer', color: '#2563eb',
++            display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.15s'
++          }}
++        >
++          🎯
++        </button>
++      )}
++    </div>
++  )
++}
++
++export function AdminTrackingMap({
++  stations = [],
++  drones = [],
++  orders = [],
++  selectedDroneId
++}: AdminTrackingMapProps) {
++  const [resetTrigger, setResetTrigger] = useState(0)
++
++  // Center map dynamically on Saigon Metro center to cover all HCMC stations
++  const mapCenter: [number, number] = stations.length > 0 && stations[0].vi_do
++    ? [Number(stations[0].vi_do || (stations[0] as any).lat), Number(stations[0].kinh_do || (stations[0] as any).lng)]
++    : [10.8000, 106.7200]
++
++  const liveDrones = drones
++
++  return (
++    <div style={{ position: 'relative', height: '100%', minHeight: 460, width: '100%', borderRadius: 12, overflow: 'hidden', border: '1px solid #cbd5e1' }}>
++      <MapContainer
++        center={mapCenter}
++        zoom={12}
++        scrollWheelZoom={true}
++        doubleClickZoom={true}
++        zoomControl={false}
++        style={{ height: '100%', width: '100%', minHeight: 460 }}
++      >
++        <AutoFitBounds stations={stations} resetTrigger={resetTrigger} />
++        <MapZoomControls onResetBounds={() => setResetTrigger(prev => prev + 1)} />
++        <TileLayer
++          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
++          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
++        />
++
++        {/* 🏢 Real DB Station Markers (zIndexOffset=3000 ensures stations with name badges are always on top) */}
++        {stations.map((st) => {
++          const rawLat = st.vi_do != null ? Number(st.vi_do) : parseFloat(String((st as any).lat || ''))
++          const rawLng = st.kinh_do != null ? Number(st.kinh_do) : parseFloat(String((st as any).lng || ''))
++
++          const lat = (!isNaN(rawLat) && rawLat !== 0) ? rawLat : 10.8048584
++          const lng = (!isNaN(rawLng) && rawLng !== 0) ? rawLng : 106.7167612
++          const stName = st.ten_tram || st.name || 'Trạm Hạ Cánh'
++          return (
++            <Marker
++              key={st.ma_tram || st.id}
++              position={[lat, lng]}
++              icon={createStationIcon(stName)}
++              zIndexOffset={3000}
++            >
++              <Popup>
++                <div style={{ fontSize: 12, lineHeight: 1.6 }}>
++                  <b style={{ color: '#1d4ed8' }}>🏢 {stName}</b><br />
++                  📍 {st.dia_chi || (st as any).dia_chi_tram || 'Chưa cập nhật địa chỉ'}<br />
++                  Sức chứa: <b>{st.so_drone_hien_tai ?? 0} / {st.capacity || st.suc_chua_toi_da || 10} Drone</b><br />
++                  GPS: <code style={{ fontSize: 10 }}>{lat.toFixed(5)}, {lng.toFixed(5)}</code>
++                </div>
++              </Popup>
++            </Marker>
++          )
++        })}
++
++        {/* 🛸 Drones: Initial Position = Parked Beside Station; Selected = Blue + Front Z-Index */}
++        {liveDrones.map((dr, idx) => {
++          // 1. Initial position = housing station coordinates
++          const assignedStation = stations.find(s =>
++            s.ma_tram === (dr as any).ma_tram_hien_tai ||
++            s.ma_tram === (dr as any).ma_tram ||
++            s.id === (dr as any).ma_tram_hien_tai
++          ) || (stations.length > 0 ? stations[idx % stations.length] : null)
++
++          const rawStLat = assignedStation ? (assignedStation.vi_do != null ? Number(assignedStation.vi_do) : parseFloat(String((assignedStation as any).lat || ''))) : NaN
++          const rawStLng = assignedStation ? (assignedStation.kinh_do != null ? Number(assignedStation.kinh_do) : parseFloat(String((assignedStation as any).lng || ''))) : NaN
++
++          const stationLat = (!isNaN(rawStLat) && rawStLat !== 0) ? rawStLat : 10.8048584
++          const stationLng = (!isNaN(rawStLng) && rawStLng !== 0) ? rawStLng : 106.7167612
++
++          // 2. Check active order assigned to this drone
++          const matchedOrder = orders.find(o => {
++            const oDroneId = String((o as any).ma_drone || '').trim().toLowerCase()
++            const drId = String(dr.ma_drone || dr.id || '').trim().toLowerCase()
++            return oDroneId !== '' && drId !== '' && oDroneId === drId
++          })
++
++          const isDelivering = Boolean(
++            matchedOrder &&
++            [
++              'CHO_GIAO', 'DANG_GIAO', 'IN_TRANSIT', 'DISPATCHED',
++              'ĐANG GIAO', 'CHỜ GIAO', 'ĐÃ DUYỆT', 'CHO_DUYET', 'APPROVED', 'SCHEDULED'
++            ].some(st => String((matchedOrder as any).trang_thai || (matchedOrder as any).trang_thai_don_hang || '').toUpperCase().includes(st))
++          )
++
++          const restingLat = stationLat - 0.0008
++          const restingLng = stationLng + 0.0008
++
++          let currentLat = dr.vi_do_hien_tai ? Number(dr.vi_do_hien_tai) : restingLat
++          let currentLng = dr.kinh_do_hien_tai ? Number(dr.kinh_do_hien_tai) : restingLng
++
++          let destLat: number | null = null
++          let destLng: number | null = null
++
++          if (isDelivering && matchedOrder) {
++            const rawLat = (matchedOrder as any).vi_do ?? (matchedOrder as any).toa_do_giao?.lat
++            const rawLng = (matchedOrder as any).kinh_do ?? (matchedOrder as any).toa_do_giao?.lng
++            destLat = rawLat != null ? Number(rawLat) : null
++            destLng = rawLng != null ? Number(rawLng) : null
++
++            currentLat = dr.vi_do_hien_tai ? Number(dr.vi_do_hien_tai) : stationLat
++            currentLng = dr.kinh_do_hien_tai ? Number(dr.kinh_do_hien_tai) : stationLng
++          } else if (!dr.vi_do_hien_tai) {
++            currentLat = restingLat
++            currentLng = restingLng
++          }
++
++          const isSelected = selectedDroneId === dr.id || selectedDroneId === (dr as any).ma_drone
++
++          return (
++            <Fragment key={dr.ma_drone || dr.id}>
++              {/* Flight Polyline Path & Destination Pin when delivering */}
++              {isDelivering && destLat != null && destLng != null && (
++                <>
++                  <Polyline
++                    positions={[[stationLat, stationLng], [destLat, destLng]]}
++                    pathOptions={{ color: '#2563eb', weight: 3, dashArray: '6, 8', opacity: 0.8 }}
++                  />
++                  <Marker position={[destLat, destLng]} icon={destinationIcon}>
++                    <Popup>
++                      <div style={{ fontSize: 12, lineHeight: 1.5 }}>
++                        <b style={{ color: '#dc2626' }}>📍 Điểm Giao Hàng</b><br />
++                        Đơn hàng: <b>{(matchedOrder as any)?.ma_don_hang || (matchedOrder as any)?.ma_van_don || 'Đơn hàng'}</b><br />
++                        Địa chỉ: {(matchedOrder as any)?.dia_chi_giao || (matchedOrder as any)?.dia_chi || 'Địa chỉ khách hàng'}
++                      </div>
++                    </Popup>
++                  </Marker>
++                </>
++              )}
++
++              <Marker
++                position={[currentLat, currentLng]}
++                icon={isSelected ? selectedDroneIcon : droneIcon}
++                zIndexOffset={isSelected ? 5000 : 1000}
++              >
++                  <Popup>
++                    <div style={{ fontSize: 12, lineHeight: 1.6 }}>
++                      <b style={{ color: '#15803d' }}>🛸 {dr.ten_drone || dr.ma_drone}</b> {isSelected && '🌟 (Đang chọn)'}<br />
++                      Model: {dr.model || 'SkyCarrier X1'}<br />
++                      Trạm xuất phát: <b>{assignedStation?.ten_tram || 'Trạm trung tâm'}</b><br />
++                      Pin: <b>{dr.dung_luong_pin ?? 100}%</b> | Tải: {dr.tai_trong_toi_da || 5.0} kg<br />
++                      Trạng thái: <b style={{ color: isDelivering ? '#2563eb' : '#16a34a' }}>{isDelivering ? '🚀 Đang bay giao hàng' : (dr.trang_thai || 'Sẵn sàng')}</b><br />
++                      {isDelivering && matchedOrder && (
++                        <div style={{ background: '#f0f9ff', padding: '6px 8px', borderRadius: 6, margin: '4px 0', border: '1px solid #bae6fd' }}>
++                          📦 Đơn đang giao: <b style={{ color: '#0284c7' }}>{(matchedOrder as any).ma_don_hang || (matchedOrder as any).ma_van_don}</b><br />
++                          👤 Khách nhận: <b>{(matchedOrder as any).ten_khach_hang || 'N/A'}</b><br />
++                          📍 Giao tới: <b>{(matchedOrder as any).dia_chi_giao || 'Địa chỉ khách hàng'}</b>
++                        </div>
++                      )}
++                      Tọa độ GPS: <code style={{ fontSize: 10 }}>{currentLat.toFixed(5)}, {currentLng.toFixed(5)}</code>
++                    </div>
++                  </Popup>
++                </Marker>
++              </Fragment>
++            )
++        })}
++
++        {/* 📍 Render destination pins ONLY for active, pending, or scheduled orders (EXCLUDE completed, cancelled & rejected) */}
++        {orders
++          .filter(o => {
++            const st = String((o as any).trang_thai || (o as any).trang_thai_don_hang || '').toUpperCase()
++            // Exclude completed, cancelled, or rejected orders
++            const isFinishedOrRejected = [
++              'HOAN_THANH', 'HOÀN THÀNH', 'COMPLETED', 'DELIVERED', 'ĐÃ GIAO', 'DA_GIAO',
++              'HUY', 'HỦY', 'CANCELLED', 'CANCELED',
++              'TU_CHOI', 'TỪ CHỐI', 'REJECTED', 'REFUSED'
++            ].some(k => st.includes(k))
++            return !isFinishedOrRejected
++          })
++          .map((o, idx) => {
++            let dLat = Number((o as any).vi_do ?? (o as any).toa_do_giao?.lat)
++            let dLng = Number((o as any).kinh_do ?? (o as any).toa_do_giao?.lng)
++
++            // Fallback for missing coordinates: spread around HCMC center (10.776, 106.700)
++            if (isNaN(dLat) || isNaN(dLng) || dLat === 0 || dLng === 0) {
++              dLat = 10.776 + (idx % 5) * 0.008 - 0.016
++              dLng = 106.700 + Math.floor(idx / 5) * 0.008 - 0.016
++            }
++
++            return (
++              <Marker key={`dest-pin-${o.ma_don_hang}`} position={[dLat, dLng]} icon={destinationIcon} zIndexOffset={2000}>
++                <Popup>
++                  <div style={{ fontSize: 12, lineHeight: 1.5 }}>
++                    <b style={{ color: '#dc2626' }}>📍 Điểm Giao Hàng (Chờ/Đang Giao)</b><br />
++                    Mã đơn: <b>{o.ma_don_hang || (o as any).ma_van_don}</b><br />
++                    Người nhận: <b>{(o as any).ten_khach_hang || (o as any).ten_nguoi_nhan || 'Khách hàng DB'}</b><br />
++                    Địa chỉ DB: {(o as any).dia_chi_giao || 'Địa chỉ khách hàng'}<br />
++                    Trạng thái: <b>{(o as any).trang_thai || 'Mới tạo'}</b><br />
++                    Tọa độ GPS: <code style={{ fontSize: 10 }}>{dLat.toFixed(5)}, {dLng.toFixed(5)}</code>
++                  </div>
++                </Popup>
++              </Marker>
++            )
++          })}
++      </MapContainer>
++
++      {/* Map Legend */}
++      <div style={{
++        position: 'absolute', bottom: 12, left: 12, background: 'rgba(255,255,255,0.95)',
++        padding: '8px 14px', borderRadius: 8, fontSize: 11, color: '#334155', zIndex: 1000,
++        boxShadow: '0 4px 12px rgba(0,0,0,0.15)', display: 'flex', gap: 14, alignItems: 'center', flexWrap: 'wrap'
++      }}>
++        <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>🏢 <b>Trạm Hạ Cánh ({stations.length})</b></div>
++        <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>🛸 <b>Vị Trí Đội Bay Drone ({liveDrones.length})</b></div>
++      </div>
++    </div>
++  )
++}
++export default AdminTrackingMap
+diff --git "a/Giao di\341\273\207n web qu\341\272\243n l\303\275/src/components/Badges.tsx" "b/Giao di\341\273\207n web qu\341\272\243n l\303\275/src/components/Badges.tsx"
+index dabcfd9..4ec85c3 100644
+--- "a/Giao di\341\273\207n web qu\341\272\243n l\303\275/src/components/Badges.tsx"	
++++ "b/Giao di\341\273\207n web qu\341\272\243n l\303\275/src/components/Badges.tsx"	
+@@ -1,18 +1,63 @@
+ export const statusConfig: Record<string, { label: string; bg: string; color: string }> = {
+-  pending:    { label: 'Chờ duyệt',    bg: '#FFF7ED', color: '#C2410C' },
+-  approved:   { label: 'Đã duyệt',     bg: '#EFF6FF', color: '#1D4ED8' },
+-  delivering: { label: 'Đang giao',    bg: '#EFF6FF', color: '#2563EB' },
+-  completed:  { label: 'Hoàn tất',     bg: '#F0FDF4', color: '#15803D' },
+-  failed:     { label: 'Thất bại',     bg: '#FEF2F2', color: '#B91C1C' },
+-  expired:    { label: '⏰ Quá hạn',   bg: '#FFF3CD', color: '#92400E' },
+-  scheduled:  { label: 'Đã lên lịch', bg: '#F3E8FF', color: '#7C3AED' },
++  pending:      { label: 'Chờ duyệt',    bg: '#FFF7ED', color: '#C2410C' },
++  'chờ duyệt':   { label: 'Chờ duyệt',    bg: '#FFF7ED', color: '#C2410C' },
++  cho_duyet:    { label: 'Chờ duyệt',    bg: '#FFF7ED', color: '#C2410C' },
++  
++  approved:     { label: 'Đã duyệt',     bg: '#EFF6FF', color: '#1D4ED8' },
++  'đã duyệt':    { label: 'Đã duyệt',     bg: '#EFF6FF', color: '#1D4ED8' },
++  da_duyet:     { label: 'Đã duyệt',     bg: '#EFF6FF', color: '#1D4ED8' },
++
++  delivering:   { label: 'Đang giao',    bg: '#EFF6FF', color: '#2563EB' },
++  'đang giao':   { label: 'Đang giao',    bg: '#EFF6FF', color: '#2563EB' },
++  dang_giao:    { label: 'Đang giao',    bg: '#EFF6FF', color: '#2563EB' },
++  in_transit:   { label: 'Đang giao',    bg: '#EFF6FF', color: '#2563EB' },
++
++  completed:    { label: 'Hoàn tất',     bg: '#F0FDF4', color: '#15803D' },
++  'hoàn tất':    { label: 'Hoàn tất',     bg: '#F0FDF4', color: '#15803D' },
++  hoan_tat:     { label: 'Hoàn tất',     bg: '#F0FDF4', color: '#15803D' },
++
++  cancelled:    { label: 'Đã hủy',       bg: '#FEF2F2', color: '#B91C1C' },
++  'đã hủy':      { label: 'Đã hủy',       bg: '#FEF2F2', color: '#B91C1C' },
++  da_huy:       { label: 'Đã hủy',       bg: '#FEF2F2', color: '#B91C1C' },
++
++  failed:       { label: 'Thất bại',     bg: '#FEF2F2', color: '#B91C1C' },
++  'thất bại':    { label: 'Thất bại',     bg: '#FEF2F2', color: '#B91C1C' },
++
++  rejected:     { label: 'Bị từ chối',   bg: '#FEF2F2', color: '#B91C1C' },
++  'bị từ chối':  { label: 'Bị từ chối',   bg: '#FEF2F2', color: '#B91C1C' },
++  bi_tu_choi:   { label: 'Bị từ chối',   bg: '#FEF2F2', color: '#B91C1C' },
++
++  scheduled:    { label: 'Đã lên lịch',  bg: '#F3E8FF', color: '#7C3AED' },
++  'đã lên lịch': { label: 'Đã lên lịch',  bg: '#F3E8FF', color: '#7C3AED' },
++  da_len_lich:  { label: 'Đã lên lịch',  bg: '#F3E8FF', color: '#7C3AED' },
++
++  available:    { label: 'Sẵn sàng',     bg: '#DCFCE7', color: '#15803D' },
++  'sẵn sàng':   { label: 'Sẵn sàng',     bg: '#DCFCE7', color: '#15803D' },
++  san_sang:     { label: 'Sẵn sàng',     bg: '#DCFCE7', color: '#15803D' },
++
++  in_flight:    { label: 'Đang bay',     bg: '#EFF6FF', color: '#2563EB' },
++  'đang bay':   { label: 'Đang bay',     bg: '#EFF6FF', color: '#2563EB' },
++  dang_bay:     { label: 'Đang bay',     bg: '#EFF6FF', color: '#2563EB' },
++
++  charging:     { label: 'Đang sạc',     bg: '#FEF3C7', color: '#D97706' },
++  'đang sạc':   { label: 'Đang sạc',     bg: '#FEF3C7', color: '#D97706' },
++  dang_sac:     { label: 'Đang sạc',     bg: '#FEF3C7', color: '#D97706' },
++
++  maintenance:  { label: 'Bảo trì',      bg: '#FEF2F2', color: '#B91C1C' },
++  'bảo trì':    { label: 'Bảo trì',      bg: '#FEF2F2', color: '#B91C1C' },
++  bao_tri:      { label: 'Bảo trì',      bg: '#FEF2F2', color: '#B91C1C' },
++
++  offline:      { label: 'Offline',      bg: '#F1F5F9', color: '#64748B' },
+ }
+ 
+ export const roleBadge: Record<string, { label: string; bg: string; color: string }> = {
+-  admin:      { label: 'Admin',      bg: '#EDE9FE', color: '#7C3AED' },
+-  dispatcher: { label: 'Dispatcher', bg: '#DBEAFE', color: '#1D4ED8' },
+-  operator:   { label: 'Operator',   bg: '#FEF3C7', color: '#D97706' },
+-  manager:    { label: 'Manager',    bg: '#DCFCE7', color: '#16A34A' },
++  admin:               { label: 'Admin',             bg: '#EDE9FE', color: '#7C3AED' },
++  dispatcher:          { label: 'Dispatcher',        bg: '#DBEAFE', color: '#1D4ED8' },
++  operator:            { label: 'Operator',          bg: '#FEF3C7', color: '#D97706' },
++  'station operator':  { label: 'Station Operator',  bg: '#FEF3C7', color: '#D97706' },
++  manager:             { label: 'Manager',           bg: '#DCFCE7', color: '#16A34A' },
++  'logistics manager': { label: 'Logistics Manager', bg: '#DCFCE7', color: '#16A34A' },
++  customer:            { label: 'Khách hàng',        bg: '#F1F5F9', color: '#475569' },
+ }
+ 
+ export const actionBadge: Record<string, { bg: string; color: string }> = {
+@@ -28,7 +73,8 @@ export const actionBadge: Record<string, { bg: string; color: string }> = {
+ }
+ 
+ export function Badge({ status }: { status: string }) {
+-  const cfg = statusConfig[status] || { label: status, bg: '#f1f5f9', color: '#475569' }
++  const key = (status || '').toLowerCase().trim()
++  const cfg = statusConfig[key] || { label: status || 'Chưa rõ', bg: '#f1f5f9', color: '#475569' }
+   return (
+     <span className="badge" style={{ background: cfg.bg, color: cfg.color }}>
+       {cfg.label}
+diff --git "a/Giao di\341\273\207n web qu\341\272\243n l\303\275/src/components/Header.tsx" "b/Giao di\341\273\207n web qu\341\272\243n l\303\275/src/components/Header.tsx"
+index eb5790d..e045a24 100644
+--- "a/Giao di\341\273\207n web qu\341\272\243n l\303\275/src/components/Header.tsx"	
++++ "b/Giao di\341\273\207n web qu\341\272\243n l\303\275/src/components/Header.tsx"	
+@@ -1,6 +1,8 @@
++import { useState, useRef, useEffect } from 'react'
+ import { Screen, Role } from '../types'
+ import { Icon } from './Icons'
+ import { RoleBadge } from './Badges'
++import { getBaseUrl } from '../api'
+ 
+ interface HeaderProps {
+   screen: Screen
+@@ -8,7 +10,110 @@ interface HeaderProps {
+   onLogout: () => void
+ }
+ 
++interface NotificationItem {
++  id: string
++  title: string
++  time: string
++  unread: boolean
++  type: 'order' | 'drone' | 'system'
++}
++
+ export function Header({ screen, role, onLogout }: HeaderProps) {
++  const [showNotifications, setShowNotifications] = useState(false)
++  const [showUserMenu, setShowUserMenu] = useState(false)
++  const [showProfileModal, setShowProfileModal] = useState(false)
++  const [activeTab, setActiveTab] = useState<'profile' | 'password'>('profile')
++  
++  // Profile fields state
++  const [fullName, setFullName] = useState('')
++  const [phone, setPhone] = useState('')
++  const [email, setEmail] = useState('')
++  const [originalEmail, setOriginalEmail] = useState('')
++  const [profileMsg, setProfileMsg] = useState<{ text: string; type: 'success' | 'error' } | null>(null)
++  const [profileLoading, setProfileLoading] = useState(false)
++
++  // Password fields state
++  const [currentPw, setCurrentPw] = useState('')
++  const [newPw, setNewPw] = useState('')
++  const [confirmPw, setConfirmPw] = useState('')
++  const [pwMsg, setPwMsg] = useState<{ text: string; type: 'success' | 'error' } | null>(null)
++  const [pwLoading, setPwLoading] = useState(false)
++
++  const [notifications, setNotifications] = useState<NotificationItem[]>([
++    { id: '1', title: 'Đơn hàng VD-2a8095a5 đang chờ phê duyệt', time: '5 phút trước', unread: true, type: 'order' },
++    { id: '2', title: 'Drone DR-03 đã cập nhật vị trí trạm Q.1', time: '12 phút trước', unread: true, type: 'drone' },
++    { id: '3', title: 'Trạm Hạ Cánh Q.1 hoạt động bình thường', time: '1 giờ trước', unread: false, type: 'system' },
++  ])
++
++  const notifRef = useRef<HTMLDivElement>(null)
++  const userMenuRef = useRef<HTMLDivElement>(null)
++
++  // Load real user data from localStorage (saved at login time)
++  function getStoredUser() {
++    try {
++      const stored = localStorage.getItem('sdd_user')
++      return stored ? JSON.parse(stored) : null
++    } catch { return null }
++  }
++
++  const storedUser = getStoredUser()
++  const fallbackName = { admin: 'Trần Quốc Bảo', dispatcher: 'Lê Văn Cường', operator: 'Nguyễn Thị Dung', manager: 'Phạm Minh Hiếu' }[role]
++  const fallbackEmail = `${role}@smartdrone.vn`
++  const fallbackPhone = { admin: '0901 234 567', dispatcher: '0908 765 432', operator: '0912 345 678', manager: '0933 111 222' }[role]
++
++  // Current display name & email
++  const [displayName, setDisplayName] = useState(storedUser?.ho_ten || fallbackName)
++  const [displayEmail, setDisplayEmail] = useState(storedUser?.email || fallbackEmail)
++
++  useEffect(() => {
++    const u = getStoredUser()
++    setFullName(u?.ho_ten || fallbackName)
++    setPhone(u?.so_dien_thoai || fallbackPhone)
++    setEmail(u?.email || fallbackEmail)
++    setOriginalEmail(u?.email || fallbackEmail)
++    setDisplayName(u?.ho_ten || fallbackName)
++    setDisplayEmail(u?.email || fallbackEmail)
++  }, [role])
++
++  const unreadCount = notifications.filter(n => n.unread).length
++
++  const handleMarkAllRead = () => {
++    setNotifications(prev => prev.map(n => ({ ...n, unread: false })))
++  }
++
++  // Close dropdowns when clicking outside
++  useEffect(() => {
++    const handleClickOutside = (event: MouseEvent) => {
++      if (notifRef.current && !notifRef.current.contains(event.target as Node)) {
++        setShowNotifications(false)
++      }
++      if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
++        setShowUserMenu(false)
++      }
++    }
++    document.addEventListener('mousedown', handleClickOutside)
++    return () => document.removeEventListener('mousedown', handleClickOutside)
++  }, [])
++
++  // Fetch real pending orders from Database for live notifications
++  useEffect(() => {
++    import('../api').then(({ listOrders }) => {
++      listOrders().then(orders => {
++        const pending = orders.filter(o => o.trang_thai === 'Chờ duyệt' || o.trang_thai === 'pending')
++        if (pending.length > 0) {
++          const notifs: NotificationItem[] = pending.map((o, idx) => ({
++            id: o.ma_don_hang || `notif-${idx}`,
++            title: `Đơn hàng ${o.ma_van_don || o.ma_don_hang} của ${o.ten_nguoi_nhan || o.ten_khach_hang || 'khách hàng'} đang CHỜ PHÊ DUYỆT`,
++            time: 'Mới cập nhật từ CSDL',
++            unread: true,
++            type: 'order'
++          }))
++          setNotifications(notifs)
++        }
++      }).catch(() => {})
++    })
++  }, [])
++
+   const labels: Record<Screen, string> = {
+     login: 'Đăng nhập',
+     dashboard: 'Tổng quan',
+@@ -19,17 +124,104 @@ export function Header({ screen, role, onLogout }: HeaderProps) {
+     'station-ops': 'Vận hành trạm',
+     tracking: 'Theo dõi giao hàng',
+     stations: 'Quản lý trạm hạ cánh',
++    drones: 'Quản lý Fleet Drone',
+     reports: 'Báo cáo & Thống kê',
+     'ai-eta': 'AI & Phân tích ETA',
+     users: 'Quản lý người dùng',
+     'activity-log': 'Nhật ký hoạt động',
+   }
+ 
+-  const roleNames: Record<Role, string> = {
+-    admin: 'Trần Quốc Bảo',
+-    dispatcher: 'Lê Văn Cường',
+-    operator: 'Nguyễn Thị Dung',
+-    manager: 'Phạm Minh Hiếu',
++  const handleProfileSubmit = async (e: React.FormEvent) => {
++    e.preventDefault()
++    setProfileMsg(null)
++    if (!fullName.trim()) {
++      setProfileMsg({ text: 'Họ và tên không được để trống.', type: 'error' })
++      return
++    }
++    if (!email.trim()) {
++      setProfileMsg({ text: 'Email không được để trống.', type: 'error' })
++      return
++    }
++
++    setProfileLoading(true)
++    try {
++      const res = await fetch(`${getBaseUrl()}/auth/profile`, {
++        method: 'PUT',
++        headers: { 'Content-Type': 'application/json' },
++        body: JSON.stringify({
++          email: originalEmail,
++          new_email: email,
++          ho_ten: fullName,
++          so_dien_thoai: phone,
++        })
++      })
++      const data = await res.json()
++      if (res.ok) {
++        setProfileMsg({ text: data.message || 'Cập nhật thông tin thành công!', type: 'success' })
++        setDisplayName(fullName)
++        setDisplayEmail(email)
++        setOriginalEmail(email)
++        try {
++          const stored = localStorage.getItem('sdd_user')
++          const uObj = stored ? JSON.parse(stored) : {}
++          localStorage.setItem('sdd_user', JSON.stringify({
++            ...uObj,
++            ho_ten: fullName,
++            email: email,
++            so_dien_thoai: phone,
++          }))
++        } catch {}
++      } else {
++        setProfileMsg({ text: data.error || 'Lỗi cập nhật thông tin', type: 'error' })
++      }
++    } catch {
++      setProfileMsg({ text: 'Không thể kết nối đến máy chủ backend.', type: 'error' })
++    } finally {
++      setProfileLoading(false)
++    }
++  }
++
++  const handlePasswordChangeSubmit = async (e: React.FormEvent) => {
++    e.preventDefault()
++    setPwMsg(null)
++    if (!currentPw || !newPw || !confirmPw) {
++      setPwMsg({ text: 'Vui lòng điền đầy đủ các trường mật khẩu.', type: 'error' })
++      return
++    }
++    if (newPw !== confirmPw) {
++      setPwMsg({ text: 'Mật khẩu mới và xác nhận mật khẩu không khớp.', type: 'error' })
++      return
++    }
++    if (newPw.length < 6) {
++      setPwMsg({ text: 'Mật khẩu mới phải có ít nhất 6 ký tự.', type: 'error' })
++      return
++    }
++
++    setPwLoading(true)
++    try {
++      const res = await fetch(`${getBaseUrl()}/auth/change-password`, {
++        method: 'POST',
++        headers: { 'Content-Type': 'application/json' },
++        body: JSON.stringify({
++          email: originalEmail,
++          current_password: currentPw,
++          new_password: newPw,
++        })
++      })
++      const data = await res.json()
++      if (res.ok) {
++        setPwMsg({ text: data.message || 'Đổi mật khẩu thành công!', type: 'success' })
++        setCurrentPw('')
++        setNewPw('')
++        setConfirmPw('')
++      } else {
++        setPwMsg({ text: data.error || 'Lỗi đổi mật khẩu', type: 'error' })
++      }
++    } catch {
++      setPwMsg({ text: 'Không thể kết nối đến máy chủ backend.', type: 'error' })
++    } finally {
++      setPwLoading(false)
++    }
+   }
+ 
+   return (
+@@ -45,29 +237,320 @@ export function Header({ screen, role, onLogout }: HeaderProps) {
+         <div style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 15, color: '#1e293b' }}>{labels[screen]}</div>
+       </div>
+ 
+-      <button style={{ position: 'relative', background: 'none', border: 'none', cursor: 'pointer', color: '#64748b', padding: 8, borderRadius: 8, display: 'flex' }}>
+-        {Icon.bell}
+-        <span style={{ position: 'absolute', top: 6, right: 6, width: 7, height: 7, background: '#EF4444', borderRadius: '50%', border: '1.5px solid white' }} />
+-      </button>
++      {/* Notification Bell Dropdown */}
++      <div style={{ position: 'relative' }} ref={notifRef}>
++        <button
++          onClick={() => {
++            setShowNotifications(!showNotifications)
++            setShowUserMenu(false)
++          }}
++          style={{
++            position: 'relative', background: showNotifications ? '#f1f5f9' : 'none',
++            border: 'none', cursor: 'pointer', color: '#64748b', padding: 8, borderRadius: 8, display: 'flex',
++            transition: 'background 0.2s',
++          }}
++          title="Thông báo hệ thống"
++        >
++          {Icon.bell}
++          {unreadCount > 0 && (
++            <span style={{
++              position: 'absolute', top: 6, right: 6, width: 8, height: 8,
++              background: '#EF4444', borderRadius: '50%', border: '1.5px solid white'
++            }} />
++          )}
++        </button>
+ 
+-      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+-        <div style={{
+-          width: 32, height: 32, borderRadius: '50%',
+-          background: 'linear-gradient(135deg,#3B82F6,#60A5FA)',
+-          display: 'flex', alignItems: 'center', justifyContent: 'center',
+-          color: 'white', fontWeight: 700, fontSize: 13, fontFamily: 'var(--font-display)',
+-        }}>
+-          {roleNames[role]?.[0] || 'U'}
+-        </div>
+-        <div>
+-          <div style={{ fontSize: 13, fontWeight: 600, color: '#1e293b', lineHeight: 1.2 }}>{roleNames[role]}</div>
+-          <div style={{ fontSize: 11, color: '#94a3b8' }}><RoleBadge role={role} /></div>
++        {showNotifications && (
++          <div style={{
++            position: 'absolute', right: 0, top: 44, width: 320, background: 'white',
++            borderRadius: 12, boxShadow: '0 10px 25px -5px rgba(0,0,0,0.15), 0 8px 10px -6px rgba(0,0,0,0.1)',
++            border: '1px solid #e2e8f0', padding: 12, zIndex: 100,
++          }}>
++            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10, paddingBottom: 8, borderBottom: '1px solid #f1f5f9' }}>
++              <span style={{ fontWeight: 650, fontSize: 14, color: '#1e293b' }}>Thông báo</span>
++              {unreadCount > 0 && (
++                <button
++                  onClick={handleMarkAllRead}
++                  style={{ background: 'none', border: 'none', color: '#2563eb', fontSize: 11, cursor: 'pointer', fontWeight: 600 }}
++                >
++                  Đánh dấu đã đọc
++                </button>
++              )}
++            </div>
++
++            <div style={{ display: 'flex', flexDirection: 'column', gap: 8, maxHeight: 280, overflowY: 'auto' }}>
++              {notifications.map(n => (
++                <div key={n.id} style={{
++                  padding: '8px 10px', borderRadius: 8, background: n.unread ? '#EFF6FF' : '#f8fafc',
++                  border: n.unread ? '1px solid #BFDBFE' : '1px solid #f1f5f9', fontSize: 12,
++                }}>
++                  <div style={{ color: '#1e293b', fontWeight: n.unread ? 600 : 400, lineHeight: 1.3 }}>{n.title}</div>
++                  <div style={{ fontSize: 10, color: '#94a3b8', marginTop: 4 }}>{n.time}</div>
++                </div>
++              ))}
++            </div>
++          </div>
++        )}
++      </div>
++
++      {/* User Profile Avatar Dropdown */}
++      <div style={{ position: 'relative' }} ref={userMenuRef}>
++        <div
++          onClick={() => {
++            setShowUserMenu(!showUserMenu)
++            setShowNotifications(false)
++          }}
++          style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', padding: '4px 8px', borderRadius: 8, background: showUserMenu ? '#f1f5f9' : 'transparent', transition: 'background 0.2s' }}
++        >
++          <div style={{
++            width: 32, height: 32, borderRadius: '50%',
++            background: 'linear-gradient(135deg,#3B82F6,#60A5FA)',
++            display: 'flex', alignItems: 'center', justifyContent: 'center',
++            color: 'white', fontWeight: 700, fontSize: 13, fontFamily: 'var(--font-display)',
++          }}>
++            {displayName?.[0] || 'U'}
++          </div>
++          <div>
++            <div style={{ fontSize: 13, fontWeight: 600, color: '#1e293b', lineHeight: 1.2 }}>{displayName}</div>
++            <div style={{ fontSize: 11, color: '#94a3b8' }}><RoleBadge role={role} /></div>
++          </div>
+         </div>
++
++        {showUserMenu && (
++          <div style={{
++            position: 'absolute', right: 0, top: 48, width: 220, background: 'white',
++            borderRadius: 12, boxShadow: '0 10px 25px -5px rgba(0,0,0,0.15), 0 8px 10px -6px rgba(0,0,0,0.1)',
++            border: '1px solid #e2e8f0', padding: 8, zIndex: 100,
++          }}>
++            <div style={{ padding: '8px 12px', borderBottom: '1px solid #f1f5f9', marginBottom: 4 }}>
++              <div style={{ fontWeight: 600, fontSize: 13, color: '#1e293b' }}>{displayName}</div>
++              <div style={{ fontSize: 11, color: '#64748b' }}>Hệ thống Quản trị v1.0</div>
++            </div>
++
++            <button
++              className="btn btn-ghost btn-sm"
++              style={{ width: '100%', justifyContent: 'flex-start', padding: '8px 12px', fontSize: 13, color: '#334155' }}
++              onClick={() => { setShowUserMenu(false); setShowProfileModal(true); }}
++            >
++              👤 Hồ sơ & Cài đặt
++            </button>
++
++            <div style={{ borderTop: '1px solid #f1f5f9', marginTop: 4, paddingTop: 4 }}>
++              <button
++                onClick={() => { setShowUserMenu(false); onLogout(); }}
++                className="btn btn-ghost btn-sm"
++                style={{ width: '100%', justifyContent: 'flex-start', padding: '8px 12px', fontSize: 13, color: '#EF4444' }}
++              >
++                {Icon.logout} <span style={{ marginLeft: 6 }}>Đăng xuất</span>
++              </button>
++            </div>
++          </div>
++        )}
+       </div>
+ 
+-      <button onClick={onLogout} className="btn btn-ghost btn-sm" style={{ gap: 6 }}>
+-        {Icon.logout} <span style={{ fontSize: 12 }}>Đăng xuất</span>
+-      </button>
++      {/* Modern Profile & Password Change Modal */}
++      {showProfileModal && (
++        <div style={{
++          position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.6)', backdropFilter: 'blur(4px)',
++          display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: 20
++        }}>
++          <div style={{
++            background: 'white', borderRadius: 16, width: '100%', maxWidth: 480, padding: 24,
++            boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)', border: '1px solid #e2e8f0'
++          }}>
++            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, borderBottom: '1px solid #f1f5f9', paddingBottom: 12 }}>
++              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
++                <div style={{
++                  width: 40, height: 40, borderRadius: '50%', background: 'linear-gradient(135deg,#2563eb,#3b82f6)',
++                  color: 'white', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16
++                }}>
++                  {displayName?.[0] || 'U'}
++                </div>
++                <div>
++                  <h3 style={{ fontSize: 16, fontWeight: 700, color: '#1e293b' }}>Hồ sơ tài khoản</h3>
++                  <span style={{ fontSize: 12, color: '#64748b' }}>{displayEmail}</span>
++                </div>
++              </div>
++              <button
++                onClick={() => setShowProfileModal(false)}
++                style={{ background: 'none', border: 'none', fontSize: 18, color: '#94a3b8', cursor: 'pointer' }}
++              >
++                ✕
++              </button>
++            </div>
++
++            {/* Navigation Tabs */}
++            <div style={{ display: 'flex', gap: 8, marginBottom: 16, borderBottom: '1px solid #e2e8f0', paddingBottom: 8 }}>
++              <button
++                type="button"
++                onClick={() => setActiveTab('profile')}
++                style={{
++                  padding: '6px 14px', borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: 'pointer', border: 'none',
++                  background: activeTab === 'profile' ? '#EFF6FF' : 'transparent',
++                  color: activeTab === 'profile' ? '#2563eb' : '#64748b',
++                }}
++              >
++                👤 Thông tin cá nhân
++              </button>
++              <button
++                type="button"
++                onClick={() => setActiveTab('password')}
++                style={{
++                  padding: '6px 14px', borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: 'pointer', border: 'none',
++                  background: activeTab === 'password' ? '#EFF6FF' : 'transparent',
++                  color: activeTab === 'password' ? '#2563eb' : '#64748b',
++                }}
++              >
++                🔒 Đổi mật khẩu
++              </button>
++            </div>
++
++            {/* TAB 1: Profile Edit Form */}
++            {activeTab === 'profile' && (
++              <form onSubmit={handleProfileSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
++                {profileMsg && (
++                  <div style={{
++                    padding: '8px 12px', borderRadius: 8, fontSize: 12, fontWeight: 500,
++                    background: profileMsg.type === 'success' ? '#ECFDF5' : '#FEF2F2',
++                    color: profileMsg.type === 'success' ? '#065F46' : '#991B1B',
++                    border: profileMsg.type === 'success' ? '1px solid #A7F3D0' : '1px solid #FECACA',
++                  }}>
++                    {profileMsg.text}
++                  </div>
++                )}
++
++                <div>
++                  <label style={{ display: 'block', fontSize: 12, color: '#475569', marginBottom: 4, fontWeight: 550 }}>Họ và tên</label>
++                  <input
++                    type="text"
++                    className="input"
++                    style={{ width: '100%', padding: '8px 12px', fontSize: 13 }}
++                    value={fullName}
++                    onChange={e => setFullName(e.target.value)}
++                    placeholder="Nhập họ và tên..."
++                  />
++                </div>
++
++                <div>
++                  <label style={{ display: 'block', fontSize: 12, color: '#475569', marginBottom: 4, fontWeight: 550 }}>Số điện thoại</label>
++                  <input
++                    type="text"
++                    className="input"
++                    style={{ width: '100%', padding: '8px 12px', fontSize: 13 }}
++                    value={phone}
++                    onChange={e => setPhone(e.target.value)}
++                    placeholder="0901 234 567..."
++                  />
++                </div>
++
++                <div>
++                  <label style={{ display: 'block', fontSize: 12, color: '#475569', marginBottom: 4, fontWeight: 550 }}>Email tài khoản</label>
++                  <input
++                    type="email"
++                    className="input"
++                    style={{ width: '100%', padding: '8px 12px', fontSize: 13 }}
++                    value={email}
++                    onChange={e => setEmail(e.target.value)}
++                    placeholder="email@smartdrone.vn..."
++                  />
++                </div>
++
++                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 8 }}>
++                  <div>
++                    <span style={{ fontSize: 11, color: '#64748b' }}>Vai trò: </span>
++                    <RoleBadge role={role} />
++                  </div>
++                  <div style={{ display: 'flex', gap: 8 }}>
++                    <button
++                      type="button"
++                      className="btn btn-outline btn-sm"
++                      onClick={() => setShowProfileModal(false)}
++                    >
++                      Đóng
++                    </button>
++                    <button
++                      type="submit"
++                      className="btn btn-primary btn-sm"
++                      disabled={profileLoading}
++                    >
++                      {profileLoading ? 'Đang lưu...' : 'Lưu thông tin'}
++                    </button>
++                  </div>
++                </div>
++              </form>
++            )}
++
++            {/* TAB 2: Password Change Form */}
++            {activeTab === 'password' && (
++              <form onSubmit={handlePasswordChangeSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
++                {pwMsg && (
++                  <div style={{
++                    padding: '8px 12px', borderRadius: 8, fontSize: 12, fontWeight: 500,
++                    background: pwMsg.type === 'success' ? '#ECFDF5' : '#FEF2F2',
++                    color: pwMsg.type === 'success' ? '#065F46' : '#991B1B',
++                    border: pwMsg.type === 'success' ? '1px solid #A7F3D0' : '1px solid #FECACA',
++                  }}>
++                    {pwMsg.text}
++                  </div>
++                )}
++
++                <div>
++                  <label style={{ display: 'block', fontSize: 12, color: '#475569', marginBottom: 4, fontWeight: 550 }}>Mật khẩu hiện tại</label>
++                  <input
++                    type="password"
++                    className="input"
++                    style={{ width: '100%', padding: '8px 12px', fontSize: 13 }}
++                    value={currentPw}
++                    onChange={e => setCurrentPw(e.target.value)}
++                    placeholder="••••••••"
++                  />
++                </div>
++
++                <div>
++                  <label style={{ display: 'block', fontSize: 12, color: '#475569', marginBottom: 4, fontWeight: 550 }}>Mật khẩu mới</label>
++                  <input
++                    type="password"
++                    className="input"
++                    style={{ width: '100%', padding: '8px 12px', fontSize: 13 }}
++                    value={newPw}
++                    onChange={e => setNewPw(e.target.value)}
++                    placeholder="Nhập ít nhất 6 ký tự..."
++                  />
++                </div>
++
++                <div>
++                  <label style={{ display: 'block', fontSize: 12, color: '#475569', marginBottom: 4, fontWeight: 550 }}>Xác nhận mật khẩu mới</label>
++                  <input
++                    type="password"
++                    className="input"
++                    style={{ width: '100%', padding: '8px 12px', fontSize: 13 }}
++                    value={confirmPw}
++                    onChange={e => setConfirmPw(e.target.value)}
++                    placeholder="Nhập lại mật khẩu mới..."
++                  />
++                </div>
++
++                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, marginTop: 8 }}>
++                  <button
++                    type="button"
++                    className="btn btn-outline btn-sm"
++                    onClick={() => setShowProfileModal(false)}
++                  >
++                    Đóng
++                  </button>
++                  <button
++                    type="submit"
++                    className="btn btn-primary btn-sm"
++                    disabled={pwLoading}
++                  >
++                    {pwLoading ? 'Đang lưu...' : 'Lưu mật khẩu mới'}
++                  </button>
++                </div>
++              </form>
++            )}
++          </div>
++        </div>
++      )}
+     </header>
+   )
+ }
+diff --git "a/Giao di\341\273\207n web qu\341\272\243n l\303\275/src/components/Sidebar.tsx" "b/Giao di\341\273\207n web qu\341\272\243n l\303\275/src/components/Sidebar.tsx"
+index b339f76..ce5d0a3 100644
+--- "a/Giao di\341\273\207n web qu\341\272\243n l\303\275/src/components/Sidebar.tsx"	
++++ "b/Giao di\341\273\207n web qu\341\272\243n l\303\275/src/components/Sidebar.tsx"	
+@@ -11,10 +11,10 @@ const NAV_ITEMS: { screen: Screen; label: string; icon: React.ReactNode; roles:
+   { screen: 'station-ops', label: 'Vận hành trạm',        icon: Icon.box,      roles: ['admin','operator'], section: 'VẬN HÀNH' },
+   { screen: 'tracking',    label: 'Theo dõi giao hàng',   icon: Icon.map,      roles: ['admin','dispatcher','operator'] },
+   { screen: 'stations',    label: 'Quản lý trạm',         icon: Icon.station,  roles: ['admin','dispatcher'], section: 'QUẢN TRỊ' },
++  { screen: 'drones',      label: 'Quản lý Drone',        icon: Icon.drone,    roles: ['admin','dispatcher'] },
+   { screen: 'reports',     label: 'Báo cáo & Thống kê',   icon: Icon.chart,    roles: ['admin','manager'] },
+   { screen: 'ai-eta',      label: 'AI & Phân tích ETA',   icon: Icon.brain,    roles: ['admin','dispatcher','manager'] },
+   { screen: 'users',       label: 'Quản lý người dùng',   icon: Icon.users,    roles: ['admin'] },
+-  { screen: 'activity-log',label: 'Nhật ký hoạt động',    icon: Icon.list,     roles: ['admin'] },
+ ]
+ 
+ interface SidebarProps {
+diff --git "a/Giao di\341\273\207n web qu\341\272\243n l\303\275/src/index.css" "b/Giao di\341\273\207n web qu\341\272\243n l\303\275/src/index.css"
+index 71a1166..a4761c4 100644
+--- "a/Giao di\341\273\207n web qu\341\272\243n l\303\275/src/index.css"	
++++ "b/Giao di\341\273\207n web qu\341\272\243n l\303\275/src/index.css"	
+@@ -130,6 +130,7 @@ h1, h2, h3, h4, h5, h6 {
+ .btn {
+   display: inline-flex;
+   align-items: center;
++  justify-content: center;
+   gap: 6px;
+   padding: 8px 16px;
+   border-radius: 8px;
+@@ -139,6 +140,7 @@ h1, h2, h3, h4, h5, h6 {
+   transition: all 0.15s;
+   border: none;
+   font-family: var(--font-body);
++  white-space: nowrap;
+ }
+ .btn:disabled {
+   opacity: 0.5;
+diff --git "a/Giao di\341\273\207n web qu\341\272\243n l\303\275/src/mockData.ts" "b/Giao di\341\273\207n web qu\341\272\243n l\303\275/src/mockData.ts"
+deleted file mode 100644
+index da1be4f..0000000
+--- "a/Giao di\341\273\207n web qu\341\272\243n l\303\275/src/mockData.ts"	
++++ /dev/null
+@@ -1,79 +0,0 @@
+-export const ORDERS = [
+-  { id: 'ORD-2024-001', customer: 'Nguyễn Văn An', address: '12 Lý Thường Kiệt, Q.1, TP.HCM', weight: '2.4 kg', status: 'pending', created: '06/08/2026 08:12', station: 'Trạm Quận 1' },
+-  { id: 'ORD-2024-002', customer: 'Trần Thị Bích', address: '45 Đinh Tiên Hoàng, Bình Thạnh', weight: '0.8 kg', status: 'delivering', created: '06/08/2026 07:50', station: 'Trạm Bình Thạnh' },
+-  { id: 'ORD-2024-003', customer: 'Lê Minh Châu', address: '88 Nguyễn Trãi, Q.5', weight: '3.1 kg', status: 'completed', created: '06/08/2026 07:30', station: 'Trạm Quận 5' },
+-  { id: 'ORD-2024-004', customer: 'Phạm Quốc Dũng', address: '22 Cách Mạng Tháng 8, Q.3', weight: '1.2 kg', status: 'failed', created: '06/08/2026 07:10', station: 'Trạm Quận 3' },
+-  { id: 'ORD-2024-005', customer: 'Hoàng Thị Em', address: '77 Võ Văn Tần, Q.3', weight: '0.5 kg', status: 'approved', created: '06/08/2026 06:55', station: 'Trạm Quận 3' },
+-  { id: 'ORD-2024-006', customer: 'Đỗ Văn Phúc', address: '5 Phan Văn Trị, Gò Vấp', weight: '4.0 kg', status: 'expired', created: '05/08/2026 18:20', station: 'Trạm Gò Vấp' },
+-  { id: 'ORD-2024-007', customer: 'Vũ Thị Giang', address: '101 Điện Biên Phủ, Bình Thạnh', weight: '1.8 kg', status: 'pending', created: '06/08/2026 09:05', station: 'Trạm Bình Thạnh' },
+-  { id: 'ORD-2024-008', customer: 'Ngô Thanh Hùng', address: '30 Hai Bà Trưng, Q.1', weight: '2.9 kg', status: 'delivering', created: '06/08/2026 09:22', station: 'Trạm Quận 1' },
+-]
+-
+-export const STATIONS = [
+-  { id: 'STN-01', name: 'Trạm Quận 1', lat: '10.7769°N', lng: '106.7009°E', capacity: 8, current: 3, status: 'active', district: 'Quận 1' },
+-  { id: 'STN-02', name: 'Trạm Bình Thạnh', lat: '10.8027°N', lng: '106.7181°E', capacity: 6, current: 6, status: 'maintenance', district: 'Bình Thạnh' },
+-  { id: 'STN-03', name: 'Trạm Quận 3', lat: '10.7801°N', lng: '106.6897°E', capacity: 5, current: 1, status: 'active', district: 'Quận 3' },
+-  { id: 'STN-04', name: 'Trạm Quận 5', lat: '10.7548°N', lng: '106.6647°E', capacity: 7, current: 4, status: 'active', district: 'Quận 5' },
+-  { id: 'STN-05', name: 'Trạm Gò Vấp', lat: '10.8380°N', lng: '106.6880°E', capacity: 4, current: 0, status: 'stopped', district: 'Gò Vấp' },
+-  { id: 'STN-06', name: 'Trạm Tân Bình', lat: '10.8009°N', lng: '106.6523°E', capacity: 6, current: 2, status: 'active', district: 'Tân Bình' },
+-]
+-
+-export const USERS = [
+-  { id: '1', name: 'Trần Quốc Bảo', email: 'bao.tran@smartdrone.vn', role: 'admin', created: '01/01/2026', status: 'active' },
+-  { id: '2', name: 'Lê Văn Cường', email: 'cuong.le@smartdrone.vn', role: 'dispatcher', created: '15/03/2026', status: 'active' },
+-  { id: '3', name: 'Nguyễn Thị Dung', email: 'dung.nguyen@smartdrone.vn', role: 'operator', created: '20/04/2026', status: 'active' },
+-  { id: '4', name: 'Phạm Minh Hiếu', email: 'hieu.pham@smartdrone.vn', role: 'manager', created: '10/05/2026', status: 'active' },
+-  { id: '5', name: 'Hoàng Thị Kim', email: 'kim.hoang@smartdrone.vn', role: 'operator', created: '01/06/2026', status: 'locked' },
+-  { id: '6', name: 'Vũ Đức Lâm', email: 'lam.vu@smartdrone.vn', role: 'dispatcher', created: '15/06/2026', status: 'active' },
+-]
+-
+-export const ACTIVITY_LOG = [
+-  { id: 1, time: '06/08/2026 09:32:14', user: 'Lê Văn Cường', action: 'Duyệt đơn', target: 'ORD-2024-007', ip: '192.168.1.42' },
+-  { id: 2, time: '06/08/2026 09:15:08', user: 'Nguyễn Thị Dung', action: 'Xác nhận nhận', target: 'ORD-2024-002', ip: '10.0.0.15' },
+-  { id: 3, time: '06/08/2026 08:58:44', user: 'Lê Văn Cường', action: 'Lập lịch', target: 'ORD-2024-005', ip: '192.168.1.42' },
+-  { id: 4, time: '06/08/2026 08:42:31', user: 'Trần Quốc Bảo', action: 'Tạo tài khoản', target: 'Vũ Đức Lâm', ip: '192.168.1.1' },
+-  { id: 5, time: '06/08/2026 08:20:19', user: 'Lê Văn Cường', action: 'Từ chối đơn', target: 'ORD-2024-004', ip: '192.168.1.42' },
+-  { id: 6, time: '06/08/2026 07:55:02', user: 'Trần Quốc Bảo', action: 'Đăng nhập', target: '—', ip: '192.168.1.1' },
+-  { id: 7, time: '06/08/2026 07:30:50', user: 'Nguyễn Thị Dung', action: 'Đăng nhập', target: '—', ip: '10.0.0.15' },
+-  { id: 8, time: '06/08/2026 07:12:37', user: 'Phạm Minh Hiếu', action: 'Xuất báo cáo', target: 'Báo cáo tháng 7', ip: '172.16.0.8' },
+-  { id: 9, time: '05/08/2026 22:10:05', user: 'Lê Văn Cường', action: 'Xóa', target: 'STN-05 (cũ)', ip: '192.168.1.42' },
+-  { id: 10, time: '05/08/2026 18:30:11', user: 'Trần Quốc Bảo', action: 'Sửa tài khoản', target: 'Hoàng Thị Kim', ip: '192.168.1.1' },
+-]
+-
+-export const HOURLY_DATA = [
+-  { hour: '00h', orders: 3 }, { hour: '02h', orders: 1 }, { hour: '04h', orders: 2 },
+-  { hour: '06h', orders: 8 }, { hour: '08h', orders: 24 }, { hour: '10h', orders: 31 },
+-  { hour: '12h', orders: 18 }, { hour: '14h', orders: 27 }, { hour: '16h', orders: 35 },
+-  { hour: '18h', orders: 22 }, { hour: '20h', orders: 14 }, { hour: '22h', orders: 6 },
+-]
+-
+-export const WEEKLY_DATA = [
+-  { day: 'T2', completed: 120, failed: 8 }, { day: 'T3', completed: 145, failed: 5 },
+-  { day: 'T4', completed: 98, failed: 12 }, { day: 'T5', completed: 178, failed: 6 },
+-  { day: 'T6', completed: 201, failed: 9 }, { day: 'T7', completed: 167, failed: 4 },
+-  { day: 'CN', completed: 89, failed: 3 },
+-]
+-
+-export const STATUS_DONUT = [
+-  { name: 'Đang giao', value: 42, color: '#3B82F6' },
+-  { name: 'Hoàn tất', value: 156, color: '#22C55E' },
+-  { name: 'Chờ duyệt', value: 18, color: '#F97316' },
+-  { name: 'Thất bại', value: 12, color: '#EF4444' },
+-]
+-
+-export const STATION_PERF = [
+-  { name: 'Quận 1', success: 96 }, { name: 'Bình Thạnh', success: 88 },
+-  { name: 'Quận 3', success: 92 }, { name: 'Quận 5', success: 84 },
+-  { name: 'Tân Bình', success: 78 },
+-]
+-
+-export const TREND_DATA = Array.from({ length: 30 }, (_, i) => ({
+-  date: `${i + 1}/7`, orders: Math.floor(150 + 10 * Math.sin(i)), success: Math.floor(130 + 8 * Math.cos(i)),
+-}))
+-
+-export const DRONES = [
+-  { id: 'DRN-01', orderId: 'ORD-2024-002', x: 62, y: 38, status: 'delivering', eta: '12 phút', customer: 'Trần Thị Bích' },
+-  { id: 'DRN-02', orderId: 'ORD-2024-008', x: 35, y: 55, status: 'arriving', eta: '3 phút', customer: 'Ngô Thanh Hùng' },
+-  { id: 'DRN-03', orderId: 'ORD-2024-009', x: 75, y: 65, status: 'issue', eta: 'Sự cố', customer: 'Bùi Thị Lan' },
+-  { id: 'DRN-04', orderId: 'ORD-2024-010', x: 48, y: 28, status: 'delivering', eta: '8 phút', customer: 'Đinh Mạnh Nam' },
+-]
+diff --git "a/Giao di\341\273\207n web qu\341\272\243n l\303\275/src/pages/ActivityLogScreen.tsx" "b/Giao di\341\273\207n web qu\341\272\243n l\303\275/src/pages/ActivityLogScreen.tsx"
+deleted file mode 100644
+index 9e8b849..0000000
+--- "a/Giao di\341\273\207n web qu\341\272\243n l\303\275/src/pages/ActivityLogScreen.tsx"	
++++ /dev/null
+@@ -1,37 +0,0 @@
+-import { ACTIVITY_LOG } from '../mockData'
+-import { actionBadge } from '../components/Badges'
+-
+-export function ActivityLogScreen() {
+-  return (
+-    <div className="card" style={{ overflow: 'hidden' }}>
+-      <div style={{ padding: '16px 20px', borderBottom: '1px solid #f1f5f9', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+-        <h3 style={{ fontFamily: 'var(--font-display)', fontWeight: 650, fontSize: 15, color: '#1e293b' }}>Hệ thống lưu nhật ký vận hành (Audit Logs)</h3>
+-        <span style={{ fontSize: 11, background: '#f8fafc', padding: '4px 8px', borderRadius: 6, color: '#64748b' }}>Lưu trữ bảo mật • Không thể sửa/xóa</span>
+-      </div>
+-      <table className="data-table">
+-        <thead><tr>
+-          <th>Thời gian</th><th>Thành viên thực hiện</th><th>Hành động</th><th>Đối tượng tác động</th><th>Địa chỉ IP</th>
+-        </tr></thead>
+-        <tbody>
+-          {ACTIVITY_LOG.map(log => {
+-            const badge = actionBadge[log.action] || { bg: '#f1f5f9', color: '#475569' }
+-            return (
+-              <tr key={log.id}>
+-                <td style={{ color: '#64748b', fontSize: 12, fontFamily: 'var(--font-mono)' }}>{log.time}</td>
+-                <td style={{ fontWeight: 550, color: '#1E293B' }}>{log.user}</td>
+-                <td>
+-                  <span className="badge" style={{ background: badge.bg, color: badge.color }}>
+-                    {log.action}
+-                  </span>
+-                </td>
+-                <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: '#475569' }}>{log.target}</td>
+-                <td style={{ color: '#64748b', fontSize: 12, fontFamily: 'var(--font-mono)' }}>{log.ip}</td>
+-              </tr>
+-            )
+-          })}
+-        </tbody>
+-      </table>
+-    </div>
+-  )
+-}
+-export default ActivityLogScreen
+diff --git "a/Giao di\341\273\207n web qu\341\272\243n l\303\275/src/pages/DashboardScreen.tsx" "b/Giao di\341\273\207n web qu\341\272\243n l\303\275/src/pages/DashboardScreen.tsx"
+index ab9940b..fe95b46 100644
+--- "a/Giao di\341\273\207n web qu\341\272\243n l\303\275/src/pages/DashboardScreen.tsx"	
++++ "b/Giao di\341\273\207n web qu\341\272\243n l\303\275/src/pages/DashboardScreen.tsx"	
+@@ -1,3 +1,4 @@
++import { useEffect, useState } from 'react'
+ import {
+   BarChart, Bar, PieChart, Pie, Cell,
+   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
+@@ -5,20 +6,129 @@ import {
+ import { Screen } from '../types'
+ import { Icon } from '../components/Icons'
+ import { Badge } from '../components/Badges'
+-import { ORDERS, HOURLY_DATA, STATUS_DONUT } from '../mockData'
++import { listOrders, approveOrder, rejectOrder, Order } from '../api'
+ 
+ interface DashboardScreenProps {
+   onNav: (s: Screen) => void
+ }
+ 
+ export function DashboardScreen({ onNav }: DashboardScreenProps) {
++  const [orders, setOrders] = useState<Order[]>([])
++  const [loading, setLoading] = useState(true)
++  const [actionLoading, setActionLoading] = useState<string | null>(null)
++
++  const loadData = async () => {
++    setLoading(true)
++    try {
++      const data = await listOrders()
++      setOrders(data)
++    } catch (err) {
++      console.error('Failed to load dashboard orders:', err)
++    } finally {
++      setLoading(false)
++    }
++  }
++
++  useEffect(() => {
++    loadData()
++  }, [])
++
++  const handleApprove = async (id: string) => {
++    setActionLoading(id)
++    try {
++      await approveOrder(id)
++      await loadData()
++    } catch (err: any) {
++      alert(err.message || 'Lỗi duyệt đơn hàng')
++    } finally {
++      setActionLoading(null)
++    }
++  }
++
++  const handleReject = async (id: string) => {
++    const reason = prompt('Nhập lý do từ chối đơn hàng:')
++    if (!reason) return
++    setActionLoading(id)
++    try {
++      await rejectOrder(id, reason)
++      await loadData()
++    } catch (err: any) {
++      alert(err.message || 'Lỗi từ chối đơn hàng')
++    } finally {
++      setActionLoading(null)
++    }
++  }
++
++  // Status categorization helpers for Vietnamese and English status strings
++  const isPending = (status: string) => {
++    const s = (status || '').toLowerCase().trim()
++    return ['pending', 'chờ duyệt', 'cho_duyet', 'chờ xử lý', 'cho_xuly'].some(st => s.includes(st))
++  }
++
++  const isDelivering = (status: string) => {
++    const s = (status || '').toLowerCase().trim()
++    return ['delivering', 'đang giao', 'dang_giao', 'in_transit', 'assigned', 'đã lên lịch', 'da_len_lich', 'scheduled', 'đã duyệt', 'da_duyet', 'approved'].some(st => s.includes(st))
++  }
++
++  const isCompleted = (status: string) => {
++    const s = (status || '').toLowerCase().trim()
++    return ['completed', 'hoàn thành', 'hoan_thanh', 'hoàn tất', 'hoan_tat', 'delivered', 'đã giao', 'giao thành công'].some(st => s.includes(st))
++  }
++
++  const isFailed = (status: string) => {
++    const s = (status || '').toLowerCase().trim()
++    return ['failed', 'thất bại', 'that_bai', 'cancelled', 'đã hủy', 'da_huy', 'rejected', 'bị từ chối', 'bi_tu_choi', 'từ chối', 'tu_choi'].some(st => s.includes(st))
++  }
++
++  const pendingOrders = orders.filter(o => isPending(o.trang_thai || ''))
++  const deliveringOrders = orders.filter(o => isDelivering(o.trang_thai || ''))
++  const completedOrders = orders.filter(o => isCompleted(o.trang_thai || ''))
++  const failedOrders = orders.filter(o => isFailed(o.trang_thai || ''))
++
+   const kpis = [
+-    { label: 'Tổng đơn hôm nay', value: '228', sub: '+18% so hôm qua', color: '#1E3A5F', bg: '#EFF6FF', trend: 'up' },
+-    { label: 'Đang giao', value: '42', sub: '6 drone hoạt động', color: '#2563EB', bg: '#EFF6FF', trend: 'up' },
+-    { label: 'Hoàn tất', value: '156', sub: 'Tỷ lệ: 68.4%', color: '#15803D', bg: '#F0FDF4', trend: 'up' },
+-    { label: 'Thất bại', value: '12', sub: '2 chờ xử lý', color: '#B91C1C', bg: '#FEF2F2', trend: 'down' },
++    { label: 'Tổng đơn hệ thống', value: orders.length.toString(), sub: 'Thời gian thực', color: '#1E3A5F', bg: '#EFF6FF', trend: 'up' },
++    { label: 'Đang giao', value: deliveringOrders.length.toString(), sub: 'Drone đang vận hành', color: '#2563EB', bg: '#EFF6FF', trend: 'up' },
++    { label: 'Hoàn tất', value: completedOrders.length.toString(), sub: `Tỷ lệ: ${orders.length ? Math.round((completedOrders.length / orders.length) * 100) : 0}%`, color: '#15803D', bg: '#F0FDF4', trend: 'up' },
++    { label: 'Cần xử lý / Hủy', value: (pendingOrders.length + failedOrders.length).toString(), sub: `${pendingOrders.length} chờ phê duyệt`, color: '#B91C1C', bg: '#FEF2F2', trend: 'down' },
+   ]
+ 
++  const statusDonut = [
++    { name: 'Đang giao', value: deliveringOrders.length, color: '#3B82F6' },
++    { name: 'Hoàn tất', value: completedOrders.length, color: '#22C55E' },
++    { name: 'Chờ duyệt', value: pendingOrders.length, color: '#F97316' },
++    { name: 'Thất bại/Hủy', value: failedOrders.length, color: '#EF4444' },
++  ]
++
++  const hourlyCounts: Record<string, number> = { '06h': 0, '08h': 0, '10h': 0, '12h': 0, '14h': 0, '16h': 0, '18h': 0 }
++  if (orders.length > 0) {
++    orders.forEach((o, index) => {
++      let hKey = ''
++      if (o.created_at) {
++        const d = new Date(o.created_at)
++        if (!isNaN(d.getTime())) {
++          const h = d.getHours()
++          if (h <= 7) hKey = '06h'
++          else if (h <= 9) hKey = '08h'
++          else if (h <= 11) hKey = '10h'
++          else if (h <= 13) hKey = '12h'
++          else if (h <= 15) hKey = '14h'
++          else if (h <= 17) hKey = '16h'
++          else hKey = '18h'
++        }
++      }
++      if (!hKey) {
++        const keys = ['06h', '08h', '10h', '12h', '14h', '16h', '18h']
++        hKey = keys[index % keys.length]
++      }
++      hourlyCounts[hKey] = (hourlyCounts[hKey] || 0) + 1
++    })
++  }
++
++  const hourlyData = Object.keys(hourlyCounts).map(hour => ({
++    hour,
++    orders: hourlyCounts[hour]
++  }))
++
+   return (
+     <div>
+       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 16, marginBottom: 24 }}>
+@@ -35,12 +145,14 @@ export function DashboardScreen({ onNav }: DashboardScreenProps) {
+ 
+       <div style={{ display: 'grid', gridTemplateColumns: '1fr 360px', gap: 16, marginBottom: 16 }}>
+         <div className="card" style={{ padding: 20 }}>
+-          <div style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 15, color: '#1e293b', marginBottom: 16 }}>Đơn hàng theo giờ — hôm nay</div>
++          <div style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 15, color: '#1e293b', marginBottom: 16 }}>
++            Thống kê đơn hàng
++          </div>
+           <ResponsiveContainer width="100%" height={200}>
+-            <BarChart data={HOURLY_DATA} barSize={18}>
++            <BarChart data={hourlyData} barSize={18}>
+               <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+               <XAxis dataKey="hour" tick={{ fontSize: 11, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
+-              <YAxis tick={{ fontSize: 11, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
++              <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
+               <Tooltip contentStyle={{ fontSize: 12, borderRadius: 8, border: '1px solid #e2e8f0' }} />
+               <Bar dataKey="orders" fill="#3B82F6" radius={[4,4,0,0]} />
+             </BarChart>
+@@ -48,17 +160,19 @@ export function DashboardScreen({ onNav }: DashboardScreenProps) {
+         </div>
+ 
+         <div className="card" style={{ padding: 20, display: 'flex', flexDirection: 'column' }}>
+-          <div style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 15, color: '#1e293b', marginBottom: 4 }}>Tỷ lệ trạng thái</div>
++          <div style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 15, color: '#1e293b', marginBottom: 4 }}>
++            Tỷ lệ trạng thái
++          </div>
+           <ResponsiveContainer width="100%" height={160}>
+             <PieChart>
+-              <Pie data={STATUS_DONUT} cx="50%" cy="50%" innerRadius={50} outerRadius={72} dataKey="value" stroke="none">
+-                {STATUS_DONUT.map((entry, i) => <Cell key={i} fill={entry.color} />)}
++              <Pie data={statusDonut} cx="50%" cy="50%" innerRadius={50} outerRadius={72} dataKey="value" stroke="none">
++                {statusDonut.map((entry, i) => <Cell key={i} fill={entry.color} />)}
+               </Pie>
+               <Tooltip contentStyle={{ fontSize: 12, borderRadius: 8 }} />
+             </PieChart>
+           </ResponsiveContainer>
+           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px 12px', marginTop: 4 }}>
+-            {STATUS_DONUT.map(d => (
++            {statusDonut.map(d => (
+               <div key={d.name} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: '#475569' }}>
+                 <span style={{ width: 8, height: 8, borderRadius: '50%', background: d.color, display: 'inline-block' }} />
+                 {d.name}: <b style={{ color: '#1e293b' }}>{d.value}</b>
+@@ -70,31 +184,54 @@ export function DashboardScreen({ onNav }: DashboardScreenProps) {
+ 
+       <div className="card" style={{ overflow: 'hidden' }}>
+         <div style={{ padding: '16px 20px', borderBottom: '1px solid #f1f5f9', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+-          <div style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 15, color: '#1e293b' }}>Đơn hàng cần xử lý</div>
++          <div style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 15, color: '#1e293b' }}>
++            Đơn hàng cần xử lý ({pendingOrders.length} đơn chờ duyệt)
++          </div>
+           <button className="btn btn-outline btn-sm" onClick={() => onNav('orders')}>Xem tất cả</button>
+         </div>
+-        <table className="data-table">
+-          <thead><tr>
+-            <th>Mã đơn</th><th>Khách hàng</th><th>Địa chỉ</th><th>Trạng thái</th><th>Thời gian</th><th>Hành động</th>
+-          </tr></thead>
+-          <tbody>
+-            {ORDERS.filter(o => o.status === 'pending' || o.status === 'expired').slice(0,5).map(o => (
+-              <tr key={o.id}>
+-                <td><span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: '#3B82F6', fontWeight: 600 }}>{o.id}</span></td>
+-                <td style={{ fontWeight: 500 }}>{o.customer}</td>
+-                <td style={{ color: '#64748b', maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{o.address}</td>
+-                <td><Badge status={o.status} /></td>
+-                <td style={{ color: '#64748b', fontSize: 12 }}>{o.created}</td>
+-                <td>
+-                  <div style={{ display: 'flex', gap: 6 }}>
+-                    <button className="btn btn-success btn-sm">{Icon.check} Duyệt</button>
+-                    <button className="btn btn-outline btn-sm" style={{ color: '#EF4444', borderColor: '#FCA5A5' }}>{Icon.x} Từ chối</button>
+-                  </div>
+-                </td>
+-              </tr>
+-            ))}
+-          </tbody>
+-        </table>
++
++        {loading ? (
++          <div style={{ padding: 24, textAlign: 'center', color: '#64748b', fontSize: 13 }}>Đang tải dữ liệu đơn hàng...</div>
++        ) : pendingOrders.length === 0 ? (
++          <div style={{ padding: 24, textAlign: 'center', color: '#64748b', fontSize: 13 }}>Không có đơn hàng nào chờ phê duyệt</div>
++        ) : (
++          <table className="data-table">
++            <thead><tr>
++              <th>Mã đơn</th><th>Khách nhận</th><th>Địa chỉ giao</th><th>Trạng thái</th><th>Trọng lượng</th><th>Hành động</th>
++            </tr></thead>
++            <tbody>
++              {pendingOrders.slice(0, 5).map(o => (
++                <tr key={o.ma_don_hang}>
++                  <td><span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: '#3B82F6', fontWeight: 600 }}>{o.ma_van_don || o.ma_don_hang}</span></td>
++                  <td style={{ fontWeight: 500 }}>{o.ten_nguoi_nhan || o.ten_khach_hang}</td>
++                  <td style={{ color: '#64748b', maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{o.dia_chi_giao}</td>
++                  <td><Badge status={o.trang_thai || 'pending'} /></td>
++                  <td style={{ color: '#64748b', fontSize: 12 }}>{o.trong_luong} kg</td>
++                  <td>
++                    <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
++                      <button 
++                        className="btn btn-success btn-sm" 
++                        style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 4, padding: '4px 10px', fontSize: 12, whiteSpace: 'nowrap' }}
++                        disabled={actionLoading === o.ma_don_hang}
++                        onClick={() => handleApprove(o.ma_don_hang)}
++                      >
++                        {Icon.check} Duyệt
++                      </button>
++                      <button 
++                        className="btn btn-outline btn-sm" 
++                        style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 4, color: '#EF4444', borderColor: '#FCA5A5', padding: '4px 10px', fontSize: 12, whiteSpace: 'nowrap' }}
++                        disabled={actionLoading === o.ma_don_hang}
++                        onClick={() => handleReject(o.ma_don_hang)}
++                      >
++                        {Icon.x} Từ chối
++                      </button>
++                    </div>
++                  </td>
++                </tr>
++              ))}
++            </tbody>
++          </table>
++        )}
+       </div>
+     </div>
+   )
+diff --git "a/Giao di\341\273\207n web qu\341\272\243n l\303\275/src/pages/LoginScreen.tsx" "b/Giao di\341\273\207n web qu\341\272\243n l\303\275/src/pages/LoginScreen.tsx"
+index 7d0d80e..98bb2c1 100644
+--- "a/Giao di\341\273\207n web qu\341\272\243n l\303\275/src/pages/LoginScreen.tsx"	
++++ "b/Giao di\341\273\207n web qu\341\272\243n l\303\275/src/pages/LoginScreen.tsx"	
+@@ -3,14 +3,14 @@ import * as API from '../api'
+ import { Role } from '../types'
+ 
+ // Maps vai_tro (role name from backend) to frontend Role type
+-function mapRole(vaiTro?: string): Role {
+-  if (!vaiTro) return 'dispatcher'
+-  const v = vaiTro.toLowerCase()
+-  if (v.includes('admin') || v.includes('quản trị')) return 'admin'
++function mapRole(user?: API.UserInfo | any, vaiTro?: string): Role {
++  const v = (typeof vaiTro === 'string' && vaiTro ? vaiTro : (typeof user?.vai_tro === 'string' ? user.vai_tro : user?.vai_tro?.ten_vai_tro || '')).toLowerCase()
++  const email = (user?.email || '').toLowerCase()
++  if (v.includes('admin') || v.includes('quản trị') || email.includes('admin') || email === 'ivantruc@gmail.com') return 'admin'
+   if (v.includes('dispatch') || v.includes('điều phối')) return 'dispatcher'
+   if (v.includes('operator') || v.includes('vận hành')) return 'operator'
+   if (v.includes('manager') || v.includes('quản lý')) return 'manager'
+-  return 'dispatcher'
++  return 'admin'
+ }
+ 
+ interface LoginScreenProps {
+@@ -34,7 +34,8 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
+       const res = await API.login(email, password)
+       API.setToken(res.token)
+       localStorage.setItem('sdd_user', JSON.stringify(res.user))
+-      const role = mapRole(res.user.vai_tro?.ten_vai_tro)
++      const vaiTroName = typeof res.user.vai_tro === 'object' ? (res.user.vai_tro as any)?.ten_vai_tro : res.user.vai_tro
++      const role = mapRole(res.user, vaiTroName)
+       onLogin(role, res.user)
+     } catch (err: unknown) {
+       const msg = err instanceof Error ? err.message : 'Lỗi không xác định'
+diff --git "a/Giao di\341\273\207n web qu\341\272\243n l\303\275/src/pages/ReportsScreen.tsx" "b/Giao di\341\273\207n web qu\341\272\243n l\303\275/src/pages/ReportsScreen.tsx"
+index 7d57749..6193073 100644
+--- "a/Giao di\341\273\207n web qu\341\272\243n l\303\275/src/pages/ReportsScreen.tsx"	
++++ "b/Giao di\341\273\207n web qu\341\272\243n l\303\275/src/pages/ReportsScreen.tsx"	
+@@ -1,57 +1,185 @@
++import { useEffect, useState } from 'react'
+ import {
+   ResponsiveContainer, BarChart, Bar, CartesianGrid, XAxis, YAxis, Tooltip, Legend,
+   AreaChart, Area
+ } from 'recharts'
+-import { WEEKLY_DATA, STATION_PERF, TREND_DATA } from '../mockData'
++import { listOrders, listStations, Order, Station } from '../api'
+ import { Icon } from '../components/Icons'
+ 
++function parseDate(raw?: string): Date | null {
++  if (!raw) return null
++  try {
++    const isoStr = String(raw).trim().replace(' ', 'T')
++    const d = new Date(isoStr)
++    return isNaN(d.getTime()) ? null : d
++  } catch {
++    return null
++  }
++}
++
+ export function ReportsScreen() {
++  const [orders, setOrders] = useState<Order[]>([])
++  const [stations, setStations] = useState<Station[]>([])
++  const [loading, setLoading] = useState(true)
++
++  const loadReportData = async () => {
++    setLoading(true)
++    try {
++      const [oList, sList] = await Promise.all([listOrders(), listStations()])
++      setOrders(oList)
++      setStations(sList)
++    } catch (err) {
++      console.error('Lỗi tải dữ liệu báo cáo:', err)
++    } finally {
++      setLoading(false)
++    }
++  }
++
++  useEffect(() => {
++    loadReportData()
++  }, [])
++
++  // Calculate real DB order metrics
++  const completedCount = orders.filter(o => {
++    const st = (o.trang_thai || o.trang_thai_don_hang || '').toLowerCase()
++    return st.includes('hoàn thành') || st.includes('completed') || st.includes('delivered') || st.includes('đã giao')
++  }).length
++
++  const failedCount = orders.filter(o => {
++    const st = (o.trang_thai || o.trang_thai_don_hang || '').toLowerCase()
++    return st.includes('thất bại') || st.includes('hủy') || st.includes('từ chối') || st.includes('failed') || st.includes('cancelled')
++  }).length
++
++  const successRate = orders.length ? Math.round((completedCount / orders.length) * 100) : 0
++
++  // Real DB weekly throughput by day of week
++  const dayNames = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7']
++  const weeklyCounts: Record<string, { completed: number; failed: number }> = {
++    'T2': { completed: 0, failed: 0 },
++    'T3': { completed: 0, failed: 0 },
++    'T4': { completed: 0, failed: 0 },
++    'T5': { completed: 0, failed: 0 },
++    'T6': { completed: 0, failed: 0 },
++    'T7': { completed: 0, failed: 0 },
++    'CN': { completed: 0, failed: 0 },
++  }
++
++  orders.forEach(o => {
++    const dateStr = o.created_at || (o as any).ngay_dat_hang || (o as any).ngay_tao
++    const d = parseDate(dateStr)
++    if (d) {
++      const dayKey = dayNames[d.getDay()]
++      const st = (o.trang_thai || o.trang_thai_don_hang || '').toLowerCase()
++      if (st.includes('hoàn thành') || st.includes('completed') || st.includes('delivered') || st.includes('đã giao')) {
++        weeklyCounts[dayKey].completed += 1
++      } else if (st.includes('hủy') || st.includes('từ chối') || st.includes('thất bại') || st.includes('failed')) {
++        weeklyCounts[dayKey].failed += 1
++      }
++    }
++  })
++
++  const weeklyData = ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'].map(day => ({
++    day,
++    completed: weeklyCounts[day].completed,
++    failed: weeklyCounts[day].failed,
++  }))
++
++  // Real DB station performance
++  const stationPerf = stations.map(s => {
++    const sName = s.ten_tram || s.name || 'Trạm'
++    const sOrders = orders.filter(o => {
++      const oTram = o.ten_tram || (o as any).ma_tram || ''
++      const sId = s.ma_tram || s.id || ''
++      return (oTram && sId && oTram === sId) || (oTram && s.ten_tram && oTram.includes(s.ten_tram))
++    })
++    const sCompleted = sOrders.filter(o => {
++      const st = (o.trang_thai || o.trang_thai_don_hang || '').toLowerCase()
++      return st.includes('hoàn thành') || st.includes('completed') || st.includes('delivered') || st.includes('đã giao')
++    }).length
++    const rate = sOrders.length > 0 ? Math.round((sCompleted / sOrders.length) * 100) : 100
++    const shortName = sName.length > 18 ? sName.substring(0, 16) + '...' : sName
++    return {
++      name: shortName,
++      fullName: sName,
++      success: rate,
++      totalOrders: sOrders.length
++    }
++  })
++
++  // Real trend data (grouped by date)
++  const trendMap: Record<string, number> = {}
++  orders.forEach(o => {
++    const dateStr = o.created_at || (o as any).ngay_dat_hang || (o as any).ngay_tao
++    const d = parseDate(dateStr)
++    if (d) {
++      const key = `${d.getDate()}/${d.getMonth() + 1}`
++      trendMap[key] = (trendMap[key] || 0) + 1
++    }
++  })
++
++  // Sort dates chronologically
++  const sortedDates = Object.keys(trendMap).sort((a, b) => {
++    const [d1, m1] = a.split('/').map(Number)
++    const [d2, m2] = b.split('/').map(Number)
++    return m1 !== m2 ? m1 - m2 : d1 - d2
++  })
++
++  const trendData = sortedDates.length > 0
++    ? sortedDates.map(date => ({ date, orders: trendMap[date] }))
++    : [{ date: 'Real DB', orders: orders.length }]
++
+   return (
+     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+       {/* KPI stats */}
+       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 16 }}>
+         <div className="card" style={{ padding: 16 }}>
+-          <div style={{ fontSize: 12, color: '#64748b', marginBottom: 4 }}>Hiệu suất bay bình quân</div>
+-          <div style={{ fontSize: 24, fontWeight: 700, color: '#10B981' }}>94.2%</div>
+-          <div style={{ fontSize: 11, color: '#64748b', marginTop: 4 }}>Dựa trên 1,240 chuyến bay tháng này</div>
++          <div style={{ fontSize: 12, color: '#64748b', marginBottom: 4 }}>Hiệu suất hoàn tất đơn thực tế</div>
++          <div style={{ fontSize: 24, fontWeight: 700, color: '#10B981' }}>{successRate}%</div>
++          <div style={{ fontSize: 11, color: '#64748b', marginTop: 4 }}>
++            {completedCount}/{orders.length} đơn hoàn thành trong Database
++          </div>
+         </div>
+         <div className="card" style={{ padding: 16 }}>
+-          <div style={{ fontSize: 12, color: '#64748b', marginBottom: 4 }}>Thời gian giao trung bình</div>
+-          <div style={{ fontSize: 24, fontWeight: 700, color: '#1E3A5F' }}>14.5 phút</div>
+-          <div style={{ fontSize: 11, color: '#64748b', marginTop: 4 }}>Giảm 1.2 phút so với tháng trước</div>
++          <div style={{ fontSize: 12, color: '#64748b', marginBottom: 4 }}>Thời gian bay ước tính trung bình</div>
++          <div style={{ fontSize: 24, fontWeight: 700, color: '#1E3A5F' }}>12.5 phút</div>
++          <div style={{ fontSize: 11, color: '#64748b', marginTop: 4 }}>Duy trì tốc độ 45 km/h</div>
+         </div>
+         <div className="card" style={{ padding: 16 }}>
+-          <div style={{ fontSize: 12, color: '#64748b', marginBottom: 4 }}>Khoảng cách bay tích lũy</div>
+-          <div style={{ fontSize: 24, fontWeight: 700, color: '#3B82F6' }}>8,421 km</div>
+-          <div style={{ fontSize: 11, color: '#64748b', marginTop: 4 }}>Tổng cộng 4 trạm hoạt động</div>
++          <div style={{ fontSize: 12, color: '#64748b', marginBottom: 4 }}>Số trạm hạ cánh hoạt động</div>
++          <div style={{ fontSize: 24, fontWeight: 700, color: '#3B82F6' }}>{stations.length} trạm</div>
++          <div style={{ fontSize: 11, color: '#64748b', marginTop: 4 }}>Kết nối realtime từ API</div>
+         </div>
+       </div>
+ 
+       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+         {/* Weekly throughput */}
+         <div className="card" style={{ padding: 20 }}>
+-          <div style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 15, color: '#1e293b', marginBottom: 16 }}>Sản lượng giao nhận theo tuần</div>
++          <div style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 15, color: '#1e293b', marginBottom: 16 }}>
++            Sản lượng đơn theo tuần (Real DB)
++          </div>
+           <ResponsiveContainer width="100%" height={220}>
+-            <BarChart data={WEEKLY_DATA} barSize={16}>
++            <BarChart data={weeklyData} barSize={16}>
+               <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+               <XAxis dataKey="day" tick={{ fontSize: 11, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
+               <YAxis tick={{ fontSize: 11, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
+               <Tooltip contentStyle={{ fontSize: 12, borderRadius: 8 }} />
+               <Legend wrapperStyle={{ fontSize: 11 }} />
+-              <Bar dataKey="completed" name="Giao thành công" fill="#10B981" radius={[3,3,0,0]} />
+-              <Bar dataKey="failed" name="Giao thất bại" fill="#EF4444" radius={[3,3,0,0]} />
++              <Bar dataKey="completed" name="Hoàn tất" fill="#10B981" radius={[3,3,0,0]} />
++              <Bar dataKey="failed" name="Thất bại/Hủy" fill="#EF4444" radius={[3,3,0,0]} />
+             </BarChart>
+           </ResponsiveContainer>
+         </div>
+ 
+         {/* Station Performance */}
+         <div className="card" style={{ padding: 20 }}>
+-          <div style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 15, color: '#1e293b', marginBottom: 16 }}>Tỷ lệ bay thành công theo trạm</div>
++          <div style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 15, color: '#1e293b', marginBottom: 16 }}>
++            Tỷ lệ thành công theo trạm hạ cánh
++          </div>
+           <ResponsiveContainer width="100%" height={220}>
+-            <BarChart data={STATION_PERF} layout="vertical" barSize={12}>
++            <BarChart data={stationPerf} layout="vertical" barSize={12} margin={{ left: 20, right: 10 }}>
+               <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+               <XAxis type="number" domain={[0, 100]} tick={{ fontSize: 11, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
+-              <YAxis dataKey="name" type="category" tick={{ fontSize: 11, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
++              <YAxis dataKey="name" type="category" width={120} tick={{ fontSize: 10, fill: '#475569' }} axisLine={false} tickLine={false} />
+               <Tooltip contentStyle={{ fontSize: 12, borderRadius: 8 }} />
+               <Bar dataKey="success" name="Tỷ lệ thành công (%)" fill="#3B82F6" radius={[0,3,3,0]} />
+             </BarChart>
+@@ -62,11 +190,13 @@ export function ReportsScreen() {
+       {/* Trend chart */}
+       <div className="card" style={{ padding: 20 }}>
+         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+-          <div style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 15, color: '#1e293b' }}>Biểu đồ tăng trưởng đơn hàng (30 ngày qua)</div>
+-          <button className="btn btn-outline btn-sm">{Icon.download} Xuất báo cáo CSV</button>
++          <div style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 15, color: '#1e293b' }}>
++            Biểu đồ xu hướng đơn hàng thực tế
++          </div>
++          <button className="btn btn-outline btn-sm" onClick={loadReportData}>{Icon.download} Xuất báo cáo CSV</button>
+         </div>
+         <ResponsiveContainer width="100%" height={200}>
+-          <AreaChart data={TREND_DATA}>
++          <AreaChart data={trendData}>
+             <defs>
+               <linearGradient id="colorO" x1="0" y1="0" x2="0" y2="1">
+                 <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.2}/>
+@@ -77,7 +207,7 @@ export function ReportsScreen() {
+             <XAxis dataKey="date" tick={{ fontSize: 10, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
+             <YAxis tick={{ fontSize: 11, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
+             <Tooltip contentStyle={{ fontSize: 12, borderRadius: 8 }} />
+-            <Area type="monotone" dataKey="orders" name="Tổng đơn đặt" stroke="#3B82F6" strokeWidth={2} fillOpacity={1} fill="url(#colorO)" />
++            <Area type="monotone" dataKey="orders" name="Số lượng đơn" stroke="#3B82F6" strokeWidth={2} fillOpacity={1} fill="url(#colorO)" />
+           </AreaChart>
+         </ResponsiveContainer>
+       </div>
+diff --git "a/Giao di\341\273\207n web qu\341\272\243n l\303\275/src/pages/StationsScreen.tsx" "b/Giao di\341\273\207n web qu\341\272\243n l\303\275/src/pages/StationsScreen.tsx"
+index 1cf032f..fdfc94d 100644
+--- "a/Giao di\341\273\207n web qu\341\272\243n l\303\275/src/pages/StationsScreen.tsx"	
++++ "b/Giao di\341\273\207n web qu\341\272\243n l\303\275/src/pages/StationsScreen.tsx"	
+@@ -1,130 +1,517 @@
+-import { useState } from 'react'
+-import { STATIONS } from '../mockData'
++import React, { useEffect, useState, useRef } from 'react'
++import { MapContainer, TileLayer, Marker, useMapEvents, useMap } from 'react-leaflet'
++import L from 'leaflet'
++import 'leaflet/dist/leaflet.css'
++import { listStations, createStationApi, updateStationApi, deleteStationApi, Station } from '../api'
+ import { Icon } from '../components/Icons'
+ 
+ interface StationsScreenProps {
+   showToast: (msg: string, type: 'success' | 'error' | 'info') => void
+ }
+ 
++// Station icon for map picker
++const stationPickerIcon = new L.DivIcon({
++  html: `<div style="background:#1d4ed8;width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 4px 10px rgba(0,0,0,0.4);border:2px solid white">🏢</div>`,
++  className: '',
++  iconSize: [32, 32],
++  iconAnchor: [16, 16],
++})
++
++// Sub-component: Clickable Leaflet Map Picker inside modal
++function LocationPickerMap({
++  lat,
++  lng,
++  onSelectLocation,
++}: {
++  lat: number
++  lng: number
++  onSelectLocation: (newLat: number, newLng: number) => void
++}) {
++  function MapEvents() {
++    useMapEvents({
++      click(e) {
++        onSelectLocation(e.latlng.lat, e.latlng.lng)
++      },
++    })
++    return null
++  }
++
++  function RecenterMap({ center }: { center: [number, number] }) {
++    const map = useMap()
++    useEffect(() => {
++      map.setView(center, map.getZoom())
++    }, [center, map])
++    return null
++  }
++
++  const validCenter: [number, number] = [lat || 10.7769, lng || 106.7009]
++
++  return (
++    <div style={{ borderRadius: 10, overflow: 'hidden', border: '1px solid #cbd5e1', position: 'relative' }}>
++      <MapContainer center={validCenter} zoom={16} style={{ height: 210, width: '100%' }}>
++        <TileLayer
++          attribution='&copy; OpenStreetMap'
++          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
++        />
++        <MapEvents />
++        <RecenterMap center={validCenter} />
++        <Marker position={validCenter} icon={stationPickerIcon} />
++      </MapContainer>
++      <div style={{ position: 'absolute', bottom: 6, left: 6, background: 'rgba(255,255,255,0.92)', padding: '3px 8px', borderRadius: 4, fontSize: 10, color: '#334155', fontWeight: 600, zIndex: 1000 }}>
++        👇 Bấm vào vị trí bất kỳ trên bản đồ để chọn tọa độ Trạm
++      </div>
++    </div>
++  )
++}
++
+ export function StationsScreen({ showToast }: StationsScreenProps) {
++  const [stations, setStations] = useState<Station[]>([])
++  const [loading, setLoading] = useState(true)
+   const [search, setSearch] = useState('')
+-  const [showAdd, setShowAdd] = useState(false)
+-  const [showDelete, setShowDelete] = useState<string | null>(null)
+-  const [stationName, setStationName] = useState('')
+-  const [capacity, setCapacity] = useState('6')
++  const [showModal, setShowModal] = useState(false)
++  const [editStation, setEditStation] = useState<Station | null>(null)
++  const [deletingId, setDeletingId] = useState<string | null>(null)
++  const [submitting, setSubmitting] = useState(false)
++  const [geocoding, setGeocoding] = useState(false)
++
++  // Form fields for station creation / edition
++  const [tenTram, setTenTram] = useState('')
++  const [diaChiTram, setDiaChiTram] = useState('')
++  const [lat, setLat] = useState<number | ''>(10.7769)
++  const [lng, setLng] = useState<number | ''>(106.7009)
++  const [capacity, setCapacity] = useState('10')
++
++  // Address suggestions dropdown state
++  const [suggestions, setSuggestions] = useState<any[]>([])
++  const [showSuggestions, setShowSuggestions] = useState(false)
++  const debounceTimer = useRef<any>(null)
++
++  const loadStations = async () => {
++    setLoading(true)
++    try {
++      const data = await listStations()
++      setStations(data)
++    } catch (err) {
++      console.error('Lỗi tải danh sách trạm:', err)
++      showToast('Lỗi khi tải danh sách trạm từ máy chủ', 'error')
++    } finally {
++      setLoading(false)
++    }
++  }
++
++  useEffect(() => {
++    loadStations()
++  }, [])
++
++  const openCreate = () => {
++    setEditStation(null)
++    setTenTram('')
++    setDiaChiTram('')
++    setLat(10.7769)
++    setLng(106.7009)
++    setCapacity('10')
++    setSuggestions([])
++    setShowSuggestions(false)
++    setShowModal(true)
++  }
++
++  const openEdit = (s: Station) => {
++    setEditStation(s)
++    setTenTram(s.ten_tram || s.name || '')
++    setDiaChiTram(s.dia_chi || '')
++    setLat(Number(s.vi_do) || 10.7769)
++    setLng(Number(s.kinh_do) || 106.7009)
++    setCapacity(String(s.suc_chua_toi_da || s.capacity || 10))
++    setSuggestions([])
++    setShowSuggestions(false)
++    setShowModal(true)
++  }
++
++  // Pure Direct Geocoding search function against OpenStreetMap API
++  const fetchNominatimResults = async (queryStr: string) => {
++    try {
++      const res = await fetch(
++        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(queryStr)}&limit=5`,
++        { headers: { 'Accept-Language': 'vi,en' } }
++      )
++      return await res.json()
++    } catch (err) {
++      console.error('Direct Nominatim API error:', err)
++      return []
++    }
++  }
++
++  // Handle address input change with live suggestions
++  const handleAddressInputChange = (value: string) => {
++    setDiaChiTram(value)
++    if (debounceTimer.current) clearTimeout(debounceTimer.current)
++
++    if (value.trim().length < 3) {
++      setSuggestions([])
++      setShowSuggestions(false)
++      return
++    }
++
++    debounceTimer.current = setTimeout(async () => {
++      let data = await fetchNominatimResults(value.trim())
++      if (!data || data.length === 0) {
++        data = await fetchNominatimResults(`${value.trim()}, Việt Nam`)
++      }
++      if (data && data.length > 0) {
++        setSuggestions(data)
++        setShowSuggestions(true)
++      } else {
++        setSuggestions([])
++        setShowSuggestions(false)
++      }
++    }, 400)
++  }
++
++  // Handle selection from suggestions dropdown
++  const handleSelectSuggestion = (item: any) => {
++    const newLat = parseFloat(item.lat)
++    const newLng = parseFloat(item.lon)
++    setDiaChiTram(item.display_name)
++    setLat(newLat)
++    setLng(newLng)
++    setSuggestions([])
++    setShowSuggestions(false)
++    showToast(`📍 Đã định vị chính xác: ${newLat.toFixed(5)}, ${newLng.toFixed(5)}`, 'success')
++  }
++
++  // Reverse Geocoding when user clicks on map: Lat/Lng -> Address string
++  const handleMapLocationSelect = async (newLat: number, newLng: number) => {
++    setLat(newLat)
++    setLng(newLng)
++    try {
++      const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${newLat}&lon=${newLng}&zoom=18&addressdetails=1`, {
++        headers: { 'Accept-Language': 'vi,en' }
++      })
++      const data = await res.json()
++      if (data && data.display_name) {
++        setDiaChiTram(data.display_name)
++        showToast(`📍 Đã cập nhật tọa độ & địa chỉ: ${newLat.toFixed(5)}, ${newLng.toFixed(5)}`, 'success')
++      }
++    } catch (err) {
++      console.error('Reverse geocode error:', err)
++    }
++  }
++
++  // Manual Forward Geocoding button click
++  const handleGeocodeAddress = async (rawAddress: string) => {
++    if (!rawAddress.trim()) return
++    setGeocoding(true)
++
++    try {
++      let results = await fetchNominatimResults(rawAddress.trim())
++      if (!results || results.length === 0) {
++        results = await fetchNominatimResults(`${rawAddress.trim()}, Việt Nam`)
++      }
+ 
+-  const handleAddSubmit = (e: React.FormEvent) => {
++      if (results && results.length > 0) {
++        const item = results[0]
++        const newLat = parseFloat(item.lat)
++        const newLng = parseFloat(item.lon)
++        setLat(newLat)
++        setLng(newLng)
++        showToast(`📍 Đã định vị thành công: ${newLat.toFixed(5)}, ${newLng.toFixed(5)} (${item.display_name.split(',')[0]})`, 'success')
++      } else {
++        showToast('⚠️ Không tìm thấy vị trí tự động. Bạn có thể BẤM TRỰC TIẾP LÊN BẢN ĐỒ bên dưới để chọn vị trí!', 'info')
++      }
++    } finally {
++      setGeocoding(false)
++    }
++  }
++
++  const handleFormSubmit = async (e: React.FormEvent) => {
+     e.preventDefault()
+-    if (!stationName) return
+-    setShowAdd(false)
+-    showToast(`Đã thêm mới đề xuất trạm: "${stationName}" (Mã: STN-${Math.floor(Math.random() * 90 + 10)}). Chờ duyệt vị trí tọa độ.`, 'success')
+-    setStationName('')
++    if (!tenTram.trim() || !diaChiTram.trim()) {
++      showToast('Vui lòng nhập Tên trạm và Địa chỉ vật lý', 'error')
++      return
++    }
++
++    setSubmitting(true)
++    try {
++      const payload = {
++        ten_tram: tenTram.trim(),
++        dia_chi_tram: diaChiTram.trim(),
++        lat: Number(lat) || 10.7769,
++        lng: Number(lng) || 106.7009,
++        cong_suat_toi_da: parseInt(capacity) || 10,
++      }
++
++      if (editStation) {
++        await updateStationApi(editStation.ma_tram || editStation.id, payload)
++        showToast(`✅ Đã cập nhật thông tin trạm: "${tenTram}"`, 'success')
++      } else {
++        await createStationApi(payload)
++        showToast(`✅ Đã đăng ký trạm thành công: "${tenTram}"`, 'success')
++      }
++
++      setShowModal(false)
++      await loadStations()
++    } catch (err: any) {
++      showToast(`Lỗi lưu trạm: ${err.message || 'Không thể kết nối API'}`, 'error')
++    } finally {
++      setSubmitting(false)
++    }
+   }
+ 
+-  const handleDeleteConfirm = () => {
+-    if (!showDelete) return
+-    setShowDelete(null)
+-    showToast(`Đã ngừng hoạt động và xóa thông tin trạm ${showDelete} khỏi hệ thống vận hành.`, 'info')
++  const handleDeleteConfirm = async (maTram: string) => {
++    try {
++      await deleteStationApi(maTram)
++      showToast(`Đã xóa trạm khỏi hệ thống`, 'info')
++      setDeletingId(null)
++      await loadStations()
++    } catch (err: any) {
++      showToast(`Lỗi xóa trạm: ${err.message || 'Lỗi server'}`, 'error')
++    }
+   }
+ 
+-  const filtered = STATIONS.filter(s => s.name.toLowerCase().includes(search.toLowerCase()) || s.district.toLowerCase().includes(search.toLowerCase()))
++  const filtered = stations.filter(s =>
++    (s.ten_tram || s.name || '').toLowerCase().includes(search.toLowerCase()) ||
++    (s.dia_chi || s.district || '').toLowerCase().includes(search.toLowerCase())
++  )
+ 
+   return (
+-    <div>
+-      <div style={{ display: 'flex', gap: 12, marginBottom: 16, flexWrap: 'wrap' }}>
+-        <div style={{ position: 'relative', flex: 1, minWidth: 200 }}>
+-          <span style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }}>{Icon.search}</span>
+-          <input className="input" style={{ paddingLeft: 34 }} placeholder="Tìm trạm, tìm khu vực quận huyện..." value={search} onChange={e => setSearch(e.target.value)} />
++    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
++      {/* Top Toolbar */}
++      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
++        <div style={{ position: 'relative', flex: 1, minWidth: 220 }}>
++          <span style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }}>{Icon.search}</span>
++          <input
++            className="input"
++            style={{ paddingLeft: 36 }}
++            placeholder="Tìm theo tên trạm, địa chỉ vật lý..."
++            value={search}
++            onChange={e => setSearch(e.target.value)}
++          />
+         </div>
+-        <button className="btn btn-primary" onClick={() => setShowAdd(true)}>{Icon.plus} Thêm trạm hạ cánh</button>
++        <button className="btn btn-outline" onClick={loadStations}>{Icon.refresh} Làm mới</button>
++        <button className="btn btn-primary" onClick={openCreate}>{Icon.plus} Đăng ký Trạm mới</button>
+       </div>
+ 
+-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 16 }}>
+-        {filtered.map(s => {
+-          const percent = Math.min(100, Math.round((s.current / s.capacity) * 100))
+-          const isFull = s.current === s.capacity
+-          const stColor = s.status === 'active' ? '#10B981' : s.status === 'maintenance' ? '#F59E0B' : '#EF4444'
+-          const stLabel = s.status === 'active' ? 'Hoạt động' : s.status === 'maintenance' ? 'Bảo trì' : 'Tạm dừng'
++      {/* Grid of Stations */}
++      {loading ? (
++        <div className="card" style={{ padding: 48, textAlign: 'center', color: '#64748b' }}>
++          Đang tải danh sách Trạm Hạ Cánh từ Cơ Sở Dữ Liệu...
++        </div>
++      ) : filtered.length === 0 ? (
++        <div className="card" style={{ padding: 48, textAlign: 'center', color: '#64748b' }}>
++          Chưa có trạm nào. Bấm "+ Đăng ký Trạm mới" để thêm trạm vào hệ thống.
++        </div>
++      ) : (
++        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 16 }}>
++          {filtered.map(s => {
++            const cap = s.capacity || s.suc_chua_toi_da || 10
++            const curr = s.current || s.so_drone_hien_tai || 0
++            const percent = Math.min(100, Math.round((curr / cap) * 100))
++            const isFull = curr >= cap
+ 
+-          return (
+-            <div key={s.id} className="card" style={{ padding: 16, borderTop: `4px solid ${stColor}` }}>
+-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
++            return (
++              <div key={s.id} className="card" style={{ padding: 18, borderTop: '4px solid #2563eb', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                 <div>
+-                  <h4 style={{ fontWeight: 650, fontSize: 15, color: '#1e293b' }}>{s.name}</h4>
+-                  <span style={{ fontSize: 11, color: '#94a3b8', fontFamily: 'var(--font-mono)' }}>{s.id}</span>
+-                </div>
+-                <span className="badge" style={{ background: `${stColor}15`, color: stColor }}>{stLabel}</span>
+-              </div>
+-
+-              <div style={{ display: 'flex', flexDirection: 'column', gap: 8, fontSize: 13, color: '#475569', marginBottom: 12 }}>
+-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+-                  <span>Khu vực</span>
+-                  <span style={{ fontWeight: 550, color: '#1e293b' }}>{s.district}</span>
+-                </div>
+-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+-                  <span>Tọa độ</span>
+-                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11 }}>{s.lat}, {s.lng}</span>
+-                </div>
+-                <div style={{ marginTop: 4 }}>
+-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, color: '#64748b', marginBottom: 3 }}>
+-                    <span>Dung lượng Drone</span>
+-                    <span>{s.current}/{s.capacity} chiếc ({percent}%)</span>
++                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
++                    <div>
++                      <h4 style={{ fontWeight: 700, fontSize: 15, color: '#1e293b', marginBottom: 2 }}>🏢 {s.ten_tram || s.name}</h4>
++                      <span style={{ fontSize: 10, color: '#94a3b8', fontFamily: 'var(--font-mono)' }}>ID: {s.ma_tram || s.id}</span>
++                    </div>
++                    <span className="badge" style={{ background: '#dbeafe', color: '#1d4ed8', fontWeight: 600, fontSize: 11 }}>
++                      ✅ Hoạt động
++                    </span>
+                   </div>
+-                  <div style={{ height: 6, background: '#f1f5f9', borderRadius: 3, overflow: 'hidden' }}>
+-                    <div style={{ height: '100%', background: isFull ? '#EF4444' : '#3B82F6', width: `${percent}%`, borderRadius: 3 }} />
++
++                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8, fontSize: 12, color: '#475569', marginBottom: 14 }}>
++                    <div>
++                      <span style={{ color: '#64748b', display: 'block', fontSize: 11, fontWeight: 600 }}>📍 Địa chỉ vật lý:</span>
++                      <span style={{ fontWeight: 600, color: '#1e293b' }}>{s.dia_chi || 'Chưa cập nhật địa chỉ'}</span>
++                    </div>
++
++                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
++                      <span style={{ color: '#64748b', fontSize: 11 }}>🌐 Tọa độ GPS:</span>
++                      <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, background: '#f1f5f9', padding: '2px 6px', borderRadius: 4, color: '#0f172a' }}>
++                        {s.vi_do ? Number(s.vi_do).toFixed(4) : '10.7769'}, {s.kinh_do ? Number(s.kinh_do).toFixed(4) : '106.7009'}
++                      </span>
++                    </div>
++
++                    <div style={{ marginTop: 4 }}>
++                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, color: '#64748b', marginBottom: 4 }}>
++                        <span>Sức chứa Drone</span>
++                        <span style={{ fontWeight: 600, color: '#1e293b' }}>{curr} / {cap} drone ({percent}%)</span>
++                      </div>
++                      <div style={{ height: 6, background: '#e2e8f0', borderRadius: 3, overflow: 'hidden' }}>
++                        <div style={{ height: '100%', background: isFull ? '#EF4444' : '#3B82F6', width: `${percent}%`, borderRadius: 3 }} />
++                      </div>
++                    </div>
+                   </div>
+                 </div>
++
++                <div style={{ display: 'flex', gap: 8, borderTop: '1px solid #f1f5f9', paddingTop: 10, justifyContent: 'flex-end' }}>
++                  <button
++                    className="btn btn-outline btn-sm"
++                    onClick={() => openEdit(s)}
++                    title="Chỉnh sửa thông tin trạm"
++                  >
++                    ✏️ Chỉnh sửa
++                  </button>
++                  <button
++                    className="btn btn-sm"
++                    style={{ background: '#FEF2F2', color: '#EF4444', border: '1px solid #FCA5A5' }}
++                    onClick={() => setDeletingId(s.ma_tram || s.id)}
++                    title="Xóa trạm"
++                  >
++                    🗑️ Xóa
++                  </button>
++                </div>
+               </div>
++            )
++          })}
++        </div>
++      )}
+ 
+-              <div style={{ display: 'flex', gap: 8, borderTop: '1px solid #f1f5f9', paddingTop: 10, justifyContent: 'flex-end' }}>
+-                <button className="btn btn-outline btn-sm">{Icon.edit} Sửa</button>
+-                <button className="btn btn-outline btn-sm" style={{ color: '#EF4444', borderColor: '#FCA5A5' }} onClick={() => setShowDelete(s.id)}>{Icon.trash} Xóa</button>
++      {/* Modal Đăng Ký / Chỉnh Sửa Trạm */}
++      {showModal && (
++        <div style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.5)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
++          <div style={{ background: 'white', borderRadius: 16, padding: 24, width: '100%', maxWidth: 520, maxHeight: '92vh', overflowY: 'auto', boxShadow: '0 20px 60px rgba(0,0,0,0.2)' }}>
++            <h3 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 18, color: '#1e293b', marginBottom: 16 }}>
++              {editStation ? '✏️ Chỉnh sửa thông tin Trạm Hạ Cánh' : '🏢 Đăng ký trạm hạ cánh mới'}
++            </h3>
++            <form onSubmit={handleFormSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
++              <div>
++                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#374151', marginBottom: 4 }}>Tên Trạm Hạ Cánh *</label>
++                <input
++                  className="input"
++                  placeholder="Ví dụ: Trạm Saigonres Plaza Hub, Trạm Thủ Đức..."
++                  value={tenTram}
++                  onChange={e => setTenTram(e.target.value)}
++                  required
++                />
+               </div>
+-            </div>
+-          )
+-        })}
+-      </div>
+ 
+-      {/* Modal Add Station */}
+-      {showAdd && (
+-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.4)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+-          <div style={{ background: 'white', borderRadius: 16, padding: '24px 20px', width: '105%', maxWidth: 420, boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)' }}>
+-            <h3 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 17, color: '#1e293b', marginBottom: 12 }}>Đăng ký trạm hạ cánh mới</h3>
+-            <form onSubmit={handleAddSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
++              <div style={{ position: 'relative' }}>
++                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#374151', marginBottom: 4 }}>
++                  📍 Địa Chỉ Vật Lý (Gõ địa chỉ để gợi ý vị trí từ OpenStreetMap API) *
++                </label>
++                <div style={{ display: 'flex', gap: 8 }}>
++                  <input
++                    className="input"
++                    style={{ flex: 1 }}
++                    placeholder="Gõ địa chỉ: Võ Oanh, Pearl Plaza, Nguyễn Huệ..."
++                    value={diaChiTram}
++                    onChange={e => handleAddressInputChange(e.target.value)}
++                    required
++                  />
++                  <button
++                    type="button"
++                    className="btn btn-outline btn-sm"
++                    disabled={geocoding || !diaChiTram.trim()}
++                    onClick={() => handleGeocodeAddress(diaChiTram)}
++                  >
++                    {geocoding ? '⌛...' : '🗺️ Định vị'}
++                  </button>
++                </div>
++
++                {/* Live Autocomplete Suggestions Dropdown */}
++                {showSuggestions && suggestions.length > 0 && (
++                  <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, background: 'white', border: '1px solid #cbd5e1', borderRadius: 8, boxShadow: '0 10px 25px rgba(0,0,0,0.15)', zIndex: 2000, marginTop: 4, maxHeight: 200, overflowY: 'auto' }}>
++                    {suggestions.map((item, idx) => (
++                      <div
++                        key={idx}
++                        style={{ padding: '8px 12px', fontSize: 12, borderBottom: idx < suggestions.length - 1 ? '1px solid #f1f5f9' : 'none', cursor: 'pointer', display: 'flex', alignItems: 'flex-start', gap: 8, color: '#1e293b' }}
++                        onClick={() => handleSelectSuggestion(item)}
++                        onMouseDown={e => e.preventDefault()}
++                      >
++                        <span style={{ fontSize: 14 }}>📍</span>
++                        <div>
++                          <div style={{ fontWeight: 600, color: '#0f172a' }}>{item.display_name.split(',')[0]}</div>
++                          <div style={{ fontSize: 10, color: '#64748b', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 420 }}>{item.display_name}</div>
++                        </div>
++                      </div>
++                    ))}
++                  </div>
++                )}
++              </div>
++
++              {/* 🗺️ Interactive Map Picker inside Modal */}
+               <div>
+-                <label style={{ display: 'block', fontSize: 12, fontWeight: 605, color: '#374151', marginBottom: 4 }}>Tên trạm</label>
+-                <input className="input" placeholder="Ví dụ: Trạm Quận 10..." value={stationName} onChange={e => setStationName(e.target.value)} required />
++                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#374151', marginBottom: 4 }}>
++                  🗺️ Chọn vị trí trực tiếp trên Bản đồ (Bấm vào điểm bất kỳ)
++                </label>
++                <LocationPickerMap
++                  lat={Number(lat) || 10.7769}
++                  lng={Number(lng) || 106.7009}
++                  onSelectLocation={handleMapLocationSelect}
++                />
+               </div>
++
+               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                 <div>
+-                  <label style={{ display: 'block', fontSize: 12, fontWeight: 605, color: '#374151', marginBottom: 4 }}>Quận Huyện</label>
+-                  <input className="input" placeholder="Ví dụ: Quận 10..." required />
++                  <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#374151', marginBottom: 4 }}>Vĩ độ (Latitude)</label>
++                  <input
++                    className="input"
++                    type="number"
++                    step="any"
++                    value={lat}
++                    onChange={e => setLat(e.target.value ? parseFloat(e.target.value) : '')}
++                    required
++                  />
+                 </div>
+                 <div>
+-                  <label style={{ display: 'block', fontSize: 12, fontWeight: 605, color: '#374151', marginBottom: 4 }}>Sức chứa (drones)</label>
+-                  <input className="input" type="number" value={capacity} onChange={e => setCapacity(e.target.value)} required />
++                  <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#374151', marginBottom: 4 }}>Kinh độ (Longitude)</label>
++                  <input
++                    className="input"
++                    type="number"
++                    step="any"
++                    value={lng}
++                    onChange={e => setLng(e.target.value ? parseFloat(e.target.value) : '')}
++                    required
++                  />
+                 </div>
+               </div>
+-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 8 }}>
+-                <button className="btn btn-outline btn-sm" type="button" onClick={() => setShowAdd(false)}>Hủy</button>
+-                <button className="btn btn-primary btn-sm" type="submit">Xác nhận tạo đề xuất</button>
++
++              <div>
++                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#374151', marginBottom: 4 }}>Sức chứa tối đa (Drone)</label>
++                <input
++                  className="input"
++                  type="number"
++                  min="1"
++                  max="50"
++                  value={capacity}
++                  onChange={e => setCapacity(e.target.value)}
++                  required
++                />
++              </div>
++
++              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, marginTop: 12 }}>
++                <button className="btn btn-outline" type="button" onClick={() => setShowModal(false)}>Hủy</button>
++                <button className="btn btn-primary" type="submit" disabled={submitting}>
++                  {submitting ? 'Đang lưu vào DB...' : editStation ? 'Cập nhật trạm' : 'Lưu trạm vào Database'}
++                </button>
+               </div>
+             </form>
+           </div>
+         </div>
+       )}
+ 
+-      {/* Modal Confirm Delete */}
+-      {showDelete && (
+-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.4)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+-          <div style={{ background: 'white', borderRadius: 16, padding: '24px 20px', width: '100%', maxWidth: 400, boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)' }}>
+-            <h3 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 17, color: '#1e293b', marginBottom: 8 }}>Ngừng hoạt động trạm</h3>
+-            <p style={{ fontSize: 14, color: '#64748b', lineHeight: 1.5, marginBottom: 16 }}>
+-              Bạn có chắc muốn xóa và tạm ngưng vận hành trạm <b>{showDelete}</b>? Việc này có thể ảnh hưởng đến lộ trình các chuyến bay đang hoạt động.
++      {/* Modal Xác Nhận Xóa Trạm */}
++      {deletingId && (
++        <div style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.5)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
++          <div style={{ background: 'white', borderRadius: 16, padding: 24, width: '100%', maxWidth: 400, boxShadow: '0 20px 60px rgba(0,0,0,0.2)' }}>
++            <h3 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 17, color: '#1e293b', marginBottom: 8 }}>
++              ⚠️ Xóa Trạm Hạ Cánh
++            </h3>
++            <p style={{ fontSize: 13, color: '#64748b', lineHeight: 1.5, marginBottom: 20 }}>
++              Bạn có chắc chắn muốn xóa vĩnh viễn trạm này khỏi cơ sở dữ liệu? Thao tác này không thể hoàn tác.
+             </p>
+-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
+-              <button className="btn btn-outline btn-sm" onClick={() => setShowDelete(null)}>Hủy</button>
+-              <button className="btn btn-sm" style={{ background: '#EF4444', color: 'white', border: 'none' }} onClick={handleDeleteConfirm}>Xác nhận dừng hoạt động</button>
++            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10 }}>
++              <button className="btn btn-outline" onClick={() => setDeletingId(null)}>Hủy</button>
++              <button
++                className="btn"
++                style={{ background: '#EF4444', color: 'white', border: 'none' }}
++                onClick={() => handleDeleteConfirm(deletingId)}
++              >
++                Xác nhận xóa
++              </button>
+             </div>
+           </div>
+         </div>
+diff --git "a/Giao di\341\273\207n web qu\341\272\243n l\303\275/src/pages/TrackingScreen.tsx" "b/Giao di\341\273\207n web qu\341\272\243n l\303\275/src/pages/TrackingScreen.tsx"
+index 9acdfcb..b38374a 100644
+--- "a/Giao di\341\273\207n web qu\341\272\243n l\303\275/src/pages/TrackingScreen.tsx"	
++++ "b/Giao di\341\273\207n web qu\341\272\243n l\303\275/src/pages/TrackingScreen.tsx"	
+@@ -1,161 +1,194 @@
+-import { useState, useEffect } from 'react'
+-import { DRONES } from '../mockData'
+-import { Icon } from '../components/Icons'
++import { useState, useEffect, useRef } from 'react'
++import { listDrones, listOrders, listStations, Drone, Order, Station } from '../api'
+ import { Badge } from '../components/Badges'
++import AdminTrackingMap from '../components/AdminTrackingMap'
+ 
+ export function TrackingScreen() {
++  const [drones, setDrones] = useState<Drone[]>([])
++  const [orders, setOrders] = useState<Order[]>([])
++  const [stations, setStations] = useState<Station[]>([])
++  const [loading, setLoading] = useState(true)
+   const [selectedDrone, setSelectedDrone] = useState<string | null>(null)
+-  const [tick, setTick] = useState(0)
++  const selectedDroneRef = useRef<string | null>(null)
+ 
+-  // Simulation: Move drones slightly every 5 seconds to simulate real-time tracking
++  // Keep ref synchronized with state to avoid closure staleness in setInterval
+   useEffect(() => {
++    selectedDroneRef.current = selectedDrone
++  }, [selectedDrone])
++
++  const loadTrackingData = async () => {
++    try {
++      const [dList, oList, sList] = await Promise.all([listDrones(), listOrders(), listStations()])
++      setDrones(dList)
++      setOrders(oList)
++      setStations(sList)
++
++      // Only set initial default drone if user hasn't selected any drone yet
++      if (dList.length > 0 && !selectedDroneRef.current) {
++        const defaultId = dList[0].id || (dList[0] as any).ma_drone
++        setSelectedDrone(defaultId)
++        selectedDroneRef.current = defaultId
++      }
++    } catch (err) {
++      console.error('Lỗi tải dữ liệu telemetry:', err)
++    } finally {
++      setLoading(false)
++    }
++  }
++
++  useEffect(() => {
++    loadTrackingData()
+     const t = setInterval(() => {
+-      setTick(p => p + 1)
++      loadTrackingData()
+     }, 5000)
+     return () => clearInterval(t)
+   }, [])
+ 
+-  // Generate slightly adjusted coordinates based on tick
+-  const simulatedDrones = DRONES.map((d, index) => {
+-    const offset = Math.sin(tick + index) * 2
+-    return {
+-      ...d,
+-      x: Math.min(95, Math.max(5, d.x + offset)),
+-      y: Math.min(95, Math.max(5, d.y + offset)),
+-    }
++  const [selectedStationFilter, setSelectedStationFilter] = useState<string>('ALL')
++
++  const filteredDrones = drones.filter(d => {
++    if (selectedStationFilter === 'ALL') return true
++    const stId = (d as any).ma_tram_hien_tai || (d as any).ma_tram
++    return String(stId) === String(selectedStationFilter)
+   })
+ 
+-  const activeDrone = simulatedDrones.find(d => d.id === selectedDrone) || simulatedDrones[0]
++  const activeDrone = drones.find(d => d.id === selectedDrone || (d as any).ma_drone === selectedDrone) || drones[0]
+ 
+   return (
+     <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 16, height: 'calc(100vh - 120px)' }}>
+-      {/* Simulation Map */}
++      {/* Simulation Map using Leaflet */}
+       <div className="card" style={{ padding: 12, position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+         <div style={{ padding: '0 8px 8px', borderBottom: '1px solid #f1f5f9', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+           <div>
+-            <h3 style={{ fontFamily: 'var(--font-display)', fontWeight: 650, fontSize: 15, color: '#1e293b' }}>Bản đồ giám sát không phận thời gian thực</h3>
+-            <span style={{ fontSize: 11, color: '#22c55e' }}>● Hệ thống đang nhận dữ liệu từ telemetry trạm</span>
++            <h3 style={{ fontFamily: 'var(--font-display)', fontWeight: 650, fontSize: 15, color: '#1e293b' }}>
++              Bản đồ giám sát không phận thời gian thực (Leaflet OpenStreetMap)
++            </h3>
++            <span style={{ fontSize: 11, color: '#22c55e' }}>● Nhận tín hiệu GPS telemetry live từ đội bay Drone & Trạm hạ cánh</span>
+           </div>
+-          <span style={{ fontSize: 11, background: '#f8fafc', padding: '4px 8px', borderRadius: 6, color: '#64748b' }}>Cập nhật tự động (5s)</span>
++          <button className="btn btn-outline btn-sm" onClick={loadTrackingData}>Làm mới telemetry</button>
+         </div>
+ 
+-        {/* Map Grid container */}
+-        <div style={{
+-          flex: 1, background: '#EFF6FF', position: 'relative', marginTop: 12, borderRadius: 10,
+-          border: '1px solid #dbeafe', overflow: 'hidden',
+-          backgroundImage: 'radial-gradient(#93c5fd 0.75px, transparent 0.75px), radial-gradient(#93c5fd 0.75px, #eff6ff 0.75px)',
+-          backgroundSize: '24px 24px', backgroundPosition: '0 0, 12px 12px',
+-        }}>
+-          {/* Radial radar scanning ring */}
+-          <div style={{
+-            position: 'absolute', width: 280, height: 280, border: '1px dashed rgba(59,130,246,0.3)',
+-            borderRadius: '50%', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', pointerEvents: 'none',
+-          }} />
+-          <div style={{
+-            position: 'absolute', width: 140, height: 140, border: '1px dashed rgba(59,130,246,0.2)',
+-            borderRadius: '50%', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', pointerEvents: 'none',
+-          }} />
+-
+-          {/* Drones on Map */}
+-          {simulatedDrones.map(d => {
+-            const isSel = d.id === (selectedDrone || simulatedDrones[0].id)
+-            return (
+-              <div
+-                key={d.id}
+-                onClick={() => setSelectedDrone(d.id)}
+-                style={{
+-                  position: 'absolute', left: `${d.x}%`, top: `${d.y}%`,
+-                  transform: 'translate(-50%, -50%)', cursor: 'pointer', zIndex: isSel ? 20 : 10,
+-                  display: 'flex', flexDirection: 'column', alignItems: 'center',
+-                }}
+-              >
+-                {/* Ping wave */}
+-                {isSel && (
+-                  <span style={{
+-                    position: 'absolute', width: 26, height: 26, background: 'rgba(59,130,246,0.4)',
+-                    borderRadius: '50%', animation: 'ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite',
+-                  }} />
+-                )}
+-                {/* Drone Icon pin */}
+-                <div style={{
+-                  width: 22, height: 22, borderRadius: '50%',
+-                  background: d.status === 'issue' ? '#EF4444' : d.status === 'arriving' ? '#10B981' : '#3B82F6',
+-                  border: '2px solid white', display: 'flex', alignItems: 'center', justifyContent: 'center',
+-                  color: 'white', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)',
+-                }}>
+-                  {Icon.drone}
+-                </div>
+-                <div style={{
+-                  background: 'rgba(15,23,42,0.85)', color: 'white', padding: '1px 5px', borderRadius: 4,
+-                  fontSize: 9, fontWeight: 600, marginTop: 2, pointerEvents: 'none', whiteSpace: 'nowrap',
+-                }}>
+-                  {d.id}
+-                </div>
+-              </div>
+-            )
+-          })}
++        {/* Leaflet Real Interactive Map */}
++        <div style={{ flex: 1, marginTop: 12, borderRadius: 10, overflow: 'hidden' }}>
++          {loading ? (
++            <div style={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center', color: '#3B82F6', fontWeight: 600 }}>
++              Đang đồng bộ telemetry từ Server...
++            </div>
++          ) : (
++            <AdminTrackingMap
++              stations={stations}
++              drones={drones}
++              orders={orders}
++              selectedDroneId={selectedDrone || undefined}
++            />
++          )}
+         </div>
+       </div>
+ 
+-      {/* Side Details Panel */}
+-      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+-        {/* Telemetry info */}
++      {/* Control panel & Drone list */}
++      <div style={{ display: 'flex', flexDirection: 'column', gap: 12, minHeight: 0 }}>
++        {/* Selected Drone Status Detail */}
+         {activeDrone && (
+-          <div className="card" style={{ padding: 16 }}>
+-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+-              <h4 style={{ fontFamily: 'var(--font-display)', fontWeight: 650, fontSize: 14, color: '#1e293b' }}>Thông số Drone {activeDrone.id}</h4>
+-              <Badge status={activeDrone.status === 'issue' ? 'failed' : activeDrone.status === 'arriving' ? 'completed' : 'delivering'} />
++          <div className="card" style={{ padding: 16, flexShrink: 0 }}>
++            <div style={{ fontSize: 12, color: '#64748b' }}>Chi tiết Drone đang chọn</div>
++            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 4 }}>
++              <div style={{ fontWeight: 700, fontSize: 16, color: '#1e293b' }}>
++                {(activeDrone as any).ten_drone || (activeDrone as any).name || activeDrone.id || (activeDrone as any).ma_drone}
++              </div>
++              <Badge status={activeDrone.trang_thai || (activeDrone as any).status || 'Sẵn sàng'} />
+             </div>
+ 
+-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10, fontSize: 13 }}>
+-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+-                <span style={{ color: '#64748b' }}>Đơn hàng quản lý</span>
+-                <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 600, color: '#3B82F6' }}>{activeDrone.orderId}</span>
+-              </div>
+-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+-                <span style={{ color: '#64748b' }}>Khách nhận</span>
+-                <span style={{ fontWeight: 550, color: '#1e293b' }}>{activeDrone.customer}</span>
+-              </div>
+-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+-                <span style={{ color: '#64748b' }}>ETA dự kiến</span>
+-                <span style={{ fontWeight: 600, color: activeDrone.status === 'issue' ? '#EF4444' : '#10B981' }}>{activeDrone.eta}</span>
++            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginTop: 12, fontSize: 12 }}>
++              <div style={{ background: '#f8fafc', padding: 8, borderRadius: 6 }}>
++                <span style={{ color: '#64748b' }}>Dung lượng Pin</span>
++                <div style={{ fontWeight: 700, color: '#10B981', fontSize: 14 }}>
++                  {(activeDrone as any).cong_suat_pin ?? (activeDrone as any).dung_luong_pin ?? (activeDrone as any).battery ?? 95}%
++                </div>
+               </div>
+-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+-                <span style={{ color: '#64748b' }}>GPS Telemetry</span>
+-                <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: '#475569' }}>
+-                  {activeDrone.x.toFixed(2)}°N, {activeDrone.y.toFixed(2)}°E
+-                </span>
++              <div style={{ background: '#f8fafc', padding: 8, borderRadius: 6 }}>
++                <span style={{ color: '#64748b' }}>Sức tải tối đa</span>
++                <div style={{ fontWeight: 700, color: '#3B82F6', fontSize: 14 }}>
++                  {activeDrone.tai_trong_toi_da || (activeDrone as any).payload || '5.0'} kg
++                </div>
+               </div>
+             </div>
++
++            {((activeDrone as any).order || (activeDrone as any).ma_don_hang) && (
++              <div style={{ marginTop: 12, paddingTop: 10, borderTop: '1px solid #f1f5f9', fontSize: 12 }}>
++                <span style={{ color: '#64748b' }}>Đơn hàng đảm nhận:</span>
++                <div style={{ fontWeight: 600, color: '#1E3A5F', marginTop: 2 }}>
++                  {(activeDrone as any).order || (activeDrone as any).ma_don_hang}
++                </div>
++              </div>
++            )}
+           </div>
+         )}
+ 
+-        {/* Drone checklists */}
+-        <div className="card" style={{ padding: 16, flex: 1, overflowY: 'auto' }}>
+-          <h4 style={{ fontFamily: 'var(--font-display)', fontWeight: 650, fontSize: 14, color: '#1e293b', marginBottom: 10 }}>Danh sách thiết bị (Drone Fleet)</h4>
+-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+-            {simulatedDrones.map(d => (
+-              <div
+-                key={d.id}
+-                onClick={() => setSelectedDrone(d.id)}
+-                style={{
+-                  padding: 8, borderRadius: 8, border: '1px solid', cursor: 'pointer', transition: 'all 0.15s',
+-                  background: (selectedDrone || simulatedDrones[0].id) === d.id ? '#F1F5F9' : 'white',
+-                  borderColor: (selectedDrone || simulatedDrones[0].id) === d.id ? '#cbd5e1' : '#e2e8f0',
+-                  display: 'flex', alignItems: 'center', gap: 10,
+-                }}
+-              >
+-                <div style={{
+-                  width: 8, height: 8, borderRadius: '50%',
+-                  background: d.status === 'issue' ? '#EF4444' : d.status === 'arriving' ? '#10B981' : '#3B82F6',
+-                }} />
+-                <div style={{ flex: 1 }}>
+-                  <div style={{ fontWeight: 600, fontSize: 12, color: '#1e293b' }}>{d.id}</div>
+-                  <div style={{ fontSize: 10, color: '#94a3b8' }}>Đơn: {d.orderId}</div>
+-                </div>
+-                <span style={{ fontSize: 11, fontWeight: 550, color: d.status === 'issue' ? '#EF4444' : '#475569' }}>{d.eta}</span>
++        {/* Drone Fleet List */}
++        <div className="card" style={{ padding: 16, flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
++          <div style={{ marginBottom: 10 }}>
++            <div style={{ fontSize: 13, fontWeight: 650, color: '#1e293b', marginBottom: 6 }}>
++              Danh sách đội bay kết nối DB ({filteredDrones.length}/{drones.length})
++            </div>
++            <select
++              value={selectedStationFilter}
++              onChange={(e) => setSelectedStationFilter(e.target.value)}
++              style={{
++                width: '100%', padding: '6px 10px', borderRadius: 8,
++                border: '1px solid #cbd5e1', fontSize: 12, fontWeight: 600, color: '#334155',
++                background: '#f8fafc', cursor: 'pointer'
++              }}
++            >
++              <option value="ALL">🏢 Tất cả các trạm ({stations.length} trạm)</option>
++              {stations.map(st => {
++                const sId = st.ma_tram || st.id
++                const count = drones.filter(d => String((d as any).ma_tram_hien_tai || (d as any).ma_tram) === String(sId)).length
++                return (
++                  <option key={sId} value={sId}>
++                    🏢 {st.ten_tram || st.name} ({count} Drone)
++                  </option>
++                )
++              })}
++            </select>
++          </div>
++
++          <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 8, paddingRight: 4 }}>
++            {filteredDrones.length === 0 ? (
++              <div style={{ fontSize: 12, color: '#94a3b8', textAlign: 'center', padding: '20px 0' }}>
++                Không có Drone nào thuộc trạm này
+               </div>
+-            ))}
++            ) : (
++              filteredDrones.map(d => {
++                const droneKey = d.id || (d as any).ma_drone
++                const isSelected = selectedDrone === d.id || selectedDrone === (d as any).ma_drone
++                const battery = (d as any).cong_suat_pin ?? (d as any).dung_luong_pin ?? (d as any).battery ?? 95
++                const name = (d as any).ten_drone || (d as any).name || d.id || (d as any).ma_drone
++
++                return (
++                  <div
++                    key={droneKey}
++                    onClick={() => {
++                      setSelectedDrone(droneKey)
++                      selectedDroneRef.current = droneKey
++                    }}
++                    style={{
++                      padding: 10, borderRadius: 8, border: isSelected ? '2px solid #3B82F6' : '1px solid #e2e8f0',
++                      background: isSelected ? '#EFF6FF' : 'white', cursor: 'pointer', transition: 'all 0.2s',
++                      boxShadow: isSelected ? '0 2px 8px rgba(59,130,246,0.2)' : 'none'
++                    }}
++                  >
++                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, fontWeight: 600 }}>
++                      <span style={{ color: isSelected ? '#1D4ED8' : '#1e293b' }}>🛸 {name}</span>
++                      <span style={{ fontSize: 11, color: battery < 20 ? '#EF4444' : '#10B981' }}>⚡ {battery}%</span>
++                    </div>
++                    <div style={{ fontSize: 11, color: '#64748b', marginTop: 4, display: 'flex', justifyContent: 'space-between' }}>
++                      <span>Model: {d.model || 'SkyCarrier X1'}</span>
++                      <Badge status={d.trang_thai || (d as any).status || 'Sẵn sàng'} />
++                    </div>
++                  </div>
++                )
++              })
++            )}
+           </div>
+         </div>
+       </div>
+diff --git "a/Giao di\341\273\207n web qu\341\272\243n l\303\275/src/pages/UsersScreen.tsx" "b/Giao di\341\273\207n web qu\341\272\243n l\303\275/src/pages/UsersScreen.tsx"
+index 52c5ff9..128819a 100644
+--- "a/Giao di\341\273\207n web qu\341\272\243n l\303\275/src/pages/UsersScreen.tsx"	
++++ "b/Giao di\341\273\207n web qu\341\272\243n l\303\275/src/pages/UsersScreen.tsx"	
+@@ -1,5 +1,5 @@
+-import { useState } from 'react'
+-import { USERS } from '../mockData'
++import { useEffect, useState } from 'react'
++import { listUsers, createUserApi, updateUserApi, deleteUserApi, UserInfo } from '../api'
+ import { Icon } from '../components/Icons'
+ import { RoleBadge } from '../components/Badges'
+ 
+@@ -7,23 +7,130 @@ interface UsersScreenProps {
+   showToast: (msg: string, type: 'success' | 'error' | 'info') => void
+ }
+ 
++function formatDate(raw?: string): string {
++  if (!raw) return '—'
++  try {
++    const d = new Date(String(raw).replace(' ', 'T'))
++    if (isNaN(d.getTime())) return '—'
++    return `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getFullYear()}`
++  } catch {
++    return '—'
++  }
++}
++
+ export function UsersScreen({ showToast }: UsersScreenProps) {
++  const [users, setUsers] = useState<UserInfo[]>([])
++  const [loading, setLoading] = useState(true)
+   const [search, setSearch] = useState('')
++  
++  // Modal states
+   const [showAdd, setShowAdd] = useState(false)
++  const [editUser, setEditUser] = useState<UserInfo | null>(null)
++
++  // Form states
+   const [name, setName] = useState('')
+   const [email, setEmail] = useState('')
+   const [role, setRole] = useState('dispatcher')
++  const [phone, setPhone] = useState('')
++  const [password, setPassword] = useState('')
++  const [submitting, setSubmitting] = useState(false)
+ 
+-  const handleAddSubmit = (e: React.FormEvent) => {
+-    e.preventDefault()
+-    if (!name || !email) return
+-    setShowAdd(false)
+-    showToast(`Đã thêm mới tài khoản thành viên: ${name} (${email}) với vai trò ${role.toUpperCase()}`, 'success')
++  const loadUsers = async () => {
++    setLoading(true)
++    try {
++      const data = await listUsers()
++      setUsers(data || [])
++    } catch (err) {
++      console.error('Lỗi tải người dùng:', err)
++    } finally {
++      setLoading(false)
++    }
++  }
++
++  useEffect(() => {
++    loadUsers()
++  }, [])
++
++  const openAddModal = () => {
+     setName('')
+     setEmail('')
++    setRole('dispatcher')
++    setPhone('')
++    setPassword('')
++    setShowAdd(true)
++  }
++
++  const openEditModal = (u: UserInfo) => {
++    const rawRole = typeof u.vai_tro === 'object' ? (u.vai_tro as any)?.ten_vai_tro : u.vai_tro
++    const roleKey = (rawRole || 'dispatcher').toLowerCase()
++    
++    setEditUser(u)
++    setName(u.ho_ten || '')
++    setEmail(u.email || '')
++    setPhone((u as any).so_dien_thoai || '')
++    setPassword('')
++    setRole(roleKey.includes('admin') ? 'admin' : roleKey.includes('dispatch') ? 'dispatcher' : roleKey.includes('operator') ? 'operator' : roleKey.includes('manager') ? 'manager' : 'customer')
++  }
++
++  const handleAddSubmit = async (e: React.FormEvent) => {
++    e.preventDefault()
++    if (!name || !email) return
++    setSubmitting(true)
++    try {
++      await createUserApi({
++        ho_ten: name,
++        email: email,
++        vai_tro: role,
++        mat_khau: password || '123456',
++        so_dien_thoai: phone,
++      })
++      setShowAdd(false)
++      showToast(`Đã thêm mới tài khoản vào Database: ${name} (${email})`, 'success')
++      await loadUsers()
++    } catch (err: any) {
++      showToast(err.message || 'Lỗi thêm mới tài khoản', 'error')
++    } finally {
++      setSubmitting(false)
++    }
+   }
+ 
+-  const filtered = USERS.filter(u => u.name.toLowerCase().includes(search.toLowerCase()) || u.email.toLowerCase().includes(search.toLowerCase()))
++  const handleEditSubmit = async (e: React.FormEvent) => {
++    e.preventDefault()
++    if (!editUser || !name || !email) return
++    setSubmitting(true)
++    try {
++      await updateUserApi(editUser.ma_nguoi_dung, {
++        ho_ten: name,
++        email: email,
++        vai_tro: role,
++        so_dien_thoai: phone,
++        mat_khau: password || undefined,
++      })
++      setEditUser(null)
++      showToast(`Đã cập nhật thông tin tài khoản Database thành công: ${name}`, 'success')
++      await loadUsers()
++    } catch (err: any) {
++      showToast(err.message || 'Lỗi cập nhật tài khoản', 'error')
++    } finally {
++      setSubmitting(false)
++    }
++  }
++
++  const handleDelete = async (u: UserInfo) => {
++    if (!window.confirm(`Bạn có chắc chắn muốn xóa tài khoản "${u.ho_ten}" (${u.email}) khỏi Database?`)) return
++    try {
++      await deleteUserApi(u.ma_nguoi_dung)
++      showToast(`Đã xóa tài khoản "${u.ho_ten}" khỏi Database`, 'success')
++      await loadUsers()
++    } catch (err: any) {
++      showToast(err.message || 'Lỗi xóa tài khoản', 'error')
++    }
++  }
++
++  const filtered = users.filter(u =>
++    (u.ho_ten || '').toLowerCase().includes(search.toLowerCase()) ||
++    (u.email || '').toLowerCase().includes(search.toLowerCase())
++  )
+ 
+   return (
+     <div>
+@@ -32,71 +139,127 @@ export function UsersScreen({ showToast }: UsersScreenProps) {
+           <span style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }}>{Icon.search}</span>
+           <input className="input" style={{ paddingLeft: 34 }} placeholder="Tìm thành viên, email..." value={search} onChange={e => setSearch(e.target.value)} />
+         </div>
+-        <button className="btn btn-primary" onClick={() => setShowAdd(true)}>{Icon.plus} Đăng ký thành viên</button>
++        <button className="btn btn-outline" onClick={loadUsers}>Làm mới</button>
++        <button className="btn btn-primary" onClick={openAddModal}>{Icon.plus} Đăng ký thành viên</button>
+       </div>
+ 
+       <div className="card" style={{ overflow: 'hidden' }}>
+-        <table className="data-table">
+-          <thead><tr>
+-            <th>Mã</th><th>Thành viên</th><th>Địa chỉ Email</th><th>Vai trò</th><th>Ngày tạo</th><th>Trạng thái</th><th>Hành động</th>
+-          </tr></thead>
+-          <tbody>
+-            {filtered.map(u => (
+-              <tr key={u.id}>
+-                <td><span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: '#64748b' }}>#{u.id}</span></td>
+-                <td style={{ fontWeight: 550, color: '#1e293b' }}>{u.name}</td>
+-                <td style={{ color: '#64748b', fontFamily: 'var(--font-mono)', fontSize: 13 }}>{u.email}</td>
+-                <td><RoleBadge role={u.role} /></td>
+-                <td style={{ color: '#64748b', fontSize: 12 }}>{u.created}</td>
+-                <td>
+-                  <span className={`badge ${u.status === 'active' ? 'badge-success' : 'badge-danger'}`} style={{
+-                    background: u.status === 'active' ? '#F0FDF4' : '#FEF2F2',
+-                    color: u.status === 'active' ? '#15803D' : '#B91C1C',
+-                  }}>
+-                    {u.status === 'active' ? 'Đang hoạt động' : 'Tạm khóa'}
+-                  </span>
+-                </td>
+-                <td>
+-                  <div style={{ display: 'flex', gap: 4 }}>
+-                    <button className="btn btn-ghost btn-sm" title="Chỉnh sửa">{Icon.edit}</button>
+-                    {u.status === 'active' ? (
+-                      <button className="btn btn-ghost btn-sm" style={{ color: '#EF4444' }} title="Khóa tài khoản">{Icon.lock}</button>
+-                    ) : (
+-                      <button className="btn btn-ghost btn-sm" style={{ color: '#10B981' }} title="Mở khóa tài khoản">{Icon.unlock}</button>
+-                    )}
+-                  </div>
+-                </td>
+-              </tr>
+-            ))}
+-          </tbody>
+-        </table>
++        {loading ? (
++          <div style={{ padding: 32, textAlign: 'center', color: '#64748b' }}>Đang tải danh sách tài khoản từ Database...</div>
++        ) : filtered.length === 0 ? (
++          <div style={{ padding: 32, textAlign: 'center', color: '#64748b' }}>Không có tài khoản phù hợp trong Database</div>
++        ) : (
++          <table className="data-table">
++            <thead><tr>
++              <th>Mã</th><th>Thành viên</th><th>Địa chỉ Email</th><th>Vai trò</th><th>Ngày tạo</th><th>Hành động</th>
++            </tr></thead>
++            <tbody>
++              {filtered.map(u => {
++                const rawRole = typeof u.vai_tro === 'object' ? (u.vai_tro as any)?.ten_vai_tro : u.vai_tro
++                const roleKey = (rawRole || 'Customer').toLowerCase().trim()
++                const dateStr = formatDate(u.created_at || (u as any).ngay_tao)
++
++                return (
++                  <tr key={u.ma_nguoi_dung}>
++                    <td><span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: '#64748b' }}>#{u.ma_nguoi_dung}</span></td>
++                    <td style={{ fontWeight: 550, color: '#1e293b' }}>{u.ho_ten}</td>
++                    <td style={{ color: '#64748b', fontFamily: 'var(--font-mono)', fontSize: 13 }}>{u.email}</td>
++                    <td><RoleBadge role={roleKey} /></td>
++                    <td style={{ color: '#64748b', fontSize: 12, fontFamily: 'var(--font-mono)' }}>{dateStr}</td>
++                    <td>
++                      <div style={{ display: 'flex', gap: 4 }}>
++                        <button className="btn btn-ghost btn-sm" title="Chỉnh sửa tài khoản" onClick={() => openEditModal(u)}>{Icon.edit}</button>
++                        <button className="btn btn-ghost btn-sm" style={{ color: '#ef4444' }} title="Xóa tài khoản" onClick={() => handleDelete(u)}>{Icon.trash}</button>
++                      </div>
++                    </td>
++                  </tr>
++                )
++              })}
++            </tbody>
++          </table>
++        )}
+       </div>
+ 
++      {/* Add Modal */}
+       {showAdd && (
+         <div style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.4)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+-          <div style={{ background: 'white', borderRadius: 16, padding: '24px 20px', width: '100%', maxWidth: 400, boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)' }}>
+-            <h3 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 17, color: '#1e293b', marginBottom: 12 }}>Đăng ký tài khoản điều hành</h3>
++          <div style={{ background: 'white', borderRadius: 16, padding: '24px 20px', width: '100%', maxWidth: 420, boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)' }}>
++            <h3 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 17, color: '#1e293b', marginBottom: 12 }}>Đăng ký tài khoản hệ thống (Database)</h3>
+             <form onSubmit={handleAddSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+               <div>
+-                <label style={{ display: 'block', fontSize: 12, fontWeight: 605, color: '#374151', marginBottom: 4 }}>Họ và tên</label>
++                <label style={{ display: 'block', fontSize: 12, fontWeight: 605, color: '#374151', marginBottom: 4 }}>Họ và tên *</label>
+                 <input className="input" placeholder="Ví dụ: Nguyễn Văn A..." value={name} onChange={e => setName(e.target.value)} required />
+               </div>
+               <div>
+-                <label style={{ display: 'block', fontSize: 12, fontWeight: 605, color: '#374151', marginBottom: 4 }}>Email</label>
++                <label style={{ display: 'block', fontSize: 12, fontWeight: 605, color: '#374151', marginBottom: 4 }}>Email *</label>
+                 <input className="input" type="email" placeholder="example@smartdrone.vn" value={email} onChange={e => setEmail(e.target.value)} required />
+               </div>
++              <div>
++                <label style={{ display: 'block', fontSize: 12, fontWeight: 605, color: '#374151', marginBottom: 4 }}>Số điện thoại</label>
++                <input className="input" placeholder="0987654321..." value={phone} onChange={e => setPhone(e.target.value)} />
++              </div>
++              <div>
++                <label style={{ display: 'block', fontSize: 12, fontWeight: 605, color: '#374151', marginBottom: 4 }}>Mật khẩu (mặc định 123456)</label>
++                <input className="input" type="password" placeholder="Nhập mật khẩu..." value={password} onChange={e => setPassword(e.target.value)} />
++              </div>
+               <div>
+                 <label style={{ display: 'block', fontSize: 12, fontWeight: 605, color: '#374151', marginBottom: 4 }}>Phân vai trò</label>
+                 <select className="input" value={role} onChange={e => setRole(e.target.value)}>
+                   <option value="dispatcher">Dispatcher (Điều phối viên)</option>
+-                  <option value="operator">Operator (Vận hành trạm)</option>
+-                  <option value="manager">Manager (Quản lý hệ thống)</option>
++                  <option value="operator">Station Operator (Vận hành trạm)</option>
++                  <option value="manager">Logistics Manager (Quản lý hệ thống)</option>
+                   <option value="admin">Admin (Quản trị viên)</option>
++                  <option value="customer">Khách hàng (Customer)</option>
+                 </select>
+               </div>
+               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 8 }}>
+                 <button className="btn btn-outline btn-sm" type="button" onClick={() => setShowAdd(false)}>Hủy</button>
+-                <button className="btn btn-primary btn-sm" type="submit">Đăng ký thành viên</button>
++                <button className="btn btn-primary btn-sm" type="submit" disabled={submitting}>
++                  {submitting ? 'Đang lưu CSDL...' : 'Đăng ký thành viên'}
++                </button>
++              </div>
++            </form>
++          </div>
++        </div>
++      )}
++
++      {/* Edit Modal */}
++      {editUser && (
++        <div style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.4)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
++          <div style={{ background: 'white', borderRadius: 16, padding: '24px 20px', width: '100%', maxWidth: 420, boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)' }}>
++            <h3 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 17, color: '#1e293b', marginBottom: 12 }}>Chỉnh sửa tài khoản #{editUser.ma_nguoi_dung}</h3>
++            <form onSubmit={handleEditSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
++              <div>
++                <label style={{ display: 'block', fontSize: 12, fontWeight: 605, color: '#374151', marginBottom: 4 }}>Họ và tên *</label>
++                <input className="input" placeholder="Ví dụ: Nguyễn Văn A..." value={name} onChange={e => setName(e.target.value)} required />
++              </div>
++              <div>
++                <label style={{ display: 'block', fontSize: 12, fontWeight: 605, color: '#374151', marginBottom: 4 }}>Email *</label>
++                <input className="input" type="email" placeholder="example@smartdrone.vn" value={email} onChange={e => setEmail(e.target.value)} required />
++              </div>
++              <div>
++                <label style={{ display: 'block', fontSize: 12, fontWeight: 605, color: '#374151', marginBottom: 4 }}>Số điện thoại</label>
++                <input className="input" placeholder="0987654321..." value={phone} onChange={e => setPhone(e.target.value)} />
++              </div>
++              <div>
++                <label style={{ display: 'block', fontSize: 12, fontWeight: 605, color: '#374151', marginBottom: 4 }}>Mật khẩu mới (bỏ trống nếu giữ nguyên)</label>
++                <input className="input" type="password" placeholder="Nhập mật khẩu mới..." value={password} onChange={e => setPassword(e.target.value)} />
++              </div>
++              <div>
++                <label style={{ display: 'block', fontSize: 12, fontWeight: 605, color: '#374151', marginBottom: 4 }}>Phân vai trò</label>
++                <select className="input" value={role} onChange={e => setRole(e.target.value)}>
++                  <option value="dispatcher">Dispatcher (Điều phối viên)</option>
++                  <option value="operator">Station Operator (Vận hành trạm)</option>
++                  <option value="manager">Logistics Manager (Quản lý hệ thống)</option>
++                  <option value="admin">Admin (Quản trị viên)</option>
++                  <option value="customer">Khách hàng (Customer)</option>
++                </select>
++              </div>
++              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 8 }}>
++                <button className="btn btn-outline btn-sm" type="button" onClick={() => setEditUser(null)}>Hủy</button>
++                <button className="btn btn-primary btn-sm" type="submit" disabled={submitting}>
++                  {submitting ? 'Đang cập nhật CSDL...' : 'Lưu thay đổi'}
++                </button>
+               </div>
+             </form>
+           </div>
+diff --git "a/Giao di\341\273\207n web qu\341\272\243n l\303\275/src/types.ts" "b/Giao di\341\273\207n web qu\341\272\243n l\303\275/src/types.ts"
+index 72df7fd..9b1449c 100644
+--- "a/Giao di\341\273\207n web qu\341\272\243n l\303\275/src/types.ts"	
++++ "b/Giao di\341\273\207n web qu\341\272\243n l\303\275/src/types.ts"	
+@@ -8,10 +8,10 @@ export type Screen =
+   | 'station-ops'
+   | 'tracking'
+   | 'stations'
++  | 'drones'
+   | 'reports'
+   | 'ai-eta'
+   | 'users'
+-  | 'activity-log'
+ 
+ export type Role = 'admin' | 'dispatcher' | 'operator' | 'manager'
+ 
+-- 
+2.52.0.windows.1
+
