@@ -187,7 +187,13 @@ celerybeat-schedule
 celerybeat.pid
 
 # SageMath
-# Node / Web dependencies & builds
+*.sage.py
+
+# Node / Web UI dependencies & build artifacts
 node_modules/
+**/node_modules/
 dist/
-.output/
+**/dist/
+.vite/
+.next/
+*.log

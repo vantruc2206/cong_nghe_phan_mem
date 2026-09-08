@@ -27,10 +27,25 @@ def middleware(app):
     def after_request(response):
         return add_custom_headers(response)
 
+    @app.teardown_request
+    def teardown_request(exception=None):
+        try:
+            from infrastructure.databases.postgres import session
+            if exception:
+                session.rollback()
+            session.remove()
+        except Exception:
+            pass
+
     @app.errorhandler(Exception)
     def handle_exception(error):
+        try:
+            from infrastructure.databases.postgres import session
+            session.rollback()
+        except Exception:
+            pass
         return error_handling_middleware(error)
 
     @app.route('/options', methods=['OPTIONS'])
     def options_route():
-        return handle_options_request()
+        return handle_options_request()
