@@ -8,10 +8,10 @@ export type Screen =
   | 'station-ops'
   | 'tracking'
   | 'stations'
+  | 'drones'
   | 'reports'
   | 'ai-eta'
   | 'users'
-  | 'activity-log'
 
 export type Role = 'admin' | 'dispatcher' | 'operator' | 'manager'
 
