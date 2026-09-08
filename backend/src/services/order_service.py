@@ -62,6 +62,14 @@ class OrderService:
         self.repository.update()
         return order
 
+    def complete_order(self, ma_don_hang: str) -> Optional[DonHangModel]:
+        order = self.repository.get_order_by_id(ma_don_hang)
+        if not order:
+            return None
+        order.trang_thai_don_hang = 'Hoàn thành'
+        self.repository.update()
+        return order
+
     def get_all_packages(self) -> List[GoiHangModel]:
         return self.repository.get_all_packages()
 
@@ -146,6 +154,36 @@ class OrderService:
             return {'error': 'Chỉ có thể từ chối đơn ở trạng thái Chờ duyệt'}
             
         order.trang_thai_don_hang = 'Bị từ chối'
+        
+        try:
+            from infrastructure.databases.postgres import session
+            from infrastructure.models.app_giao_hang_model import GiaoHangModel
+            from infrastructure.models.app_su_co_giao_hang_model import SuCoGiaoHangModel
+
+            gh_rec = session.query(GiaoHangModel).filter_by(ma_don_hang=order.ma_don_hang).first()
+            if not gh_rec:
+                gh_rec = GiaoHangModel(
+                    ma_don_hang=order.ma_don_hang,
+                    trang_thai_giao_hang='Thất bại'
+                )
+                session.add(gh_rec)
+                session.commit()
+                session.refresh(gh_rec)
+            else:
+                gh_rec.trang_thai_giao_hang = 'Thất bại'
+                session.commit()
+
+            incident = SuCoGiaoHangModel(
+                ma_giao_hang=gh_rec.ma_giao_hang,
+                mo_ta_su_co=reason,
+                muc_do_nghiem_trong='Cao'
+            )
+            session.add(incident)
+            session.commit()
+        except Exception as e:
+            session.rollback()
+            print("Error creating incident for order rejection:", e)
+
         self.repository.update()
         return {'order': order, 'reason': reason}
 
@@ -153,8 +191,8 @@ class OrderService:
         order = self.repository.get_order_by_id(ma_don_hang)
         if not order:
             return {'error': 'Order not found'}
-        if order.trang_thai_don_hang not in ['Đã duyệt', 'Chờ duyệt']:
-            return {'error': 'Chỉ có thể lập lịch cho đơn đã duyệt hoặc chờ duyệt'}
+        if order.trang_thai_don_hang != 'Đã duyệt':
+            return {'error': 'Đơn hàng chưa được duyệt! Chỉ có thể lập lịch giao hàng cho đơn hàng ĐÃ DUYỆT.'}
             
         ma_drone = data.get('ma_drone')
         ma_nguoi_phu_trach = data.get('ma_nguoi_phu_trach')
@@ -173,6 +211,19 @@ class OrderService:
                 
         order.trang_thai_don_hang = 'Đã lên lịch'
         
+        # Assign landing station (ma_tram) to packages upon scheduling
+        ma_tram = data.get('ma_tram')
+        if not ma_tram and ma_drone:
+            drone_obj = self.repository.check_drone_exists(ma_drone)
+            if drone_obj and hasattr(drone_obj, 'ma_tram_hien_tai'):
+                ma_tram = drone_obj.ma_tram_hien_tai
+        
+        if ma_tram:
+            packages = self.repository.get_packages_by_order_id(ma_don_hang)
+            for pkg in packages:
+                pkg.ma_tram = ma_tram
+            self.repository.update()
+        
         delivery = GiaoHangModel(
             ma_don_hang=order.ma_don_hang,
             ma_drone=ma_drone,
@@ -182,6 +233,43 @@ class OrderService:
         )
         self.repository.create_delivery(delivery)
         return {'order': order, 'delivery': delivery}
+
+    def start_delivery(self, ma_don_hang: str) -> Optional[dict]:
+        order = self.repository.get_order_by_id(ma_don_hang)
+        if not order:
+            return {'error': 'Order not found'}
+        
+        order.trang_thai_don_hang = 'Đang giao'
+        deliv_obj = None
+        if hasattr(self.repository, 'session') and self.repository.session:
+            import uuid
+            try:
+                u_id = uuid.UUID(str(ma_don_hang))
+                deliv_obj = self.repository.session.query(GiaoHangModel).filter(GiaoHangModel.ma_don_hang == u_id).first()
+            except Exception:
+                deliv_obj = self.repository.session.query(GiaoHangModel).filter_by(ma_don_hang=ma_don_hang).first()
+
+        if not deliv_obj and hasattr(self.repository, 'session') and self.repository.session:
+            try:
+                deliv_obj = GiaoHangModel(
+                    ma_don_hang=order.ma_don_hang,
+                    trang_thai_giao_hang='Đang giao'
+                )
+                self.repository.session.add(deliv_obj)
+                self.repository.session.flush()
+            except Exception as e:
+                print("[start_delivery] Warning auto-creating GiaoHangModel:", e)
+
+        if deliv_obj:
+            deliv_obj.trang_thai_giao_hang = 'Đang giao'
+            if deliv_obj.ma_drone:
+                drone = self.repository.check_drone_exists(str(deliv_obj.ma_drone))
+                if drone:
+                    drone.trang_thai_drone = 'Đang giao'
+
+        self.repository.update()
+        return {'order': order, 'delivery': deliv_obj}
+
 
     def get_order_eta(self, ma_don_hang: str) -> Optional[dict]:
         order = self.repository.get_order_by_id(ma_don_hang)
