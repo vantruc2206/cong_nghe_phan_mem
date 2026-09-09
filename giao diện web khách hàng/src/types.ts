@@ -3,6 +3,7 @@ export type OrderStatus =
   | 'APPROVED' 
   | 'ASSIGNED' 
   | 'IN_TRANSIT' 
+  | 'ARRIVED'
   | 'DELIVERED' 
   | 'CANCELLED' 
   | 'FAILED'
