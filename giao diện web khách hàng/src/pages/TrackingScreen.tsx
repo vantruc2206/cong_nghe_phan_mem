@@ -261,7 +261,6 @@ export const TrackingScreen: React.FC<TrackingScreenProps> = ({ user, selectedOr
             <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2 text-xs">
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
                 <span className="text-slate-500">📍 Điểm giao hàng: <strong className="text-slate-900">{selectedOrder?.dia_chi_giao}</strong></span>
-                <span className="text-slate-500">📞 SĐT: <strong className="text-slate-800">{selectedOrder?.so_dien_thoai_nhan}</strong></span>
               </div>
               <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] text-slate-500 pt-2 border-t border-slate-200/60">
                 <span>Trọng lượng hàng: <strong className="text-slate-700">{selectedOrder?.trong_luong || 1.5} kg</strong></span>
