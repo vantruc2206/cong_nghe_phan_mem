@@ -4,6 +4,9 @@ from typing import List, Optional
 import os
 import json
 import http.client
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class ChatbotService:
@@ -225,9 +228,9 @@ DỮ LIỆU THỰC TẾ TỪ DATABASE (cập nhật real-time):
 
             # --- Gọi Groq API ---
             models_to_try = [
-                "llama-3.3-70b-versatile",
                 "llama-3.1-8b-instant",
-                "mixtral-8x7b-32768",
+                "llama-3.3-70b-versatile",
+                "gemma2-9b-it",
             ]
             for model_name in models_to_try:
                 try:
@@ -249,13 +252,21 @@ DỮ LIỆU THỰC TẾ TỪ DATABASE (cập nhật real-time):
                         headers,
                     )
                     res = conn.getresponse()
+                    body = res.read().decode("utf-8")
                     if res.status == 200:
-                        resp_json = json.loads(res.read().decode("utf-8"))
+                        resp_json = json.loads(body)
                         ai_response = resp_json["choices"][0]["message"]["content"]
                         break
+                    else:
+                        logger.warning(
+                            "[chatbot] Groq model=%s status=%d body=%s",
+                            model_name, res.status, body[:300]
+                        )
                     conn.close()
-                except Exception:
+                except Exception as groq_err:
+                    logger.warning("[chatbot] Groq model=%s exception: %s", model_name, groq_err)
                     continue
+
 
             # --- Fallback khi Groq không khả dụng ---
             if not ai_response:
