@@ -1,6 +1,7 @@
 import { OrderItem, OrderStatus, UserProfile, StationItem, DroneItem } from './types';
 
-const API_BASE_URL = (import.meta as any).env?.VITE_API_URL || 'http://localhost:9999';
+const RENDER_URL = 'https://smartdronedelivery-api.onrender.com';
+const API_BASE_URL = (import.meta as any).env?.VITE_API_URL || RENDER_URL;
 
 async function handleResponse<T>(response: Response): Promise<T> {
   if (!response.ok) {
