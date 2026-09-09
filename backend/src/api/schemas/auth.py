@@ -27,7 +27,8 @@ class NguoiDungResponseSchema(Schema):
 
 class LoginUserRequestSchema(Schema):
     email = fields.Email(required=True)
-    password = fields.Str(required=True)
+    password = fields.Str(required=False, allow_none=True)
+    mat_khau = fields.Str(required=False, allow_none=True)
 
 class LoginUserResponseSchema(Schema):
     user = fields.Nested(NguoiDungResponseSchema, required=True)

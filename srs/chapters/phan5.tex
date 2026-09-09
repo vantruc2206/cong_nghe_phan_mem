@@ -1,0 +1,70 @@
+\chapter{Tài Liệu Kiểm Thử Phần Mềm}
+
+\section{Phạm Vi Kiểm Thử}
+
+\subsection{Phạm Vi Kiểm Thử}
+\subsection{Ngoài Phạm Vi Kiểm Thử}
+\subsection{Ràng Buộc và Giả Định}
+
+\section{Chiến Lược Kiểm Thử}
+
+\subsection{Các Loại Kiểm Thử}
+
+\begin{table}[H]
+  \centering
+  \begin{tabularx}{\textwidth}{|l|X|l|}
+    \hline
+    \textbf{Loại kiểm thử} & \textbf{Mô tả} & \textbf{Công cụ} \\
+    \hline
+    Unit Test         & Kiểm thử từng hàm/module độc lập   & Jest / JUnit \\ \hline
+    Integration Test  & Kiểm thử tích hợp giữa các module  & Postman \\ \hline
+    System Test       & Kiểm thử end-to-end toàn hệ thống  & Cypress \\ \hline
+    UAT               & Kiểm thử chấp nhận người dùng      & Manual \\
+    \hline
+  \end{tabularx}
+  \caption{Các loại kiểm thử áp dụng}
+  \label{tab:test-types}
+\end{table}
+
+\subsection{Cấp Độ Kiểm Thử}
+\subsection{Công Cụ Hỗ Trợ}
+
+\section{Kế Hoạch Kiểm Thử}
+
+\subsection{Nhân Lực}
+\subsection{Môi Trường Kiểm Thử}
+\subsection{Mốc Kiểm Thử}
+
+\section{Trường Hợp Kiểm Thử}
+
+\begin{longtable}{|l|l|>{\raggedright\arraybackslash}p{3.5cm}|>{\raggedright\arraybackslash}p{3.5cm}|c|}
+  \hline
+  \textbf{TC ID} & \textbf{Module} & \textbf{Mô tả} & \textbf{Kết quả mong đợi} & \textbf{Kết quả} \\
+  \hline
+  \endhead
+  \hline
+  \endfoot
+  TC-001 & Đăng nhập  & Đăng nhập đúng thông tin         & Vào trang chủ thành công    & Pass \\ \hline
+  TC-002 & Đăng nhập  & Đăng nhập sai mật khẩu           & Hiển thị lỗi xác thực      & Pass \\ \hline
+  TC-003 & Đăng nhập  & Tài khoản bị khoá                & Hiển thị thông báo khoá    & Pass \\ \hline
+  TC-004 & Quản lý đơn hàng & Tạo mới bản ghi hợp lệ           & Lưu thành công             & Pass \\ \hline
+  TC-005 & Quản lý đơn hàng & Tạo mới thiếu trường bắt buộc    & Hiện lỗi validation        & Pass \\ \hline
+\end{longtable}
+
+\section{Báo Cáo Kiểm Thử}
+
+\begin{table}[H]
+  \centering
+  \begin{tabularx}{\textwidth}{|>{\raggedright\arraybackslash}X|c|c|c|c|}
+    \hline
+    \textbf{Module} & \textbf{Tổng TC} & \textbf{Pass} & \textbf{Fail} & \textbf{Tỷ lệ Pass} \\
+    \hline
+    Đăng nhập       & 10 & 10 & 0 & 100\% \\ \hline
+    Quản lý đơn hàng & 20 & 18 & 2 & 90\%  \\ \hline
+    Quản lý trạm hạ cánh & 15 & 15 & 0 & 100\% \\ \hline
+    \textbf{Tổng}   & \textbf{45} & \textbf{43} & \textbf{2} & \textbf{95.6\%} \\
+    \hline
+  \end{tabularx}
+  \caption{Báo cáo tổng hợp kết quả kiểm thử}
+  \label{tab:test-report}
+\end{table}

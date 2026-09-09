@@ -11,6 +11,9 @@ from flask_swagger_ui import get_swaggerui_blueprint
 from cors import init_cors
 
 
+from services.drone_simulator_service import start_drone_simulator_thread
+
+
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
@@ -35,6 +38,12 @@ def create_app():
     except Exception as e:
         print(f"Error initializing database: {e}")
 
+    # Start Backend Drone Telemetry Simulator background thread
+    try:
+        start_drone_simulator_thread()
+    except Exception as simulator_err:
+        print(f"Warning: Could not start drone simulator thread: {simulator_err}")
+
     # Register middleware
     middleware(app)
 
@@ -43,9 +52,19 @@ def create_app():
         for rule in app.url_map.iter_rules():
             if rule.endpoint.startswith(('auth.', 'customer.', 'chatbot.', 'order.', 'drone.', 'station.', 'delivery.', 'notification.')):
                 view_func = app.view_functions[rule.endpoint]
-                print(f"Adding path: {rule.rule} -> {view_func}")
-                spec.path(view=view_func)
+                try:
+                    spec.path(view=view_func)
+                except Exception:
+                    pass
             
+    @app.route("/")
+    def index():
+        return jsonify({
+            "message": "Smart Drone Delivery Backend API is running",
+            "documentation": "/docs",
+            "swagger_json": "/swagger.json"
+        })
+
     @app.route("/swagger.json")
     def swagger_json():
         return jsonify(spec.to_dict())
@@ -55,4 +74,5 @@ def create_app():
 
 if __name__ == '__main__':
     app = create_app()
-    app.run(host='0.0.0.0', port=9999, debug=True)
+    app.run(host='0.0.0.0', port=9999, debug=False, threaded=True)
+

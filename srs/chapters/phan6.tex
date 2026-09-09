@@ -1,0 +1,73 @@
+\chapter{Gói Phát Hành và Hướng Dẫn Sử Dụng}
+
+\section{Gói Bàn Giao}
+
+\begin{table}[H]
+  \centering
+  \begin{tabularx}{\textwidth}{|l|X|l|}
+    \hline
+    \textbf{Tên tệp / Thư mục} & \textbf{Mô tả} & \textbf{Phiên bản} \\
+    \hline
+    \texttt{source-code.zip}      & Mã nguồn toàn bộ hệ thống       & v1.0 \\ \hline
+    \texttt{database-script.sql}  & Script khởi tạo cơ sở dữ liệu   & v1.0 \\ \hline
+    \texttt{SRS\_v1.0.pdf}        & Tài liệu đặc tả yêu cầu         & v1.0 \\ \hline
+    \texttt{SDD\_v1.0.pdf}        & Tài liệu thiết kế                & v1.0 \\ \hline
+    \texttt{TestReport\_v1.0.pdf} & Báo cáo kiểm thử                 & v1.0 \\ \hline
+    \texttt{UserManual\_v1.0.pdf} & Hướng dẫn người dùng            & v1.0 \\
+    \hline
+  \end{tabularx}
+  \caption{Bảng gói bàn giao}
+  \label{tab:package}
+\end{table}
+
+\section{Hướng Dẫn Cài Đặt}
+
+\subsection{Yêu Cầu Hệ Thống}
+
+\begin{table}[H]
+  \centering
+  \begin{tabularx}{\textwidth}{|l|X|}
+    \hline
+    \textbf{Thành phần} & \textbf{Yêu cầu tối thiểu} \\
+    \hline
+    Hệ điều hành  & Windows 10 / Ubuntu 20.04 / macOS 12+ \\ \hline
+    RAM           & 8 GB trở lên \\ \hline
+    Ổ cứng        & 20 GB trống \\ \hline
+    Node.js       & v18.x trở lên cho Frontend \\ \hline
+    Python        & v3.10 trở lên cho Backend \\ \hline
+    Database      & Supabase Cloud Service \\
+    \hline
+  \end{tabularx}
+  \caption{Yêu cầu hệ thống tối thiểu}
+  \label{tab:system-req}
+\end{table}
+
+\subsection{Hướng Dẫn Cài Đặt}
+
+\begin{enumerate}
+  \item \textbf{Clone repository:}
+\begin{verbatim}
+git clone https://github.com/[username]/[repository].git
+cd [repository]
+\end{verbatim}
+  \item \textbf{Cài đặt phụ thuộc:}
+  \begin{itemize}
+    \item Frontend:
+\begin{verbatim}
+cd frontend
+npm install
+\end{verbatim}
+    \item Backend:
+\begin{verbatim}
+cd backend
+pip install -r requirements.txt
+\end{verbatim}
+  \end{itemize}
+\end{enumerate}
+
+\section{Hướng Dẫn Sử Dụng}
+
+\subsection{Tổng Quan}
+\subsection{Quy Trình Admin / Quản Lý}
+\subsection{Quy Trình Nhân Viên}
+\subsection{Quy Trình Khách Hàng / Người Dùng Cuối}

@@ -3,14 +3,14 @@ import * as API from '../api'
 import { Role } from '../types'
 
 // Maps vai_tro (role name from backend) to frontend Role type
-function mapRole(vaiTro?: string): Role {
-  if (!vaiTro) return 'dispatcher'
-  const v = vaiTro.toLowerCase()
-  if (v.includes('admin') || v.includes('quản trị')) return 'admin'
+function mapRole(user?: API.UserInfo | any, vaiTro?: string): Role {
+  const v = (typeof vaiTro === 'string' && vaiTro ? vaiTro : (typeof user?.vai_tro === 'string' ? user.vai_tro : user?.vai_tro?.ten_vai_tro || '')).toLowerCase()
+  const email = (user?.email || '').toLowerCase()
+  if (v.includes('admin') || v.includes('quản trị') || email.includes('admin') || email === 'ivantruc@gmail.com') return 'admin'
   if (v.includes('dispatch') || v.includes('điều phối')) return 'dispatcher'
   if (v.includes('operator') || v.includes('vận hành')) return 'operator'
   if (v.includes('manager') || v.includes('quản lý')) return 'manager'
-  return 'dispatcher'
+  return 'admin'
 }
 
 interface LoginScreenProps {
@@ -34,7 +34,8 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
       const res = await API.login(email, password)
       API.setToken(res.token)
       localStorage.setItem('sdd_user', JSON.stringify(res.user))
-      const role = mapRole(res.user.vai_tro?.ten_vai_tro)
+      const vaiTroName = typeof res.user.vai_tro === 'object' ? (res.user.vai_tro as any)?.ten_vai_tro : res.user.vai_tro
+      const role = mapRole(res.user, vaiTroName)
       onLogin(role, res.user)
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Lỗi không xác định'

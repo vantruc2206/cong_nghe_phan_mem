@@ -39,6 +39,16 @@ class CustomerService:
         customer.email = data.get('email')
         customer.ngay_sinh = data.get('ngay_sinh')
         
+        # Synchronize with auth_app.nguoi_dung table if matching user exists
+        if customer.email:
+            from infrastructure.databases.postgres import session
+            from infrastructure.models.app_nguoi_dung_model import NguoiDungModel
+            user = session.query(NguoiDungModel).filter_by(email=customer.email).first()
+            if user:
+                parts = [customer.ho, customer.ten_dem, customer.ten]
+                user.ho_ten = " ".join([p for p in parts if p]).strip()
+                user.so_dien_thoai = customer.so_dien_thoai
+        
         self.repository.update()
         return customer
 

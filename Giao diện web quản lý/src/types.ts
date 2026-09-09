@@ -7,11 +7,12 @@ export type Screen =
   | 'failed'
   | 'station-ops'
   | 'tracking'
+  | 'drones'
   | 'stations'
+  | 'drones'
   | 'reports'
   | 'ai-eta'
   | 'users'
-  | 'activity-log'
 
 export type Role = 'admin' | 'dispatcher' | 'operator' | 'manager'
 

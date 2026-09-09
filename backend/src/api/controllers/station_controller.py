@@ -12,20 +12,42 @@ req_schema = TramHaCanhRequestSchema()
 res_schema = TramHaCanhResponseSchema()
 
 @station_bp.route('/', methods=['GET'])
+@station_bp.route('', methods=['GET'])
 def list_stations():
     """
-    Get all landing stations
-    ---
-    get:
-      summary: List all stations
-      tags:
-        - Landing Stations
-      responses:
-        200:
-          description: List of stations
+    Get all landing stations with real available drone count
     """
-    stations = station_service.get_all()
-    return jsonify(res_schema.dump(stations, many=True)), 200
+    try:
+        stations = station_service.get_all()
+    except Exception as err:
+        print(f"[station_controller] Error fetching stations: {err}")
+        return jsonify([]), 200
+
+    try:
+        from infrastructure.databases.postgres import SessionLocal
+        from infrastructure.models.app_drone_model import DroneModel
+        from sqlalchemy import func, String
+        db = SessionLocal()
+
+        # Query active drones grouped by station ID (cast to String for exact dictionary matching)
+        drone_counts = dict(
+            db.query(func.cast(DroneModel.ma_tram_hien_tai, String), func.count(DroneModel.ma_drone))
+            .filter(DroneModel.trang_thai_drone != 'Đang sửa chữa')
+            .group_by(DroneModel.ma_tram_hien_tai)
+            .all()
+        )
+        db.close()
+
+        for st in stations:
+            st_id_str = str(st.ma_tram)
+            st.so_drone_hien_tai = drone_counts.get(st_id_str, 0)
+    except Exception as e:
+        print(f"[station_controller] Error counting drones: {e}")
+        for st in stations:
+            st.so_drone_hien_tai = 0
+
+    result = res_schema.dump(stations, many=True)
+    return jsonify(result), 200
 
 @station_bp.route('/<uuid:ma_tram>', methods=['GET'])
 def get_station(ma_tram):

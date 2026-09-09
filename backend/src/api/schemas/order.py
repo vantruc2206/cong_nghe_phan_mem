@@ -1,8 +1,11 @@
-from marshmallow import Schema, fields, validate
+from marshmallow import Schema, fields, validate, EXCLUDE
 
 class DonHangRequestSchema(Schema):
-    ma_kh = fields.UUID(required=True)
-    ma_dia_chi = fields.UUID(required=True)
+    class Meta:
+        unknown = EXCLUDE
+
+    ma_kh = fields.UUID(required=False, allow_none=True)
+    ma_dia_chi = fields.UUID(required=False, allow_none=True)
     trang_thai_don_hang = fields.Str(required=False, load_default='Chờ duyệt')
     cach_thuc_thanh_toan = fields.Str(required=False, allow_none=True)
     tong_tien = fields.Float(required=False)

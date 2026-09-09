@@ -14,5 +14,3 @@ class TramHaCanhModel(Base):
     lng = Column(Float, nullable=False)
     cong_suat_toi_da = Column(Integer, nullable=False, server_default='10')
     trang_thai_hoat_dong = Column(String(20), nullable=False, server_default='Đang hoạt động')
-    created_at = Column(DateTime(timezone=True), nullable=False, server_default=func.now())
-    updated_at = Column(DateTime(timezone=True), nullable=False, server_default=func.now(), onupdate=func.now())

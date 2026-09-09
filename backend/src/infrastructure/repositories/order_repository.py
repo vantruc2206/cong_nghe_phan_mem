@@ -16,10 +16,15 @@ class OrderRepository(IOrderRepository):
         self.session = session
 
     def get_all_orders(self) -> List[DonHangModel]:
-        return self.session.query(DonHangModel).all()
+        return self.session.query(DonHangModel).order_by(DonHangModel.ngay_dat_hang.desc().nullslast()).all()
 
     def get_order_by_id(self, ma_don_hang: str) -> Optional[DonHangModel]:
-        return self.session.query(DonHangModel).filter_by(ma_don_hang=ma_don_hang).first()
+        import uuid
+        try:
+            u_id = uuid.UUID(str(ma_don_hang))
+            return self.session.query(DonHangModel).filter(DonHangModel.ma_don_hang == u_id).first()
+        except Exception:
+            return self.session.query(DonHangModel).filter_by(ma_don_hang=ma_don_hang).first()
 
     def create_order(self, order: DonHangModel) -> DonHangModel:
         self.session.add(order)
