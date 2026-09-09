@@ -136,6 +136,7 @@ export interface Order {
   vi_do?: number | string
   kinh_do?: number | string
   trang_thai?: string
+  trang_thai_don_hang?: string
   created_at?: string
   thoi_gian_tao?: string
   trong_luong?: number

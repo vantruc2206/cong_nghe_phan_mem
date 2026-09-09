@@ -84,7 +84,7 @@ export function SchedulingScreen({ showToast }: SchedulingScreenProps) {
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 360px', gap: 16 }}>
         {/* Available Approved Orders */}
         <div className="card" style={{ padding: 20 }}>
-          <div style={{ display: 'flex', justify: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
             <h3 style={{ fontFamily: 'var(--font-display)', fontWeight: 650, fontSize: 16, color: '#1e293b' }}>
               Đơn hàng chờ xếp lịch giao (Database Real)
             </h3>
