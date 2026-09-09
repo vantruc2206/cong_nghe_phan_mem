@@ -12,9 +12,7 @@ const NAV_ITEMS: { screen: Screen; label: string; icon: React.ReactNode; roles: 
   { screen: 'tracking',    label: 'Theo dõi giao hàng',   icon: Icon.map,      roles: ['admin','dispatcher','operator'] },
   { screen: 'drones',      label: 'Quản lý Drone',        icon: Icon.drone,    roles: ['admin','dispatcher','operator'], section: 'QUẢN TRỊ' },
   { screen: 'stations',    label: 'Quản lý trạm',         icon: Icon.station,  roles: ['admin','dispatcher'], section: 'QUẢN TRỊ' },
-  { screen: 'drones',      label: 'Quản lý Drone',        icon: Icon.drone,    roles: ['admin','dispatcher'] },
   { screen: 'reports',     label: 'Báo cáo & Thống kê',   icon: Icon.chart,    roles: ['admin','manager'] },
-  { screen: 'ai-eta',      label: 'AI & Phân tích ETA',   icon: Icon.brain,    roles: ['admin','dispatcher','manager'] },
   { screen: 'users',       label: 'Quản lý người dùng',   icon: Icon.users,    roles: ['admin'] },
 ]
 

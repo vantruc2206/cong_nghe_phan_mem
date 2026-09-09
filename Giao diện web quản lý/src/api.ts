@@ -143,6 +143,7 @@ export interface Order {
   phi_giao_hang?: number
   phuong_thuc_thanh_toan?: string
   ghi_chu?: string
+  ma_tram?: string
   ma_tram_ha_canh?: string
   ten_tram?: string
 }
@@ -164,6 +165,8 @@ export async function listOrders(): Promise<Order[]> {
     trong_luong: item.trong_luong || 1.5,
     phi_giao_hang: item.tong_tien || item.phi_giao_hang || 35000,
     phuong_thuc_thanh_toan: item.cach_thuc_thanh_toan || item.phuong_thuc_thanh_toan || 'COD',
+    ma_tram: item.ma_tram || item.ma_tram_ha_canh || item.ma_tram_gui || undefined,
+    ma_tram_ha_canh: item.ma_tram_ha_canh || item.ma_tram || undefined,
     ten_tram: item.ten_tram || 'Trạm Trung Tâm',
   })).sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime())
 }
@@ -298,12 +301,16 @@ export interface Drone {
   ten_drone?: string
   model?: string
   dung_luong_pin?: number
+  cong_suat_pin?: number
   tai_trong_toi_da?: number
   trang_thai?: string
+  trang_thai_drone?: string
   status?: string
   vi_do_hien_tai?: string
   kinh_do_hien_tai?: string
   ma_tram_hien_tai?: string
+  ma_tram?: string
+  ngay_bao_tri_gan_nhat?: string
   x?: number
   y?: number
   eta?: string
@@ -313,19 +320,47 @@ export interface Drone {
 
 export async function listDrones(): Promise<Drone[]> {
   const data = await apiFetch<any[]>('/drones/')
-  return (data || []).map((d, index) => ({
-    id: d.ma_drone || d.id || `DRN-0${index + 1}`,
-    ma_drone: d.ma_drone || d.id || `DRN-0${index + 1}`,
-    ten_drone: d.ten_drone || d.name || `Drone ${index + 1}`,
-    model: d.model || 'SkyCarrier X1',
-    dung_luong_pin: d.dung_luong_pin ?? d.cong_suat_pin ?? 100,
-    tai_trong_toi_da: Number(d.tai_trong_toi_da ?? 5.0),
-    status: (d.trang_thai || d.trang_thai_drone || 'Sẵn sàng'),
-    trang_thai: (d.trang_thai || d.trang_thai_drone || 'Sẵn sàng'),
-    vi_do_hien_tai: d.vi_do_hien_tai ?? d.vi_do ?? null,
-    kinh_do_hien_tai: d.kinh_do_hien_tai ?? d.kinh_do ?? null,
-    ma_tram_hien_tai: d.ma_tram_hien_tai ?? d.ma_tram ?? null,
-  }))
+  return (data || []).map((d, index) => {
+    const pin = d.dung_luong_pin ?? d.cong_suat_pin ?? 100
+    const st = d.trang_thai || d.trang_thai_drone || 'Sẵn sàng'
+    return {
+      id: d.ma_drone || d.id || `DRN-0${index + 1}`,
+      ma_drone: d.ma_drone || d.id || `DRN-0${index + 1}`,
+      ten_drone: d.ten_drone || d.name || `Drone ${index + 1}`,
+      model: d.model || 'SkyCarrier X1',
+      dung_luong_pin: pin,
+      cong_suat_pin: pin,
+      tai_trong_toi_da: Number(d.tai_trong_toi_da ?? 5.0),
+      status: st,
+      trang_thai: st,
+      trang_thai_drone: st,
+      vi_do_hien_tai: d.vi_do_hien_tai ?? d.vi_do ?? null,
+      kinh_do_hien_tai: d.kinh_do_hien_tai ?? d.kinh_do ?? null,
+      ma_tram_hien_tai: d.ma_tram_hien_tai ?? d.ma_tram ?? null,
+      ma_tram: d.ma_tram_hien_tai ?? d.ma_tram ?? null,
+      ngay_bao_tri_gan_nhat: d.ngay_bao_tri_gan_nhat ?? d.updated_at ?? d.created_at ?? null,
+    }
+  })
+}
+
+export async function createDrone(data: Partial<Drone>): Promise<any> {
+  return apiFetch<any>('/drones/', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  })
+}
+
+export async function updateDrone(id: string, data: Partial<Drone>): Promise<any> {
+  return apiFetch<any>(`/drones/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(data),
+  })
+}
+
+export async function deleteDrone(id: string): Promise<any> {
+  return apiFetch<any>(`/drones/${id}`, {
+    method: 'DELETE',
+  })
 }
 
 

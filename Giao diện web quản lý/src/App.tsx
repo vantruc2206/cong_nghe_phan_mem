@@ -19,7 +19,6 @@ import TrackingScreen from './pages/TrackingScreen'
 import DronesScreen from './pages/DronesScreen'
 import StationsScreen from './pages/StationsScreen'
 import ReportsScreen from './pages/ReportsScreen'
-import AIEtaScreen from './pages/AIEtaScreen'
 import UsersScreen from './pages/UsersScreen'
 
 
@@ -111,7 +110,6 @@ export function App() {
           {screen === 'drones'       && <DronesScreen showToast={showToast} />}
           {screen === 'stations'     && <StationsScreen showToast={showToast} />}
           {screen === 'reports'      && <ReportsScreen />}
-          {screen === 'ai-eta'       && <AIEtaScreen />}
           {screen === 'users'        && <UsersScreen showToast={showToast} />}
         </main>
       </div>

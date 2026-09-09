@@ -27,20 +27,6 @@ export function OrdersScreen({ onDetail }: OrdersScreenProps) {
     setTimeout(() => setToastMessage(null), 4000)
   }
 
-  const handleStartDelivery = async (order: Order) => {
-    const id = order.ma_don_hang
-    setActionLoading(id)
-    try {
-      await startDelivery(id)
-      showToast(`🚀 Đã kích hoạt bay cho đơn hàng #${order.ma_van_don || id.substring(0, 8)}`, 'success')
-      await loadOrders()
-    } catch (err: any) {
-      showToast(err.message || 'Lỗi kích hoạt giao hàng', 'error')
-    } finally {
-      setActionLoading(null)
-    }
-  }
-
   const loadOrders = async () => {
     setLoading(true)
     try {
@@ -229,17 +215,6 @@ export function OrdersScreen({ onDetail }: OrdersScreenProps) {
                               {Icon.x} Từ chối
                             </button>
                           </>
-                        )}
-                        {['đã lên lịch', 'da_len_lich', 'scheduled', 'chờ giao'].some(st => (o.trang_thai || '').toLowerCase().includes(st)) && (
-                          <button
-                            className="btn btn-primary btn-sm"
-                            disabled={actionLoading === o.ma_don_hang}
-                            onClick={() => handleStartDelivery(o)}
-                            title="Kích hoạt Drone cất cánh giao hàng"
-                            style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '4px 10px', fontSize: 12, background: '#2563EB', color: 'white' }}
-                          >
-                            🚀 Kích hoạt bay
-                          </button>
                         )}
                       </div>
                     </td>
