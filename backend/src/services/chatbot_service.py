@@ -5,6 +5,13 @@ import os
 import json
 import http.client
 import logging
+from dotenv import load_dotenv, find_dotenv
+
+# Load .env file automatically
+load_dotenv(find_dotenv(usecwd=True))
+_env_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', '.env')
+if os.path.exists(_env_path):
+    load_dotenv(_env_path)
 
 logger = logging.getLogger(__name__)
 
@@ -228,11 +235,13 @@ DỮ LIỆU THỰC TẾ TỪ DATABASE (cập nhật real-time):
 
             # --- Gọi Groq API ---
             models_to_try = [
-                "llama-3.1-8b-instant",
-                "llama-3.3-70b-versatile",
-                "gemma2-9b-it",
+                "groq/compound-mini",
+                "groq/compound",
+                "qwen/qwen3.8-27b",
+                "openai/gpt-oss-120b",
             ]
             for model_name in models_to_try:
+                conn = None
                 try:
                     conn = http.client.HTTPSConnection("api.groq.com", timeout=15)
                     headers = {
@@ -262,10 +271,14 @@ DỮ LIỆU THỰC TẾ TỪ DATABASE (cập nhật real-time):
                             "[chatbot] Groq model=%s status=%d body=%s",
                             model_name, res.status, body[:300]
                         )
-                    conn.close()
                 except Exception as groq_err:
                     logger.warning("[chatbot] Groq model=%s exception: %s", model_name, groq_err)
-                    continue
+                finally:
+                    if conn:
+                        try:
+                            conn.close()
+                        except Exception:
+                            pass
 
 
             # --- Fallback khi Groq không khả dụng ---
