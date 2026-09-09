@@ -1,73 +1,48 @@
-\chapter{Gói Phát Hành và Hướng Dẫn Sử Dụng}
+\chapter{Kết Luận và Hướng Phát Triển}
 
-\section{Gói Bàn Giao}
+\section{Tổng Kết Kết Quả Đạt Được}
 
-\begin{table}[H]
-  \centering
-  \begin{tabularx}{\textwidth}{|l|X|l|}
-    \hline
-    \textbf{Tên tệp / Thư mục} & \textbf{Mô tả} & \textbf{Phiên bản} \\
-    \hline
-    \texttt{source-code.zip}      & Mã nguồn toàn bộ hệ thống       & v1.0 \\ \hline
-    \texttt{database-script.sql}  & Script khởi tạo cơ sở dữ liệu   & v1.0 \\ \hline
-    \texttt{SRS\_v1.0.pdf}        & Tài liệu đặc tả yêu cầu         & v1.0 \\ \hline
-    \texttt{SDD\_v1.0.pdf}        & Tài liệu thiết kế                & v1.0 \\ \hline
-    \texttt{TestReport\_v1.0.pdf} & Báo cáo kiểm thử                 & v1.0 \\ \hline
-    \texttt{UserManual\_v1.0.pdf} & Hướng dẫn người dùng            & v1.0 \\
-    \hline
-  \end{tabularx}
-  \caption{Bảng gói bàn giao}
-  \label{tab:package}
-\end{table}
+Sau 8 tuần nghiên cứu và thực hiện đồ án môn học Công Nghệ Phần Mềm theo quy trình vận hành Scrum, nhóm phát triển đã hoàn thành xây dựng nền tảng \textit{SmartDroneDelivery} - Nền tảng quản lý giao hàng bằng drone tích hợp trí tuệ nhân tạo (AI). Dự án đã đạt được các kết quả cụ thể như sau:
 
-\section{Hướng Dẫn Cài Đặt}
-
-\subsection{Yêu Cầu Hệ Thống}
-
-\begin{table}[H]
-  \centering
-  \begin{tabularx}{\textwidth}{|l|X|}
-    \hline
-    \textbf{Thành phần} & \textbf{Yêu cầu tối thiểu} \\
-    \hline
-    Hệ điều hành  & Windows 10 / Ubuntu 20.04 / macOS 12+ \\ \hline
-    RAM           & 8 GB trở lên \\ \hline
-    Ổ cứng        & 20 GB trống \\ \hline
-    Node.js       & v18.x trở lên cho Frontend \\ \hline
-    Python        & v3.10 trở lên cho Backend \\ \hline
-    Database      & Supabase Cloud Service \\
-    \hline
-  \end{tabularx}
-  \caption{Yêu cầu hệ thống tối thiểu}
-  \label{tab:system-req}
-\end{table}
-
-\subsection{Hướng Dẫn Cài Đặt}
-
-\begin{enumerate}
-  \item \textbf{Clone repository:}
-\begin{verbatim}
-git clone https://github.com/[username]/[repository].git
-cd [repository]
-\end{verbatim}
-  \item \textbf{Cài đặt phụ thuộc:}
-  \begin{itemize}
-    \item Frontend:
-\begin{verbatim}
-cd frontend
-npm install
-\end{verbatim}
-    \item Backend:
-\begin{verbatim}
-cd backend
-pip install -r requirements.txt
-\end{verbatim}
-  \end{itemize}
+\begin{enumerate}[leftmargin=*]
+  \item \textbf{Hoàn thiện kiến trúc hệ thống phân lớp (Layered Architecture):} Xây dựng thành công hệ thống Backend RESTful API sử dụng Python Flask với cấu trúc tách biệt rõ ràng giữa các tầng Controller, Service và Repository, đảm bảo tính mở rộng và khả năng bảo trì cao.
+  \item \textbf{Phát triển 02 cổng giao diện Web người dùng độc lập:}
+    \begin{itemize}
+      \item \textit{Cổng Khách Hàng (Customer Web Portal):} Giao diện hiện đại, tối ưu trải nghiệm (Responsive UX), cho phép tạo đơn hàng, chọn vị trí trên bản đồ tương tác, theo dõi hành trình Drone thời gian thực và tích hợp Trợ lý AI tư vấn tự động.
+      \item \textit{Cổng Quản Trị (Admin Web Portal):} Cung cấp bảng điều khiển trung tâm (Dashboard) hỗ trợ quản trị viên duyệt đơn hàng, quản lý đội bay Drone, giám sát trạm hạ cánh và xem báo cáo thống kê hoạt động.
+    \end{itemize}
+  \item \textbf{Tích hợp Cơ sở dữ liệu và Dịch vụ đám mây thực tế:} Sử dụng cơ sở dữ liệu PostgreSQL chuẩn hóa hosted trên Supabase Cloud Engine, đảm bảo tính toàn vẹn dữ liệu cho toàn bộ danh mục Khách hàng, Đơn hàng, Drone, Trạm hạ cánh và Nhật ký vận chuyển.
+  \item \textbf{Đột phá với Trợ lý AI và Engine RAG thời gian thực:} Tích hợp thành công mô hình ngôn ngữ lớn (LLM API từ Groq - Llama 3.3 70B) kết hợp cơ chế RAG (Retrieval-Augmented Generation), cho phép Trợ lý AI tự động truy xuất dữ liệu đơn hàng thực tế trong CSDL để giải đáp chính xác thắc mắc của từng khách hàng.
+  \item \textbf{Xây dựng bộ mô phỏng hành trình bay thời gian thực (Drone Simulator):} Xây dựng background daemon service cập nhật tọa độ telemetry và trạng thái của Drone mỗi 3-5 giây, tạo trải nghiệm mô phỏng giao hàng sống động như hệ thống thực tế.
+  \item \textbf{Đóng gói và Triển khai sản phẩm hoàn chỉnh (Cloud Deployment):} Đã triển khai thành công sản phẩm trên môi trường điện toán đám mây Vercel (Frontend) và Render (Backend), kết nối liên thông qua kết nối mã hóa HTTPS.
 \end{enumerate}
 
-\section{Hướng Dẫn Sử Dụng}
+\section{Đánh Giá Ưu Điểm và Hạn Chế}
 
-\subsection{Tổng Quan}
-\subsection{Quy Trình Admin / Quản Lý}
-\subsection{Quy Trình Nhân Viên}
-\subsection{Quy Trình Khách Hàng / Người Dùng Cuối}
+\subsection{Ưu Điểm Của Hệ Thống}
+
+\begin{itemize}[leftmargin=*]
+  \item \textbf{Tính tiên phong và sáng tạo:} Kết hợp thành công mô hình giao hàng bằng Drone tự động với trí tuệ nhân tạo (AI RAG), giải quyết bài toán giao hàng chặng cuối nhanh chóng và thông minh.
+  \item \textbf{Giao diện người dùng xuất sắc (High Aesthetics và UX):} Thiết kế giao diện hiện đại, sử dụng bảng màu chuẩn mực, hiệu ứng Glassmorphism và micro-animations nâng cao trải nghiệm người dùng.
+  \item \textbf{Độ tin cậy và khả năng theo dõi thời gian thực:} Tọa độ di chuyển của Drone và trạng thái vận đơn được đồng bộ hóa tức thì từ cơ sở dữ liệu lên bản đồ người dùng.
+  \item \textbf{Kiến trúc linh hoạt, không phụ thuộc phần cứng độc quyền:} Nền tảng đóng vai trò lớp phần mềm quản lý nghiệp vụ trung gian, có thể kết nối với nhiều chủng loại Drone khác nhau qua cổng API mở.
+\end{itemize}
+
+\subsection{Các Hạn Chế Còn Tồn Tại}
+
+\begin{itemize}[leftmargin=*]
+  \item \textbf{Mô phỏng tọa độ chưa kết nối phần cứng thật:} Do điều kiện kinh phí và quy định quản lý không lưu, vị trí di chuyển của Drone hiện đang được mô phỏng theo thuật toán nội suy vector giữa hai điểm thay vì nhận dữ liệu từ cảm biến GPS vật lý.
+  \item \textbf{Chưa hỗ trợ giao hàng đa chặng (Multi-hop Routing):} Quy trình giao hàng hiện tại giả định một chuyến bay thẳng từ trạm đến điểm hạ cánh của khách hàng, chưa tối ưu cho các kịch bản ghé nhiều trạm hoặc giao kết hợp nhiều đơn trên cùng chuyến bay.
+  \item \textbf{Thiếu tích hợp thanh toán trực tuyến chính thức:} Hệ thống hiện tại hỗ trợ phương thức thanh toán COD (tiền mặt khi nhận hàng) và mô phỏng VietQR, chưa kết nối trực tiếp cổng thanh toán trực tuyến tự động (VNPay/MoMo).
+\end{itemize}
+
+\section{Hướng Phát Triển Trong Tương Lai}
+
+Dựa trên những nền tảng đã đạt được, hệ thống \textit{SmartDroneDelivery} có thể được mở rộng và phát triển theo các hướng chiến lược sau:
+
+\begin{enumerate}[leftmargin=*]
+  \item \textbf{Tích hợp giao thức IoT kết nối phần cứng Drone thật:} Phát triển cổng giao tiếp dữ liệu chuẩn mực (MQTT Broker / MAVLink Protocol) cho phép nhận telemetry trực tiếp từ các bộ điều khiển bay (Pixhawk/ArduPilot) của Drone thực tế.
+  \item \textbf{Nâng cấp thuật toán lập tuyến đường bay tối ưu (Pathfinding và Avoidance):} Áp dụng các giải thuật A* hoặc Dijkstra kết hợp với dữ liệu độ cao bản đồ địa hình 3D và thông tin thời tiết thời gian thực để lập tuyến đường né vật cản tự động.
+  \item \textbf{Phát triển Ứng dụng Di động Native (Mobile App):} Xây dựng ứng dụng di động trên nền tảng React Native / Flutter cho cả iOS và Android, hỗ trợ thông báo đẩy (Push Notifications) và định vị GPS người nhận chính xác hơn.
+  \item \textbf{Tối ưu hóa quản lý pin và lịch bảo trì AI:} Tích hợp mô hình học máy (Machine Learning) dự đoán mức độ tiêu hao năng lượng pin theo tải trọng và hướng gió, tự động lên lịch bảo trì định kỳ cho đội bay Drone.
+\end{enumerate}
