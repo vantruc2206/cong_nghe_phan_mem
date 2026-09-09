@@ -46,121 +46,56 @@ class ChatbotService:
 
     def _build_db_context(self, customer) -> str:
         """
-        Query nhiều bảng DB và tổng hợp thành đoạn context
-        giàu thông tin cho LLM.
+        Query DB và tổng hợp context gọn nhẹ cho LLM (tránh quá tải token).
         """
         from infrastructure.models.app_don_hang_model import DonHangModel
         from infrastructure.models.app_goi_hang_model import GoiHangModel
         from infrastructure.models.app_dia_chi_model import DiaChiModel
         from infrastructure.models.app_giao_hang_model import GiaoHangModel
         from infrastructure.models.app_drone_model import DroneModel
-        from infrastructure.models.app_tram_ha_canh_model import TramHaCanhModel
 
         session = self.repository.session
         lines = []
 
-        # === 1. Đơn hàng của khách ===
+        # === 1. Đơn hàng gần nhất (tối đa 3 đơn) ===
         try:
             orders = session.query(DonHangModel).filter_by(
                 ma_kh=customer.ma_kh
-            ).order_by(DonHangModel.ngay_dat_hang.desc()).limit(10).all()
+            ).order_by(DonHangModel.ngay_dat_hang.desc()).limit(3).all()
 
             if orders:
-                lines.append(f"=== ĐƠN HÀNG CỦA KHÁCH ({len(orders)} đơn gần nhất) ===")
+                lines.append(f"=== ĐƠN HÀNG GẦN ĐÂY ({len(orders)} đơn) ===")
                 for o in orders:
                     short_id = str(o.ma_don_hang)[:8].upper()
                     stt = self._status_display(o.trang_thai_don_hang or '')
+                    pkg = session.query(GoiHangModel).filter_by(ma_don_hang=o.ma_don_hang).first()
+                    pkg_desc = f"{pkg.loai_hang_hoa} ({pkg.can_nang}kg)" if pkg else "Kiện hàng"
+                    addr = session.query(DiaChiModel).filter_by(ma_dia_chi=o.ma_dia_chi).first()
+                    addr_desc = addr.dia_chi_cu_the if addr else "Địa chỉ chưa rõ"
 
-                    # Gói hàng
-                    pkg = session.query(GoiHangModel).filter_by(
-                        ma_don_hang=o.ma_don_hang
-                    ).first()
-                    pkg_desc = (
-                        f"{pkg.loai_hang_hoa} ({pkg.can_nang}kg)"
-                        if pkg else "Kiện hàng"
-                    )
-
-                    # Địa chỉ
-                    addr = session.query(DiaChiModel).filter_by(
-                        ma_dia_chi=o.ma_dia_chi
-                    ).first()
-                    addr_desc = (addr.dia_chi_cu_the if addr
-                                 else "Địa chỉ không rõ")
-
-                    # Giao hàng thực tế (drone, người phụ trách)
-                    gh = session.query(GiaoHangModel).filter_by(
-                        ma_don_hang=o.ma_don_hang
-                    ).first()
+                    gh = session.query(GiaoHangModel).filter_by(ma_don_hang=o.ma_don_hang).first()
                     drone_info = ""
                     if gh and gh.ma_drone:
-                        d = session.query(DroneModel).filter_by(
-                            ma_drone=gh.ma_drone
-                        ).first()
+                        d = session.query(DroneModel).filter_by(ma_drone=gh.ma_drone).first()
                         if d:
-                            drone_info = (f", Drone phụ trách: {d.ten_drone or d.model or str(d.ma_drone)[:8].upper()}"
-                                          f" (pin {d.cong_suat_pin}%)")
-                    delivery_time = ""
-                    if gh and gh.thoi_gian_giao:
-                        delivery_time = f", Thời gian giao: {gh.thoi_gian_giao.strftime('%d/%m/%Y %H:%M')}"
+                            drone_info = f", Drone: {d.ten_drone or d.model or str(d.ma_drone)[:8].upper()}"
 
-                    tong_tien = f" | Tổng tiền: {o.tong_tien:,.0f} VNĐ" if o.tong_tien else ""
-                    date_str = o.ngay_dat_hang.strftime('%d/%m/%Y') if o.ngay_dat_hang else ""
-
-                    lines.append(
-                        f"- [SD-{short_id}] {pkg_desc} → {addr_desc}"
-                        f" | Trạng thái: {stt}{drone_info}{delivery_time}"
-                        f"{tong_tien} | Ngày đặt: {date_str}"
-                    )
+                    tong_tien = f" | {o.tong_tien:,.0f} VNĐ" if o.tong_tien else ""
+                    lines.append(f"- [SD-{short_id}] {pkg_desc} → {addr_desc} | {stt}{drone_info}{tong_tien}")
             else:
-                lines.append("=== ĐƠN HÀNG: Khách chưa có đơn hàng nào ===")
+                lines.append("Khách chưa có đơn hàng nào.")
         except Exception as e:
-            lines.append(f"=== ĐƠN HÀNG: Lỗi truy vấn — {e} ===")
+            lines.append(f"Lỗi đọc đơn hàng: {e}")
 
-        # === 2. Tổng quan hệ thống Drone ===
-        try:
-            all_drones = session.query(DroneModel).all()
-            if all_drones:
-                ready = [d for d in all_drones if 'Sẵn sàng' in (d.trang_thai_drone or '')]
-                flying = [d for d in all_drones if any(
-                    k in (d.trang_thai_drone or '') for k in ['Đang bay', 'Giao hàng', 'Flying']
-                )]
-                lines.append(
-                    f"\n=== HỆ THỐNG DRONE (tổng {len(all_drones)} chiếc)"
-                    f" — Sẵn sàng: {len(ready)} | Đang bay: {len(flying)} ==="
-                )
-                for d in all_drones[:8]:  # tối đa 8 drone
-                    pin = d.cong_suat_pin or 0
-                    lines.append(
-                        f"  • {d.ten_drone or d.model or str(d.ma_drone)[:8].upper()}"
-                        f" [{d.trang_thai_drone}] pin={pin}%"
-                        f" tải_tối_đa={d.tai_trong_toi_da}kg"
-                    )
-        except Exception:
-            pass
-
-        # === 3. Trạm hạ cánh ===
-        try:
-            trams = session.query(TramHaCanhModel).all()
-            if trams:
-                active_trams = [t for t in trams if t.trang_thai_hoat_dong == 'Đang hoạt động']
-                lines.append(
-                    f"\n=== TRẠM HẠ CÁNH (tổng {len(trams)} trạm"
-                    f", đang hoạt động: {len(active_trams)}) ==="
-                )
-                for t in trams:
-                    lines.append(
-                        f"  • {t.ten_tram} — {t.dia_chi_tram}"
-                        f" [{t.trang_thai_hoat_dong}] sức chứa: {t.cong_suat_toi_da} drone"
-                    )
-        except Exception:
-            pass
-
+        # === 2. Tóm tắt hệ thống Drone & Trạm (ngắn gọn) ===
+        lines.append("=== HỆ THỐNG SMARTDRONE ===")
+        lines.append("SkyCarrier X1: Tải tối đa 5kg, tốc độ 45-60km/h, bán kính 15km. 6 trạm hạ cảnh đang hoạt động.")
         return "\n".join(lines)
 
-    def _build_history_messages(self, ma_kh: str, limit: int = 6) -> list:
+    def _build_history_messages(self, ma_kh: str, limit: int = 3) -> list:
         """
-        Lấy tối đa `limit` tin nhắn gần nhất từ DB và chuyển thành
-        định dạng messages[] của Groq API để AI nhớ context hội thoại.
+        Lấy tối đa `limit` tin nhắn gần nhất và cắt ngắn phản hồi cũ
+        để không bị nhân bản context trùng lặp.
         """
         try:
             history = (
@@ -175,9 +110,11 @@ class ChatbotService:
             msgs = []
             for msg in history:
                 if msg.noi_dung:
-                    msgs.append({"role": "user", "content": msg.noi_dung})
+                    msgs.append({"role": "user", "content": msg.noi_dung[:200]})
                 if msg.phan_hoi:
-                    msgs.append({"role": "assistant", "content": msg.phan_hoi})
+                    # Tránh mang theo cả đoạn fallback dài hàng nghìn ký tự của tin nhắn cũ
+                    clean_reply = msg.phan_hoi.split("Đây là dữ liệu đơn hàng")[0].strip()
+                    msgs.append({"role": "assistant", "content": clean_reply[:250]})
             return msgs
         except Exception:
             return []
@@ -233,12 +170,12 @@ DỮ LIỆU THỰC TẾ TỪ DATABASE (cập nhật real-time):
             messages.extend(history_msgs)         # lịch sử hội thoại
             messages.append({"role": "user", "content": user_content})  # câu hỏi hiện tại
 
-            # --- Gọi Groq API ---
+            # --- Gọi Groq API (Ưu tiên các model nhẹ & hạn chế 413 Rate Limit) ---
             models_to_try = [
                 "groq/compound-mini",
                 "groq/compound",
-                "qwen/qwen3.8-27b",
-                "openai/gpt-oss-120b",
+                "openai/gpt-oss-20b",
+                "qwen/qwen3.6-27b",
             ]
             for model_name in models_to_try:
                 conn = None
