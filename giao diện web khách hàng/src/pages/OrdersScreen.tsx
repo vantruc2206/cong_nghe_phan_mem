@@ -12,9 +12,9 @@ interface OrdersScreenProps {
 function getStatusInfo(status: string) {
   const s = status?.toLowerCase() || '';
   if (s.includes('chối') || s.includes('từ chối') || s === 'rejected') return { label: 'Bị từ chối', cls: 'badge-rejected' };
+  if (s.includes('đã đến') || s.includes('da_den') || s.includes('arrived') || s === 'arrived') return { label: 'Đã đến điểm giao', cls: 'badge-delivering' };
   if (s.includes('chờ') || s === 'pending') return { label: 'Chờ duyệt', cls: 'badge-pending' };
   if (s.includes('đã duyệt') || s === 'approved') return { label: 'Đã duyệt', cls: 'badge-approved' };
-  if (s.includes('đã đến') || s.includes('da_den') || s.includes('arrived') || s === 'đã đến') return { label: 'Đã đến điểm giao', cls: 'badge-delivering' };
   if (s.includes('giao') || s === 'in_transit' || s === 'delivering') return { label: 'Đang giao', cls: 'badge-delivering' };
   if (s.includes('hoàn') || s === 'delivered') return { label: 'Hoàn thành', cls: 'badge-delivered' };
   if (s.includes('thất') || s === 'failed') return { label: 'Thất bại', cls: 'badge-failed' };
@@ -27,6 +27,7 @@ const FILTERS = [
   { key: 'PENDING', label: 'Chờ duyệt' },
   { key: 'APPROVED', label: 'Đã duyệt' },
   { key: 'IN_TRANSIT', label: 'Đang giao' },
+  { key: 'ARRIVED', label: 'Đã đến' },
   { key: 'DELIVERED', label: 'Hoàn thành' },
   { key: 'REJECTED', label: 'Bị từ chối' },
   { key: 'CANCELLED', label: 'Đã hủy' },
@@ -101,12 +102,14 @@ export const OrdersScreen: React.FC<OrdersScreenProps> = ({ user, onNavigate, sh
       const isPending = info.label === 'Chờ duyệt';
       const isApproved = info.label === 'Đã duyệt';
       const isInTransit = info.label === 'Đang giao';
+      const isArrived = info.label === 'Đã đến điểm giao';
       const isDelivered = info.label === 'Hoàn thành';
       const isRejected = info.label === 'Bị từ chối';
       const isCancelled = info.label === 'Đã hủy';
       if (statusFilter === 'PENDING' && !isPending) return false;
       if (statusFilter === 'APPROVED' && !isApproved) return false;
       if (statusFilter === 'IN_TRANSIT' && !isInTransit) return false;
+      if (statusFilter === 'ARRIVED' && !isArrived) return false;
       if (statusFilter === 'DELIVERED' && !isDelivered) return false;
       if (statusFilter === 'REJECTED' && !isRejected) return false;
       if (statusFilter === 'CANCELLED' && !isCancelled) return false;

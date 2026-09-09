@@ -117,6 +117,7 @@ function normalizeOrderStatus(raw?: string): OrderStatus {
   if (!raw) return 'PENDING';
   const s = raw.toString().trim().toUpperCase();
   if (s.includes('CHỐI') || s.includes('TỪ CHỐI') || s.includes('REJECTED') || s.includes('DENIED')) return 'REJECTED';
+  if (s.includes('ĐÃ ĐẾN') || s.includes('ĐẾN') || s.includes('DA_DEN') || s.includes('ARRIVED')) return 'ARRIVED';
   if (s.includes('CHỜ') || s.includes('PENDING')) return 'PENDING';
   if (s.includes('ĐÃ DUYỆT') || s === 'APPROVED' || s === 'DUYỆT') return 'APPROVED';
   if (s.includes('GIAO') || s.includes('TRANSIT') || s.includes('DELIVERING')) return 'IN_TRANSIT';
