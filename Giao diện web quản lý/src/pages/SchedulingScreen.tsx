@@ -157,7 +157,7 @@ export function SchedulingScreen({ showToast }: SchedulingScreenProps) {
         <div className="card" style={{ padding: 20 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
             <h3 style={{ fontFamily: 'var(--font-display)', fontWeight: 650, fontSize: 16, color: '#1e293b' }}>
-              Đơn hàng chờ xếp lịch giao (Database Real)
+              Đơn hàng chờ xếp lịch giao
             </h3>
             <button className="btn btn-outline btn-sm" onClick={loadData}>Làm mới</button>
           </div>
@@ -258,7 +258,7 @@ export function SchedulingScreen({ showToast }: SchedulingScreenProps) {
                   <div style={{ marginTop: 4, padding: 12, background: '#F8FAFC', borderRadius: 8, border: '1px solid #CBD5E1' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
                       <span style={{ fontSize: 12, fontWeight: 700, color: '#1E3A5F', display: 'flex', alignItems: 'center', gap: 4 }}>
-                        🤖 Phân tích & Dự đoán ETA bằng AI (XGBoost)
+                        🤖 Phân tích & Dự đoán ETA bằng AI
                       </span>
                       <span style={{ fontSize: 10, background: '#DBEAFE', color: '#1E40AF', padding: '2px 6px', borderRadius: 4, fontWeight: 600 }}>
                         {aiEtaResult.confidence}
@@ -284,7 +284,7 @@ export function SchedulingScreen({ showToast }: SchedulingScreenProps) {
                 )}
 
                 <button className="btn btn-primary" type="submit" disabled={submitting || filteredDrones.length === 0} style={{ justifyContent: 'center', marginTop: 8 }}>
-                  {Icon.calendar} {submitting ? 'Đang lập lịch...' : 'Xếp lịch bay thực tế (AI Optimized)'}
+                  {Icon.calendar} {submitting ? 'Đang lập lịch...' : 'Xếp lịch bay thực tế'}
                 </button>
               </form>
             ) : (

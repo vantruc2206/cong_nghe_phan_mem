@@ -390,7 +390,7 @@ export function StationsScreen({ showToast }: StationsScreenProps) {
 
               <div style={{ position: 'relative' }}>
                 <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#374151', marginBottom: 4 }}>
-                  📍 Địa Chỉ Vật Lý (Gõ địa chỉ để gợi ý vị trí từ OpenStreetMap API) *
+                  📍 Địa Chỉ Vật Lý *
                 </label>
                 <div style={{ display: 'flex', gap: 8 }}>
                   <input
@@ -435,7 +435,7 @@ export function StationsScreen({ showToast }: StationsScreenProps) {
               {/* 🗺️ Interactive Map Picker inside Modal */}
               <div>
                 <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#374151', marginBottom: 4 }}>
-                  🗺️ Chọn vị trí trực tiếp trên Bản đồ (Bấm vào điểm bất kỳ)
+                  🗺️ Chọn vị trí trực tiếp trên Bản đồ
                 </label>
                 <LocationPickerMap
                   lat={Number(lat) || 10.7769}
@@ -446,7 +446,7 @@ export function StationsScreen({ showToast }: StationsScreenProps) {
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#374151', marginBottom: 4 }}>Vĩ độ (Latitude)</label>
+                  <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#374151', marginBottom: 4 }}>Vĩ độ</label>
                   <input
                     className="input"
                     type="number"
@@ -457,7 +457,7 @@ export function StationsScreen({ showToast }: StationsScreenProps) {
                   />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#374151', marginBottom: 4 }}>Kinh độ (Longitude)</label>
+                  <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#374151', marginBottom: 4 }}>Kinh độ</label>
                   <input
                     className="input"
                     type="number"
@@ -470,7 +470,7 @@ export function StationsScreen({ showToast }: StationsScreenProps) {
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#374151', marginBottom: 4 }}>Sức chứa tối đa (Drone)</label>
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#374151', marginBottom: 4 }}>Sức chứa tối đa</label>
                 <input
                   className="input"
                   type="number"

@@ -140,35 +140,35 @@ export function OrdersScreen({ onDetail }: OrdersScreenProps) {
           onChange={e => { setFilterStatus(e.target.value); setPage(1) }}
         >
           <option value="all">Tất cả trạng thái</option>
-          <option value="chờ duyệt">Chờ duyệt (Pending)</option>
-          <option value="đã duyệt">Đã duyệt (Approved)</option>
-          <option value="đang giao">Đang giao (Delivering)</option>
-          <option value="hoàn tất">Hoàn tất (Completed)</option>
-          <option value="bị từ chối">Bị từ chối (Rejected)</option>
-          <option value="đã hủy">Đã hủy (Cancelled)</option>
+          <option value="chờ duyệt">Chờ duyệt</option>
+          <option value="đã duyệt">Đã duyệt</option>
+          <option value="đang giao">Đang giao</option>
+          <option value="hoàn tất">Hoàn tất</option>
+          <option value="bị từ chối">Bị từ chối</option>
+          <option value="đã hủy">Đã hủy</option>
         </select>
         <button className="btn btn-outline" onClick={loadOrders} title="Làm mới">
-          Làm mới từ DB
+          Làm mới
         </button>
       </div>
 
-      <div className="card" style={{ overflow: 'hidden' }}>
+      <div className="card" style={{ overflowX: 'auto' }}>
         {loading ? (
-          <div style={{ padding: 32, textAlign: 'center', color: '#64748b' }}>Đang tải danh sách đơn hàng thực tế từ Database PostgreSQL...</div>
+          <div style={{ padding: 20, textAlign: 'center', color: '#64748b', fontSize: 13 }}>Đang tải danh sách đơn hàng...</div>
         ) : filtered.length === 0 ? (
-          <div style={{ padding: 32, textAlign: 'center', color: '#64748b' }}>Chưa có đơn hàng nào khớp với tìm kiếm từ Database</div>
+          <div style={{ padding: 20, textAlign: 'center', color: '#64748b', fontSize: 13 }}>Chưa có đơn hàng nào khớp với tìm kiếm</div>
         ) : (
-          <table className="data-table">
+          <table className="data-table" style={{ fontSize: 12 }}>
             <thead>
               <tr>
-                <th>Mã đơn</th>
-                <th>Khách hàng</th>
-                <th>Địa chỉ giao</th>
-                <th>Cân nặng</th>
-                <th>Cước phí</th>
-                <th>Trạm gửi</th>
-                <th>Trạng thái DB</th>
-                <th>Phê duyệt / Thao tác</th>
+                <th style={{ padding: '8px 10px', fontSize: 11 }}>Mã đơn</th>
+                <th style={{ padding: '8px 10px', fontSize: 11 }}>Khách hàng</th>
+                <th style={{ padding: '8px 10px', fontSize: 11 }}>Địa chỉ giao</th>
+                <th style={{ padding: '8px 10px', fontSize: 11 }}>Cân nặng</th>
+                <th style={{ padding: '8px 10px', fontSize: 11 }}>Cước phí</th>
+                <th style={{ padding: '8px 10px', fontSize: 11 }}>Trạm gửi</th>
+                <th style={{ padding: '8px 10px', fontSize: 11 }}>Trạng thái DB</th>
+                <th style={{ padding: '8px 10px', fontSize: 11, textAlign: 'center' }}>Thao tác</th>
               </tr>
             </thead>
             <tbody>
@@ -176,22 +176,24 @@ export function OrdersScreen({ onDetail }: OrdersScreenProps) {
                 const canApprove = isPendingStatus(o.trang_thai || '')
                 return (
                   <tr key={o.ma_don_hang}>
-                    <td>
-                      <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: '#3B82F6', fontWeight: 600 }}>
+                    <td style={{ padding: '8px 10px', whiteSpace: 'nowrap' }}>
+                      <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: '#3B82F6', fontWeight: 600 }}>
                         {o.ma_van_don || o.ma_don_hang?.substring(0, 8)}
                       </span>
                     </td>
-                    <td style={{ fontWeight: 500 }}>{o.ten_nguoi_nhan || o.ten_khach_hang || 'Khách hàng DB'}</td>
-                    <td style={{ color: '#64748b', maxWidth: 180, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    <td style={{ padding: '8px 10px', fontWeight: 500, fontSize: 12, whiteSpace: 'nowrap', maxWidth: 120, overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                      {o.ten_nguoi_nhan || o.ten_khach_hang || 'Khách hàng DB'}
+                    </td>
+                    <td style={{ padding: '8px 10px', color: '#64748b', fontSize: 12, maxWidth: 130, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       {o.dia_chi_giao || 'Địa chỉ đăng ký'}
                     </td>
-                    <td style={{ color: '#64748b' }}>{o.trong_luong || 1.5} kg</td>
-                    <td style={{ color: '#059669', fontWeight: 600 }}>{(o.phi_giao_hang || 35000).toLocaleString('vi-VN')} đ</td>
-                    <td style={{ fontSize: 12, color: '#64748b' }}>{o.ten_tram || 'Trạm Trung Tâm'}</td>
-                    <td><Badge status={o.trang_thai || 'Chờ duyệt'} /></td>
-                    <td>
-                      <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
-                        <button className="btn btn-ghost btn-sm" onClick={() => onDetail(o.ma_don_hang)} title="Xem chi tiết">
+                    <td style={{ padding: '8px 10px', color: '#64748b', fontSize: 12, whiteSpace: 'nowrap' }}>{o.trong_luong || 1.5} kg</td>
+                    <td style={{ padding: '8px 10px', color: '#059669', fontWeight: 600, fontSize: 12, whiteSpace: 'nowrap' }}>{(o.phi_giao_hang || 35000).toLocaleString('vi-VN')} đ</td>
+                    <td style={{ padding: '8px 10px', fontSize: 11, color: '#64748b', whiteSpace: 'nowrap' }}>{o.ten_tram || 'Trạm Trung Tâm'}</td>
+                    <td style={{ padding: '8px 10px', whiteSpace: 'nowrap' }}><Badge status={o.trang_thai || 'Chờ duyệt'} /></td>
+                    <td style={{ padding: '8px 10px', whiteSpace: 'nowrap' }}>
+                      <div style={{ display: 'flex', gap: 4, alignItems: 'center', justifyContent: 'center' }}>
+                        <button className="btn btn-ghost btn-sm" onClick={() => onDetail(o.ma_don_hang)} title="Xem chi tiết" style={{ padding: '2px 6px', height: 26 }}>
                           {Icon.eye}
                         </button>
                         {canApprove && (
@@ -201,16 +203,16 @@ export function OrdersScreen({ onDetail }: OrdersScreenProps) {
                               disabled={actionLoading === o.ma_don_hang}
                               onClick={() => setConfirmApproveOrder(o)}
                               title="Duyệt đơn hàng"
-                              style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 4, padding: '4px 10px', fontSize: 12, whiteSpace: 'nowrap' }}
+                              style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 2, padding: '2px 8px', fontSize: 11, height: 26, whiteSpace: 'nowrap' }}
                             >
                               {Icon.check} Duyệt
                             </button>
                             <button
                               className="btn btn-outline btn-sm"
-                              style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 4, color: '#EF4444', borderColor: '#FCA5A5', padding: '4px 10px', fontSize: 12, whiteSpace: 'nowrap' }}
+                              style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 2, color: '#EF4444', borderColor: '#FCA5A5', padding: '2px 8px', fontSize: 11, height: 26, whiteSpace: 'nowrap' }}
                               disabled={actionLoading === o.ma_don_hang}
                               onClick={() => { setRejectOrderModal(o); setRejectReason(''); }}
-                              title="Từ chối đơn hàng"
+                              title="Từ chối"
                             >
                               {Icon.x} Từ chối
                             </button>
@@ -226,7 +228,7 @@ export function OrdersScreen({ onDetail }: OrdersScreenProps) {
         )}
 
         <div style={{ padding: '12px 20px', borderTop: '1px solid #f1f5f9', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div style={{ fontSize: 13, color: '#64748b' }}>Hiển thị {paged.length}/{filtered.length} đơn hàng thực tế từ PostgreSQL DB</div>
+          <div style={{ fontSize: 13, color: '#64748b' }}>Hiển thị {paged.length}/{filtered.length} đơn hàng</div>
           <div style={{ display: 'flex', gap: 6 }}>
             {Array.from({ length: totalPages }, (_, i) => (
               <button

@@ -40,6 +40,17 @@
 % -- Le trang ------------------------------------------------
 \geometry{top=2.5cm, bottom=2.5cm, left=3cm, right=2cm}
 
+% -- Tối ưu khoảng trắng & Float (Hình ảnh / Bảng) ----------
+\setlength{\floatsep}{8pt plus 2pt minus 2pt}
+\setlength{\textfloatsep}{10pt plus 2pt minus 4pt}
+\setlength{\intextsep}{8pt plus 2pt minus 2pt}
+\setlength{\abovecaptionskip}{4pt}
+\setlength{\belowcaptionskip}{4pt}
+\renewcommand{\topfraction}{0.85}
+\renewcommand{\bottomfraction}{0.85}
+\renewcommand{\textfraction}{0.15}
+\renewcommand{\floatpagefraction}{0.8}
+
 % -- Duong dan hinh anh / so do PDF --------------------------
 \graphicspath{{./so-do/}{./chapters/}{./}}
 
@@ -48,6 +59,7 @@
 % -- Danh so section/subsection theo chuong (vd: 3.1, 3.1.1) ---
 \renewcommand{\thesection}{\arabic{chapter}.\arabic{section}}
 \renewcommand{\thesubsection}{\thesection.\arabic{subsection}}
+\renewcommand{\thesubsubsection}{\thesubsection.\arabic{subsubsection}}
 % -- Danh so Bang/Hinh/Cong thuc dung so Arabi (vd: Bang 3.1, khong phai III.1) ---
 \renewcommand{\thetable}{\arabic{chapter}.\arabic{table}}
 \renewcommand{\thefigure}{\arabic{chapter}.\arabic{figure}}
@@ -73,10 +85,13 @@
 % -- Dinh dang tieu de Chuong --------------------------------
 \titleformat{\chapter}[block]
   {\normalfont\Large\bfseries}{Phần \thechapter.}{0.5em}{}
-\titlespacing*{\chapter}{0pt}{20pt}{15pt}
+\titlespacing*{\chapter}{0pt}{10pt}{10pt}
+\titlespacing*{\section}{0pt}{8pt}{4pt}
+\titlespacing*{\subsection}{0pt}{6pt}{3pt}
 
 % -- Gian dong -----------------------------------------------
 \onehalfspacing
+
 
 % -- Dinh nghia lai \includegraphics de tranh crash khi thieu file anh ------------
 \usepackage{letltxmacro}
@@ -173,29 +188,11 @@
 \clearpage
 
 % PHAN V: GOI PHAT HANH & HUONG DAN
-\input{chapters/phan6.tex}
+\input{chapters/phan5.tex}
 \clearpage
 
-% ============================================================
-%  TAI LIEU THAM KHAO
-% ============================================================
-\begin{thebibliography}{99}
-  \raggedright
-  \addcontentsline{toc}{chapter}{Tài Liệu Tham Khảo}
-
-  \bibitem{ref1}
-  Tên tác giả,
-  \textit{Tên tài liệu / Sách tham khảo},
-  Nhà xuất bản, Năm xuất bản.
-
-  \bibitem{ref2}
-  Tên tổ chức / Tác giả,
-  \textit{Tên tài liệu kỹ thuật},
-  Truy cập ngày dd/mm/yyyy, tại \url{https://example.com}.
-
-  \bibitem{ieee830}
-  IEEE, \textit{IEEE Std 830-1998 -- Recommended Practice for Software Requirements Specifications}, IEEE Standards Association, 1998.
-
-\end{thebibliography}
+% PHAN VI: KET LUAN VA HUONG PHAT TRIEN
+\input{chapters/phan6.tex}
+\clearpage
 
 \end{document}

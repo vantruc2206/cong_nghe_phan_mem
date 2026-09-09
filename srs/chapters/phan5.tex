@@ -1,70 +1,295 @@
-\chapter{Tài Liệu Kiểm Thử Phần Mềm}
+\chapter{Gói Phát Hành và Hướng Dẫn Sử Dụng}
 
-\section{Phạm Vi Kiểm Thử}
+\section{Gói Bàn Giao}
 
-\subsection{Phạm Vi Kiểm Thử}
-\subsection{Ngoài Phạm Vi Kiểm Thử}
-\subsection{Ràng Buộc và Giả Định}
+Hệ thống \textit{SmartDroneDelivery} được đóng gói bàn giao đầy đủ mã nguồn, cơ sở dữ liệu, các tài liệu đặc tả thiết kế và tài liệu hướng dẫn vận hành dưới dạng cấu trúc tệp chuẩn.
 
-\section{Chiến Lược Kiểm Thử}
-
-\subsection{Các Loại Kiểm Thử}
-
-\begin{table}[H]
+\begin{table}[htbp]
   \centering
   \begin{tabularx}{\textwidth}{|l|X|l|}
     \hline
-    \textbf{Loại kiểm thử} & \textbf{Mô tả} & \textbf{Công cụ} \\
+    \textbf{Tên tệp / Thư mục} & \textbf{Mô tả} & \textbf{Phiên bản} \\
     \hline
-    Unit Test         & Kiểm thử từng hàm/module độc lập   & Jest / JUnit \\ \hline
-    Integration Test  & Kiểm thử tích hợp giữa các module  & Postman \\ \hline
-    System Test       & Kiểm thử end-to-end toàn hệ thống  & Cypress \\ \hline
-    UAT               & Kiểm thử chấp nhận người dùng      & Manual \\
+    \texttt{giao diện web khách hàng/} & Mã nguồn Frontend Cổng Khách Hàng (React + Vite) & v1.0 \\ \hline
+    \texttt{Giao diện web quản lý/}    & Mã nguồn Frontend Cổng Quản Trị Admin (React + Vite) & v1.0 \\ \hline
+    \texttt{backend/}                  & Mã nguồn Backend API (Python Flask + Supabase) & v1.0 \\ \hline
+    \texttt{database-script.sql}       & Script khởi tạo sơ đồ và dữ liệu mẫu cơ sở dữ liệu & v1.0 \\ \hline
+    \texttt{SRS\_v1.0.pdf}             & Tài liệu đặc tả yêu cầu phần mềm & v1.0 \\ \hline
+    \texttt{SDD\_v1.0.pdf}             & Tài liệu thiết kế kiến trúc hệ thống & v1.0 \\ \hline
+    \texttt{UserManual\_v1.0.pdf}      & Tài liệu hướng dẫn sử dụng người dùng & v1.0 \\
     \hline
   \end{tabularx}
-  \caption{Các loại kiểm thử áp dụng}
-  \label{tab:test-types}
+  \caption{Bảng danh mục gói phần mềm bàn giao}
+  \label{tab:package}
 \end{table}
 
-\subsection{Cấp Độ Kiểm Thử}
-\subsection{Công Cụ Hỗ Trợ}
+\section{Hướng Dẫn Cài Đặt Môi Trường Vận Hành}
 
-\section{Kế Hoạch Kiểm Thử}
+\subsection{Yêu Cầu Hệ Thống Tối Thiểu}
 
-\subsection{Nhân Lực}
-\subsection{Môi Trường Kiểm Thử}
-\subsection{Mốc Kiểm Thử}
+Để triển khai và vận hành hệ thống cục bộ (Local Development) hoặc trên máy chủ thử nghiệm, hạ tầng cần đáp ứng các yêu cầu tối thiểu sau:
 
-\section{Trường Hợp Kiểm Thử}
-
-\begin{longtable}{|l|l|>{\raggedright\arraybackslash}p{3.5cm}|>{\raggedright\arraybackslash}p{3.5cm}|c|}
-  \hline
-  \textbf{TC ID} & \textbf{Module} & \textbf{Mô tả} & \textbf{Kết quả mong đợi} & \textbf{Kết quả} \\
-  \hline
-  \endhead
-  \hline
-  \endfoot
-  TC-001 & Đăng nhập  & Đăng nhập đúng thông tin         & Vào trang chủ thành công    & Pass \\ \hline
-  TC-002 & Đăng nhập  & Đăng nhập sai mật khẩu           & Hiển thị lỗi xác thực      & Pass \\ \hline
-  TC-003 & Đăng nhập  & Tài khoản bị khoá                & Hiển thị thông báo khoá    & Pass \\ \hline
-  TC-004 & Quản lý đơn hàng & Tạo mới bản ghi hợp lệ           & Lưu thành công             & Pass \\ \hline
-  TC-005 & Quản lý đơn hàng & Tạo mới thiếu trường bắt buộc    & Hiện lỗi validation        & Pass \\ \hline
-\end{longtable}
-
-\section{Báo Cáo Kiểm Thử}
-
-\begin{table}[H]
+\begin{table}[htbp]
   \centering
-  \begin{tabularx}{\textwidth}{|>{\raggedright\arraybackslash}X|c|c|c|c|}
+  \begin{tabularx}{\textwidth}{|l|X|}
     \hline
-    \textbf{Module} & \textbf{Tổng TC} & \textbf{Pass} & \textbf{Fail} & \textbf{Tỷ lệ Pass} \\
+    \textbf{Thành phần} & \textbf{Yêu cầu tối thiểu} \\
     \hline
-    Đăng nhập       & 10 & 10 & 0 & 100\% \\ \hline
-    Quản lý đơn hàng & 20 & 18 & 2 & 90\%  \\ \hline
-    Quản lý trạm hạ cánh & 15 & 15 & 0 & 100\% \\ \hline
-    \textbf{Tổng}   & \textbf{45} & \textbf{43} & \textbf{2} & \textbf{95.6\%} \\
+    Hệ điều hành       & Windows 10/11, Ubuntu 20.04+, macOS 12+ \\ \hline
+    Bộ nhớ RAM          & 8 GB trở lên \\ \hline
+    Dung lượng đĩa trống & 10 GB trống \\ \hline
+    Môi trường Node.js  & Node.js v18.0+ và npm v9.0+ cho Frontend \\ \hline
+    Môi trường Python   & Python v3.10+ và pip cho Backend \\ \hline
+    Cơ sở dữ liệu       & PostgreSQL (Supabase Cloud Database Engine) \\ \hline
+    Dịch vụ AI (LLM)    & Khóa truy cập API của Groq (Model Llama-3.3-70b) \\
     \hline
   \end{tabularx}
-  \caption{Báo cáo tổng hợp kết quả kiểm thử}
-  \label{tab:test-report}
+  \caption{Yêu cầu cấu hình hệ thống tối thiểu}
+  \label{tab:system-req}
 \end{table}
+
+\subsection{Các Bước Triển Khai Hệ Thống}
+
+\begin{enumerate}[leftmargin=*,itemsep=2pt,topsep=2pt]
+  \item \textbf{Tải mã nguồn về máy tính:}
+\begin{verbatim}
+git clone https://github.com/vantruc2206/cong_nghe_phan_mem.git
+cd cong_nghe_phan_mem
+\end{verbatim}
+
+  \item \textbf{Cấu hình và khởi chạy Backend API (Python Flask):}
+\begin{verbatim}
+cd backend
+python -m venv .venv
+source .venv/bin/activate  # Hoặc .venv\Scripts\activate trên Windows
+pip install -r requirements.txt
+python src/app.py
+\end{verbatim}
+    \textit{Ghi chú:} Máy chủ Backend sẽ lắng nghe tại địa chỉ \texttt{http://localhost:5000}.
+
+  \item \textbf{Cấu hình và khởi chạy Cổng Khách Hàng (Customer Web Portal):}
+\begin{verbatim}
+cd "giao diện web khách hàng"
+npm install
+npm run dev
+\end{verbatim}
+    \textit{Ghi chú:} Ứng dụng web khách hàng chạy tại địa chỉ \texttt{http://localhost:3000}.
+
+  \item \textbf{Cấu hình và khởi chạy Cổng Quản Trị (Admin Web Portal):}
+\begin{verbatim}
+cd "Giao diện web quản lý"
+npm install
+npm run dev
+\end{verbatim}
+    \textit{Ghi chú:} Ứng dụng quản trị viên chạy tại địa chỉ \texttt{http://localhost:8443}.
+\end{enumerate}
+
+\section{Hướng Dẫn Sử Dụng Cổng Khách Hàng (Customer Web Portal)}
+
+Cổng Khách Hàng cung cấp giao diện hiện đại, tối ưu cho thiết bị di động và máy tính, hỗ trợ người dùng thực hiện toàn bộ quy trình từ tạo đơn hàng, theo dõi đường bay Drone đến tương tác với Trợ lý AI.
+
+\begin{enumerate}[leftmargin=*,itemsep=4pt,topsep=2pt]
+  \item \textbf{Trang chủ và Tổng quan đơn hàng} \\
+  Giao diện chính hiển thị thông điệp chào mừng, thống kê tổng số đơn hàng active (Chờ duyệt, Đang giao, Hoàn thành), các lối tắt thao tác nhanh và danh sách vận đơn gần đây.
+
+  \begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.75\textwidth,height=7.5cm,keepaspectratio]{so-do/hinh-anh/ảnh giao diện khách hàng/kh_03_trang_chu.png}
+    \caption{Giao diện Trang chủ Cổng Khách Hàng}
+    \label{fig:cust-home}
+  \end{figure}
+
+  \item \textbf{Tạo đơn hàng giao bằng Drone} \\
+  Người dùng chọn mục \textit{"Tạo đơn hàng mới"}, nhập thông tin tên kiện hàng, trọng lượng ($\le 5.0$ kg), tên và số điện thoại người nhận. Sử dụng bản đồ Leaflet tích hợp Nominatim Geocoder để chọn điểm giao hàng trực quan. Hệ thống tự động tính cước phí và dự kiến thời gian bay.
+
+  \begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.75\textwidth,height=7.5cm,keepaspectratio]{so-do/hinh-anh/ảnh giao diện khách hàng/kh_02_tao_don_hang.png}
+    \caption{Giao diện Tạo đơn hàng mới và chọn tọa độ giao hàng trên bản đồ}
+    \label{fig:cust-create}
+  \end{figure}
+
+  \item \textbf{Quản lý danh sách Đơn hàng của tôi} \\
+  Màn hình danh sách đơn hàng cho phép tìm kiếm theo mã đơn, lọc theo trạng thái (Tất cả, Chờ duyệt, Đã duyệt, Đang giao, Đã đến, Hoàn thành). Mỗi thẻ đơn hàng thể hiện rõ tiến trình giao hàng 5 bước và nút hành động tương ứng.
+
+  \begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.75\textwidth,height=7.5cm,keepaspectratio]{so-do/hinh-anh/ảnh giao diện khách hàng/kh_04_danh_sach_don.png}
+    \caption{Giao diện Quản lý danh sách Đơn hàng của tôi}
+    \label{fig:cust-orders}
+  \end{figure}
+
+  \item \textbf{Theo dõi Drone di chuyển thời gian thực (Live Telemetry)} \\
+  Khi đơn hàng đang trong quá trình vận chuyển, khách hàng truy cập màn hình \textit{"Theo dõi đơn hàng"} để xem vị trí Drone di chuyển trực quan trên bản đồ. Hệ thống cập nhật tọa độ GPS, mức pin, tên Drone phục vụ và trạng thái đơn hàng thời gian thực.
+
+  \begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.75\textwidth,height=7.5cm,keepaspectratio]{so-do/hinh-anh/ảnh giao diện khách hàng/kh_05_theo_doi.png}
+    \caption{Giao diện Theo dõi đường bay Drone di chuyển thời gian thực}
+    \label{fig:cust-tracking}
+  \end{figure}
+
+  \item \textbf{Xác nhận nhận hàng} \\
+  Khi Drone đã đáp xuống điểm giao hàng, ứng dụng hiển thị nút \textit{"Xác nhận đã nhận hàng"}. Nhấp vào nút này sẽ kích hoạt hộp thoại xác nhận để hoàn tất đơn hàng và cập nhật trạng thái sang \textit{HOAN\_THANH}.
+
+  \begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.6\textwidth,height=6.5cm,keepaspectratio]{so-do/hinh-anh/ảnh giao diện khách hàng/kh_07_xac_nhan_nhan_hang.png}
+    \caption{Hộp thoại Xác nhận đã nhận hàng từ Drone}
+    \label{fig:cust-confirm}
+  \end{figure}
+
+  \item \textbf{Tương tác với Trợ lý AI Chatbot} \\
+  Khách hàng có thể nhấn vào biểu tượng Chatbot AI ở góc phải màn hình để kích hoạt cửa sổ trò chuyện. Trợ lý AI hỗ trợ giải đáp thắc mắc về cước phí, quy định tải trọng và tra cứu tiến độ vận đơn 24/7.
+
+  \begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.65\textwidth,height=7cm,keepaspectratio]{so-do/hinh-anh/ảnh giao diện khách hàng/kh_06_chatbot.png}
+    \caption{Giao diện Trợ lý AI Chatbot hỗ trợ thông minh}
+    \label{fig:cust-chatbot}
+  \end{figure}
+
+  \item \textbf{Quản lý thông tin tài khoản và Đổi mật khẩu} \\
+  Người dùng truy cập mục \textit{"Tài khoản"} để cập nhật họ tên, số điện thoại liên hệ, địa chỉ mặc định và thay đổi mật khẩu đăng nhập an toàn.
+
+  \begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.75\textwidth,height=7.5cm,keepaspectratio]{so-do/hinh-anh/ảnh giao diện khách hàng/kh_01_tai_khoan.png}
+    \caption{Giao diện Quản lý thông tin cá nhân và Đổi mật khẩu}
+    \label{fig:cust-profile}
+  \end{figure}
+\end{enumerate}
+
+\section{Hướng Dẫn Sử Dụng Cổng Quản Trị (Admin Web Portal)}
+
+Cổng Quản Trị cung cấp bộ công cụ điều hành toàn diện dành cho Quản trị viên và Nhân viên điều phối trạm (Dispatcher).
+
+\begin{enumerate}[leftmargin=*,itemsep=4pt,topsep=2pt]
+  \item \textbf{Tổng quan hệ thống (Admin Dashboard)} \\
+  Bảng điều khiển trung tâm cung cấp số liệu tổng quan về khối lượng vận chuyển, số đơn hàng theo trạng thái, tỷ lệ hoạt động của đội bay và biểu đồ phân tích doanh thu.
+
+  \begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\textwidth,height=8cm,keepaspectratio]{so-do/hinh-anh/giao diện admin/admin_00_dashboard.png}
+    \caption{Bảng điều khiển Tổng quan Hệ thống Admin}
+    \label{fig:admin-dash}
+  \end{figure}
+
+  \item \textbf{Quản lý và Phê duyệt Đơn hàng} \\
+  Màn hình hiển thị danh sách toàn bộ vận đơn trong CSDL với các thông tin chi tiết: mã đơn, khách hàng, địa chỉ giao, trọng lượng, cước phí và trạm gửi. Quản trị viên nhấp vào nút hành động để mở cửa sổ \textit{"Phê duyệt đơn hàng"}.
+
+  \begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\textwidth,height=8cm,keepaspectratio]{so-do/hinh-anh/giao diện admin/admin_02_danh_sach_don.png}
+    \caption{Giao diện Danh sách Quản lý Đơn hàng hệ thống}
+    \label{fig:admin-orders-list}
+  \end{figure}
+
+  \begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.65\textwidth,height=6.5cm,keepaspectratio]{so-do/hinh-anh/giao diện admin/admin_01_phe_duyet_don.png}
+    \caption{Modal Phê duyệt đơn hàng khách hàng}
+    \label{fig:admin-order-approve}
+  \end{figure}
+
+  \item \textbf{Thông báo Realtime tự động} \\
+  Khi khách hàng gửi đơn mới hoặc trạng thái vận đơn thay đổi, hệ thống phát thông báo Realtime lên thanh công cụ Admin giúp điều phối viên xử lý kịp thời.
+
+  \begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.7\textwidth,height=7cm,keepaspectratio]{so-do/hinh-anh/giao diện admin/admin_04_thong_bao.png}
+    \caption{Hộp thoại Thông báo Realtime biến động đơn hàng}
+    \label{fig:admin-notif}
+  \end{figure}
+
+  \item \textbf{Lập lịch giao hàng tự động (Dispatching Schedule)} \\
+  Tại mục \textit{"Lập lịch giao hàng"}, hệ thống hiển thị danh sách các đơn hàng đã được phê duyệt. Thuật toán tự động phân tích khoảng cách, tải trọng và chọn Drone tối ưu để sẵn sàng phóng bay.
+
+  \begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\textwidth,height=8cm,keepaspectratio]{so-do/hinh-anh/giao diện admin/admin_03_lap_lich.png}
+    \caption{Giao diện Lập lịch và phân công thiết bị giao hàng}
+    \label{fig:admin-schedule}
+  \end{figure}
+
+  \item \textbf{Vận hành trạm và Quét mã vạch kiện hàng} \\
+  Nhân viên điều phối tại trạm chọn trạm vận hành tương ứng, quét hoặc nhập mã kiện hàng để kiểm kho và bấm nút \textit{"Xác nhận kiểm kho và Phóng Drone"}.
+
+  \begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\textwidth,height=8cm,keepaspectratio]{so-do/hinh-anh/giao diện admin/admin_05_van_hanh_tram.png}
+    \caption{Giao diện Màn hình Vận hành trạm và Quét mã vạch}
+    \label{fig:admin-station-ops}
+  \end{figure}
+
+  \item \textbf{Giám sát Đội bay và Bản đồ không phận thời gian thực} \\
+  Màn hình \textit{"Theo dõi giao hàng"} mô phỏng và giám sát đường bay của toàn bộ các Drone đang làm nhiệm vụ trên bản đồ GIS tương tác.
+
+  \begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\textwidth,height=8cm,keepaspectratio]{so-do/hinh-anh/giao diện admin/admin_06_theo_doi_ban_do.png}
+    \caption{Giao diện Bản đồ giám sát không phận và vị trí Drone thời gian thực}
+    \label{fig:admin-live-map}
+  \end{figure}
+
+  \item \textbf{Quản lý Đội bay Drone và Đăng ký thiết bị mới} \\
+  Cho phép xem danh sách 60 Drone trong hệ thống, mức pin, trạng thái hoạt động và thực hiện đăng ký thêm thiết bị Drone mới vào đội bay.
+
+  \begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\textwidth,height=8cm,keepaspectratio]{so-do/hinh-anh/giao diện admin/admin_08_quan_ly_drone.png}
+    \caption{Giao diện Quản lý Danh sách Đội bay Drone}
+    \label{fig:admin-drones-list}
+  \end{figure}
+
+  \begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.65\textwidth,height=6.5cm,keepaspectratio]{so-do/hinh-anh/giao diện admin/admin_07_dang_ky_drone.png}
+    \caption{Modal Đăng ký thiết bị Drone mới}
+    \label{fig:admin-drone-register}
+  \end{figure}
+
+  \item \textbf{Quản lý Trạm hạ cánh và Thêm trạm mới} \\
+  Quản lý danh sách các trạm cất/hạ cánh, tọa độ GPS và sức chứa. Người dùng có thể bấm nút \textit{"Đăng ký Trạm mới"} để định vị trạm trực tiếp trên bản đồ.
+
+  \begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\textwidth,height=8cm,keepaspectratio]{so-do/hinh-anh/giao diện admin/admin_10_quan_ly_tram.png}
+    \caption{Giao diện Quản lý Danh sách Trạm hạ cánh}
+    \label{fig:admin-stations-list}
+  \end{figure}
+
+  \begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.65\textwidth,height=6.5cm,keepaspectratio]{so-do/hinh-anh/giao diện admin/admin_09_dang_ky_tram.png}
+    \caption{Modal Đăng ký Trạm hạ cánh mới và chọn tọa độ trên bản đồ}
+    \label{fig:admin-station-register}
+  \end{figure}
+
+  \item \textbf{Báo cáo và Thống kê chuyên sâu} \\
+  Cung cấp biểu đồ trực quan về doanh thu theo thời gian, tỷ lệ hoàn thành vận đơn và năng suất hoạt động của từng trạm hạ cánh.
+
+  \begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\textwidth,height=8cm,keepaspectratio]{so-do/hinh-anh/giao diện admin/admin_11_bao_cao.png}
+    \caption{Giao diện Báo cáo và Thống kê hiệu suất vận hành}
+    \label{fig:admin-reports}
+  \end{figure}
+
+  \item \textbf{Quản lý Người dùng và Phân quyền hệ thống} \\
+  Cho phép Quản trị viên theo dõi danh sách tất cả tài khoản trong hệ thống (Khách hàng, Admin, Dispatcher) và tạo mới tài khoản phân quyền.
+
+  \begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\textwidth,height=8cm,keepaspectratio]{so-do/hinh-anh/giao diện admin/admin_12_quan_ly_nguoi_dung.png}
+    \caption{Giao diện Quản lý Danh sách Người dùng hệ thống}
+    \label{fig:admin-users-list}
+  \end{figure}
+
+  \begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.65\textwidth,height=6.5cm,keepaspectratio]{so-do/hinh-anh/giao diện admin/admin_13_dang_ky_thanh_vien.png}
+    \caption{Modal Đăng ký tài khoản hệ thống mới và Phân vai trò}
+    \label{fig:admin-user-register}
+  \end{figure}
+\end{enumerate}

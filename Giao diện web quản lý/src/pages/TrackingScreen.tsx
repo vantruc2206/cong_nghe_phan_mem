@@ -61,7 +61,7 @@ export function TrackingScreen() {
         <div style={{ padding: '0 8px 8px', borderBottom: '1px solid #f1f5f9', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
             <h3 style={{ fontFamily: 'var(--font-display)', fontWeight: 650, fontSize: 15, color: '#1e293b' }}>
-              Bản đồ giám sát không phận thời gian thực (Leaflet OpenStreetMap)
+              Bản đồ giám sát không phận thời gian thực
             </h3>
             <span style={{ fontSize: 11, color: '#22c55e' }}>● Nhận tín hiệu GPS telemetry live từ đội bay Drone & Trạm hạ cánh</span>
           </div>
@@ -128,7 +128,7 @@ export function TrackingScreen() {
         <div className="card" style={{ padding: 16, flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
           <div style={{ marginBottom: 10 }}>
             <div style={{ fontSize: 13, fontWeight: 650, color: '#1e293b', marginBottom: 6 }}>
-              Danh sách đội bay kết nối DB ({filteredDrones.length}/{drones.length})
+              Danh sách đội bay ({filteredDrones.length}/{drones.length})
             </div>
             <select
               value={selectedStationFilter}
