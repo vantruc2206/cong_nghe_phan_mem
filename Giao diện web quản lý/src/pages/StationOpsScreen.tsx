@@ -240,7 +240,7 @@ export function StationOpsScreen({ showToast }: StationOpsScreenProps) {
         {/* Cargo confirmation list */}
         <div className="card" style={{ padding: 20 }}>
           <h3 style={{ fontFamily: 'var(--font-display)', fontWeight: 650, fontSize: 16, color: '#1e293b', marginBottom: 12 }}>
-            Danh sách đơn hàng vận hành (Real DB)
+            Danh sách đơn hàng vận hành
           </h3>
           {loading ? (
             <div style={{ padding: '20px 0', textAlign: 'center', color: '#94a3b8', fontSize: 13 }}>

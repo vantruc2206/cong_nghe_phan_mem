@@ -193,7 +193,6 @@ export function ReportsScreen() {
           <div style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 15, color: '#1e293b' }}>
             Biểu đồ xu hướng đơn hàng thực tế
           </div>
-          <button className="btn btn-outline btn-sm" onClick={loadReportData}>{Icon.download} Xuất báo cáo CSV</button>
         </div>
         <ResponsiveContainer width="100%" height={200}>
           <AreaChart data={trendData}>

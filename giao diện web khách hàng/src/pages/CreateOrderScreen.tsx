@@ -139,7 +139,7 @@ export const CreateOrderScreen: React.FC<CreateOrderScreenProps> = ({ user, onNa
           {/* Section 2: Recipient Details & Leaflet Geocoding Map */}
           <div className="space-y-3 pt-3 border-t border-slate-100">
             <h3 className="text-xs font-extrabold text-[#00B14F] uppercase tracking-wider flex items-center gap-1.5">
-              <User className="w-3.5 h-3.5" /> 2. Người Nhận & Định Vị Địa Chỉ Giao (Leaflet Map)
+              <User className="w-3.5 h-3.5" /> 2. Người Nhận & Định Vị Địa Chỉ Giao
             </h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -172,7 +172,7 @@ export const CreateOrderScreen: React.FC<CreateOrderScreenProps> = ({ user, onNa
 
             <div>
               <label className="input-label" style={{ fontSize: 11, marginBottom: 3 }}>
-                Bản đồ chọn vị trí giao hàng thực tế (Leaflet + Nominatim Geocoder) *
+                Bản đồ chọn vị trí giao hàng thực tế *
               </label>
               <LocationPickerMap
                 initialAddress={deliveryAddress}

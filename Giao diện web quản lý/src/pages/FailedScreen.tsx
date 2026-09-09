@@ -54,18 +54,18 @@ export function FailedScreen({ showToast }: FailedScreenProps) {
         <div className="card" style={{ padding: 20 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
             <h3 style={{ fontFamily: 'var(--font-display)', fontWeight: 650, fontSize: 16, color: '#1e293b' }}>
-              Đơn hàng sự cố / Hủy (Database Real)
+              Đơn hàng sự cố / Hủy
             </h3>
             <button className="btn btn-outline btn-sm" onClick={loadFailedOrders}>Làm mới</button>
           </div>
 
           {loading ? (
             <div style={{ textAlign: 'center', padding: '40px 0', color: '#94a3b8', fontSize: 14 }}>
-              Đang tải danh sách đơn sự cố từ Database...
+              Đang tải danh sách đơn sự cố...
             </div>
           ) : orders.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '40px 0', color: '#94a3b8', fontSize: 14 }}>
-              Không có sự cố giao hàng nào cần xử lý trong cơ sở dữ liệu.
+              Không có sự cố giao hàng nào cần xử lý.
             </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -107,8 +107,8 @@ export function FailedScreen({ showToast }: FailedScreenProps) {
               <div>
                 <label style={{ display: 'block', fontSize: 12, fontWeight: 605, color: '#374151', marginBottom: 4 }}>Nguyên nhân lỗi</label>
                 <select className="input" value={reason} onChange={e => setReason(e.target.value)}>
-                  <option value="battery">Drone hết pin trước khi tới đích (Pin &lt; 15%)</option>
-                  <option value="wind">Tốc độ gió quá cao (&gt; 35km/h)</option>
+                  <option value="battery">Drone hết pin trước khi tới đích</option>
+                  <option value="wind">Tốc độ gió quá cao</option>
                   <option value="gps">GPS mất kết nối hoặc sai lệch tọa độ</option>
                 </select>
               </div>
