@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Badge } from '../components/Badges'
 import { Icon } from '../components/Icons'
-import { listStations, listOrders, listDrones, startDelivery, Station, Order, Drone } from '../api'
+import { listStations, listOrders, listDrones, startDelivery, listDeliveries, reportIncident, Station, Order, Drone, Delivery } from '../api'
 
 interface StationOpsScreenProps {
   showToast: (msg: string, type: 'success' | 'error' | 'info') => void
@@ -12,23 +12,32 @@ export function StationOpsScreen({ showToast }: StationOpsScreenProps) {
   const [selectedStationId, setSelectedStationId] = useState<string>('')
   const [orders, setOrders] = useState<Order[]>([])
   const [drones, setDrones] = useState<Drone[]>([])
+  const [deliveries, setDeliveries] = useState<Delivery[]>([])
   const [loading, setLoading] = useState(true)
 
   const [scanCode, setScanCode] = useState('')
   const [cargoWeight, setCargoWeight] = useState('')
   const [actionLoading, setActionLoading] = useState(false)
 
+  // Incident modal
+  const [incidentOrder, setIncidentOrder] = useState<Order | null>(null)
+  const [incDesc, setIncDesc] = useState('')
+  const [incSeverity, setIncSeverity] = useState('Trung bình')
+  const [incSubmitting, setIncSubmitting] = useState(false)
+
   const loadOpsData = async () => {
     setLoading(true)
     try {
-      const [sList, oList, dList] = await Promise.all([
+      const [sList, oList, dList, delList] = await Promise.all([
         listStations(),
         listOrders(),
-        listDrones()
+        listDrones(),
+        listDeliveries(),
       ])
       setStations(sList)
       setOrders(oList)
       setDrones(dList)
+      setDeliveries(delList)
 
       if (sList.length > 0 && !selectedStationId) {
         setSelectedStationId(sList[0].ma_tram || sList[0].id)
@@ -86,6 +95,18 @@ export function StationOpsScreen({ showToast }: StationOpsScreenProps) {
     ].some(st => s.includes(st))
   }
 
+  const canReportIncidentOrder = (o: Order) => {
+    const status = (o.trang_thai || '').toLowerCase().trim()
+    // Không cho báo sự cố nếu đơn đã hoàn thành, đã hủy hoặc thất bại
+    if (['hoàn thành', 'completed', 'thành công', 'hủy', 'cancelled', 'thất bại', 'failed'].some(st => status.includes(st))) {
+      return false
+    }
+    // Chỉ cho báo sự cố khi đang giao hoặc có chuyến giao liên kết
+    const hasDelivery = deliveries.some(d => d.ma_don_hang === o.ma_don_hang)
+    const isDelivering = ['đang giao', 'delivering', 'in_transit', 'chờ giao'].some(st => status.includes(st))
+    return hasDelivery || isDelivering
+  }
+
   const handleScanSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!scanCode.trim()) {
@@ -133,7 +154,8 @@ export function StationOpsScreen({ showToast }: StationOpsScreenProps) {
   const canLaunchSelected = !selectedOrder || isScheduledStatus(selectedOrder.trang_thai || '')
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+    <>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
       {/* Station Selector Bar */}
       <div className="card" style={{ padding: '12px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
@@ -275,24 +297,35 @@ export function StationOpsScreen({ showToast }: StationOpsScreenProps) {
                   <div style={{ color: '#475569', fontWeight: 500 }}>{o.ten_nguoi_nhan || o.ten_khach_hang}</div>
                   <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <span>{o.dia_chi_giao}</span>
-                    {isScheduledStatus(o.trang_thai || '') && (
-                      <button
-                        className="btn btn-primary btn-sm"
-                        style={{ padding: '3px 8px', fontSize: 11, background: '#2563EB', color: 'white' }}
-                        onClick={async (e) => {
-                          e.stopPropagation()
-                          try {
-                            await startDelivery(o.ma_don_hang)
-                            showToast(`🚀 Đã phát lệnh phóng Drone cho đơn ${o.ma_van_don || o.ma_don_hang}!`, 'success')
-                            await loadOpsData()
-                          } catch (err: any) {
-                            showToast(err.message || 'Lỗi phát lệnh giao hàng', 'error')
-                          }
-                        }}
-                      >
-                        🚀 Phóng Drone
-                      </button>
-                    )}
+                    <div style={{ display: 'flex', gap: 6 }}>
+                      {isScheduledStatus(o.trang_thai || '') && (
+                        <button
+                          className="btn btn-primary btn-sm"
+                          style={{ padding: '3px 8px', fontSize: 11, background: '#2563EB', color: 'white' }}
+                          onClick={async (e) => {
+                            e.stopPropagation()
+                            try {
+                              await startDelivery(o.ma_don_hang)
+                              showToast(`🚀 Đã phát lệnh phóng Drone cho đơn ${o.ma_van_don || o.ma_don_hang}!`, 'success')
+                              await loadOpsData()
+                            } catch (err: any) {
+                              showToast(err.message || 'Lỗi phát lệnh giao hàng', 'error')
+                            }
+                          }}
+                        >
+                          🚀 Phóng Drone
+                        </button>
+                      )}
+                      {canReportIncidentOrder(o) && (
+                        <button
+                          className="btn btn-outline btn-sm"
+                          style={{ padding: '3px 8px', fontSize: 11, color: '#ef4444', borderColor: '#fca5a5' }}
+                          onClick={(e) => { e.stopPropagation(); setIncidentOrder(o); setIncDesc(''); setIncSeverity('Trung bình') }}
+                        >
+                          ⚠️ Báo sự cố
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
               ))}
@@ -301,6 +334,94 @@ export function StationOpsScreen({ showToast }: StationOpsScreenProps) {
         </div>
       </div>
     </div>
+
+      {/* ── Incident Modal ── */}
+      {incidentOrder && (
+        <div style={{
+          position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', zIndex: 1000,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }} onClick={() => setIncidentOrder(null)}>
+          <div style={{
+            background: 'white', borderRadius: 16, padding: 28, width: 440,
+            boxShadow: '0 20px 60px rgba(0,0,0,0.25)',
+          }} onClick={e => e.stopPropagation()}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+              <h3 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 16, color: '#1e293b' }}>⚠️ Báo cáo sự cố</h3>
+              <button style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 18, color: '#94a3b8' }} onClick={() => setIncidentOrder(null)}>✕</button>
+            </div>
+
+            <div style={{ padding: '8px 12px', background: '#FEF2F2', borderRadius: 8, border: '1px solid #FCA5A5', fontSize: 13, marginBottom: 16 }}>
+              <div style={{ color: '#B91C1C', fontWeight: 600 }}>Đơn hàng:</div>
+              <div style={{ fontWeight: 700, fontFamily: 'var(--font-mono)', color: '#1e293b' }}>
+                {incidentOrder?.ma_van_don || incidentOrder?.ma_don_hang?.substring(0, 16)}
+              </div>
+              <div style={{ fontSize: 12, color: '#64748b', marginTop: 2 }}>{incidentOrder?.ten_nguoi_nhan} — {incidentOrder?.dia_chi_giao}</div>
+            </div>
+
+            <div style={{ marginBottom: 14 }}>
+              <label style={{ display: 'block', fontSize: 12, fontWeight: 605, color: '#374151', marginBottom: 6 }}>Mô tả sự cố *</label>
+              <textarea
+                className="input" rows={3}
+                placeholder="VD: Kiện hàng bị hư hỏng khi nhận tại trạm..."
+                value={incDesc} onChange={e => setIncDesc(e.target.value)}
+                style={{ resize: 'vertical', fontSize: 13, fontFamily: 'inherit' }}
+              />
+            </div>
+
+            <div style={{ marginBottom: 20 }}>
+              <label style={{ display: 'block', fontSize: 12, fontWeight: 605, color: '#374151', marginBottom: 6 }}>Mức độ nghiêm trọng</label>
+              <div style={{ display: 'flex', gap: 8 }}>
+                {(['Nhẹ', 'Trung bình', 'Nghiêm trọng'] as const).map(s => {
+                  const color = s === 'Nhẹ' ? '#22c55e' : s === 'Trung bình' ? '#f59e0b' : '#ef4444'
+                  return (
+                    <button key={s} type="button" onClick={() => setIncSeverity(s)} style={{
+                      flex: 1, padding: '6px 4px', borderRadius: 8, fontSize: 12, cursor: 'pointer',
+                      border: `2px solid ${incSeverity === s ? color : '#e2e8f0'}`,
+                      background: incSeverity === s ? color + '20' : 'white',
+                      color: incSeverity === s ? color : '#64748b',
+                      fontWeight: incSeverity === s ? 700 : 400,
+                    }}>{s}</button>
+                  )
+                })}
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', gap: 10 }}>
+              <button className="btn btn-outline" style={{ flex: 1 }} onClick={() => setIncidentOrder(null)}>Hủy</button>
+              <button
+                className="btn btn-primary" style={{ flex: 1, background: '#ef4444', borderColor: '#ef4444' }}
+                disabled={incSubmitting || !incDesc.trim()}
+                onClick={async () => {
+                  if (!incidentOrder) return
+                  setIncSubmitting(true)
+                  try {
+                    const linked = deliveries.find(d => d.ma_don_hang === incidentOrder.ma_don_hang)
+                    if (!linked) {
+                      showToast('Đơn này chưa có chuyến giao — chỉ ghi được khi drone đã được gán.', 'error')
+                      return
+                    }
+                    await reportIncident({
+                      ma_giao_hang: linked.ma_giao_hang,
+                      mo_ta_su_co: incDesc,
+                      muc_do_nghiem_trong: incSeverity,
+                      ma_tram: selectedStationId || undefined,
+                    })
+                    showToast('Đã ghi nhận sự cố thành công!', 'success')
+                    setIncidentOrder(null)
+                  } catch (err: any) {
+                    showToast(err.message || 'Lỗi báo cáo sự cố', 'error')
+                  } finally {
+                    setIncSubmitting(false)
+                  }
+                }}
+              >
+                {incSubmitting ? 'Đang gửi...' : '⚠️ Xác nhận báo cáo'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   )
 }
 

@@ -216,13 +216,13 @@ def report_incident():
         return jsonify({'error': 'Delivery or Station not found'}), 404
     return jsonify(incident_res.dump(incident)), 201
 
-@delivery_bp.route('/incidents/<uuid:ma_van_de>', methods=['DELETE'])
-def delete_incident(ma_van_de):
+@delivery_bp.route('/incidents/<uuid:ma_van_de>/acknowledge', methods=['POST'])
+def acknowledge_incident(ma_van_de):
     """
-    Delete incident report
+    Logistics Manager acknowledges critical incident (UC-06 / Step 10b)
     ---
-    delete:
-      summary: Delete incident report
+    post:
+      summary: Acknowledge critical incident
       tags:
         - Delivery Incidents
       parameters:
@@ -233,13 +233,19 @@ def delete_incident(ma_van_de):
             type: string
             format: uuid
       responses:
-        204:
-          description: Incident report deleted
+        200:
+          description: Incident acknowledged by Logistics Manager
     """
-    success = delivery_service.delete_incident(str(ma_van_de))
-    if not success:
+    incident = delivery_service.get_incident_by_id(str(ma_van_de))
+    if not incident:
         return jsonify({'error': 'Incident not found'}), 404
-    return '', 204
+        
+    incident.trang_thai_xu_ly = 'Đã tiếp nhận xử lý (Logistics)'
+    delivery_service.repository.update()
+    return jsonify({
+        'message': 'Quản lý Logistics đã xác nhận tiếp nhận xử lý sự cố thành công',
+        'incident_id': str(ma_van_de)
+    }), 200
 
 @delivery_bp.route('/<uuid:ma_giao_hang>/fail', methods=['POST'])
 def fail_delivery(ma_giao_hang):

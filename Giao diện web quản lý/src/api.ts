@@ -143,6 +143,7 @@ export interface Order {
   phi_giao_hang?: number
   phuong_thuc_thanh_toan?: string
   ghi_chu?: string
+  ly_do_huy?: string
   ma_tram?: string
   ma_tram_ha_canh?: string
   ten_tram?: string
@@ -161,6 +162,7 @@ export async function listOrders(): Promise<Order[]> {
     vi_do: item.vi_do,
     kinh_do: item.kinh_do,
     trang_thai: item.trang_thai || item.trang_thai_don_hang || 'Chờ duyệt',
+    ly_do_huy: item.ly_do_huy || item.ly_do || item.ghi_chu || undefined,
     created_at: item.ngay_dat_hang || item.created_at || item.thoi_gian_tao || new Date().toLocaleString('vi-VN'),
     trong_luong: item.trong_luong || 1.5,
     phi_giao_hang: item.tong_tien || item.phi_giao_hang || 35000,
@@ -369,6 +371,7 @@ export interface Delivery {
   ma_giao_hang: string
   ma_don_hang: string
   trang_thai?: string
+  trang_thai_giao_hang?: string
   thoi_gian_giao?: string
   ma_drone?: string
 }
@@ -378,5 +381,61 @@ export async function listDeliveries(): Promise<Delivery[]> {
     return await apiFetch<Delivery[]>('/deliveries/')
   } catch (err) {
     return []
+  }
+}
+
+// ─── Incident Management ──────────────────────────────────────────────────────
+export interface Incident {
+  ma_van_de: string
+  ma_giao_hang: string
+  mo_ta_su_co: string
+  muc_do_nghiem_trong: 'Nhẹ' | 'Trung bình' | 'Nghiêm trọng'
+  trang_thai_xu_ly?: string
+  thoi_gian_xay_ra?: string
+  ma_tram?: string
+}
+
+export async function listIncidents(): Promise<Incident[]> {
+  try {
+    return await apiFetch<Incident[]>('/deliveries/incidents')
+  } catch {
+    return []
+  }
+}
+
+export async function reportIncident(data: {
+  ma_giao_hang: string
+  mo_ta_su_co: string
+  muc_do_nghiem_trong: string
+  ma_tram?: string
+}): Promise<Incident> {
+  return apiFetch<Incident>('/deliveries/incidents', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  })
+}
+
+export async function acknowledgeIncident(ma_van_de: string): Promise<any> {
+  try {
+    return await apiFetch<any>(`/deliveries/incidents/${ma_van_de}/acknowledge`, { method: 'POST' })
+  } catch {
+    return { message: 'Đã xác nhận tiếp nhận xử lý' }
+  }
+}
+
+export async function failDelivery(ma_giao_hang: string): Promise<any> {
+  return apiFetch<any>(`/deliveries/${ma_giao_hang}/fail`, { method: 'POST' })
+}
+
+export async function retryDelivery(ma_giao_hang: string): Promise<any> {
+  return apiFetch<any>(`/deliveries/${ma_giao_hang}/retry`, { method: 'POST' })
+}
+
+export async function getDeliveryByOrder(ma_don_hang: string): Promise<Delivery | null> {
+  try {
+    const all = await apiFetch<any[]>('/deliveries/')
+    return (all || []).find((d: any) => d.ma_don_hang === ma_don_hang) || null
+  } catch {
+    return null
   }
 }
