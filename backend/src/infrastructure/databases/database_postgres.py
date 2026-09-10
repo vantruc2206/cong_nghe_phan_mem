@@ -6,7 +6,7 @@ class DatabasePostgres(AbstractDatabase):
     def __init__(self):
         super().__init__()
         
-    def init_database(self, app):
+    def init_database(self, app=None):
         with self.engine.connect() as conn:
             conn.execute(text("CREATE SCHEMA IF NOT EXISTS auth_app"))
             conn.execute(text("CREATE SCHEMA IF NOT EXISTS customer"))

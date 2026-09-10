@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify, current_app
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import jwt
 from werkzeug.security import generate_password_hash, check_password_hash
 from infrastructure.databases.postgres import session, SessionLocal
@@ -13,7 +13,16 @@ from api.schemas.auth import (
     LoginUserRequestSchema, LoginUserResponseSchema
 )
 
+from typing import cast, Dict, Any
+
+def _dump_dict(schema: Any, obj: Any) -> dict[str, Any]:
+    res = schema.dump(obj)
+    if isinstance(res, dict):
+        return cast(dict[str, Any], res)
+    return {}
+
 def _get_or_create_khach_hang(user):
+
     """Finds or creates KhachHangModel corresponding to user email or user id"""
     if not user or not user.email:
         return None
@@ -129,10 +138,10 @@ def list_users():
     roles = {str(r.ma_vai_tro): r.ten_vai_tro for r in session.query(VaiTroModel).all()}
     res = []
     for u in users:
-        u_dict = nguoi_dung_res.dump(u)
+        u_dict = _dump_dict(nguoi_dung_res, u)
         role_id = str(u.ma_vai_tro) if u.ma_vai_tro else ''
         role_name = u.vai_tro.ten_vai_tro if u.vai_tro else roles.get(role_id, 'Customer')
-        u_dict['vai_tro'] = role_name
+        u_dict['vai_tro'] = str(role_name)
         u_dict['created_at'] = str(u.ngay_tao) if u.ngay_tao else ''
         res.append(u_dict)
     return jsonify(res), 200
@@ -183,8 +192,8 @@ def create_user():
 
     _get_or_create_khach_hang(new_user)
 
-    user_dict = nguoi_dung_res.dump(new_user)
-    user_dict['vai_tro'] = role_obj.ten_vai_tro if role_obj else target_role_name
+    user_dict = _dump_dict(nguoi_dung_res, new_user)
+    user_dict['vai_tro'] = str(role_obj.ten_vai_tro) if role_obj else target_role_name
     user_dict['created_at'] = str(new_user.ngay_tao) if new_user.ngay_tao else ''
     return jsonify(user_dict), 201
 
@@ -210,7 +219,7 @@ def update_user(ma_nguoi_dung):
         user.so_dien_thoai = data['so_dien_thoai']
 
     if 'mat_khau' in data and data['mat_khau']:
-        user.mat_khau_hash = generate_password_hash(data['mat_khau'])
+        setattr(user, 'mat_khau_hash', generate_password_hash(data['mat_khau']))
 
     if 'vai_tro' in data and data['vai_tro']:
         s = data['vai_tro'].lower().strip()
@@ -231,9 +240,9 @@ def update_user(ma_nguoi_dung):
     session.commit()
     session.refresh(user)
 
-    user_dict = nguoi_dung_res.dump(user)
+    user_dict = _dump_dict(nguoi_dung_res, user)
     role_obj = session.query(VaiTroModel).filter_by(ma_vai_tro=user.ma_vai_tro).first()
-    user_dict['vai_tro'] = role_obj.ten_vai_tro if role_obj else 'Customer'
+    user_dict['vai_tro'] = str(role_obj.ten_vai_tro) if role_obj else 'Customer'
     user_dict['created_at'] = str(user.ngay_tao) if user.ngay_tao else ''
     return jsonify(user_dict), 200
 
@@ -293,7 +302,7 @@ def signup():
     session.commit()
     session.refresh(user)
     kh = _get_or_create_khach_hang(user)
-    res_data = nguoi_dung_res.dump(user)
+    res_data = _dump_dict(nguoi_dung_res, user)
     if kh:
         res_data['ma_khach_hang'] = str(kh.ma_kh)
     return jsonify(res_data), 201
@@ -327,17 +336,17 @@ def login():
         return jsonify({'error': 'Email và Mật khẩu là bắt buộc'}), 400
     
     user = session.query(NguoiDungModel).filter(NguoiDungModel.email.ilike(email)).first()
-    if not user or not check_password_hash(user.mat_khau_hash, password):
+    if not user or not check_password_hash(str(user.mat_khau_hash), password):
         return jsonify({'error': 'Invalid email or password'}), 401
     
     kh = _get_or_create_khach_hang(user)
-    user_dict = nguoi_dung_res.dump(user)
+    user_dict = _dump_dict(nguoi_dung_res, user)
     if user.vai_tro:
-        user_dict['vai_tro'] = user.vai_tro.ten_vai_tro
+        user_dict['vai_tro'] = str(user.vai_tro.ten_vai_tro)
     else:
         role_obj = session.query(VaiTroModel).filter_by(ma_vai_tro=user.ma_vai_tro).first()
         if role_obj:
-            user_dict['vai_tro'] = role_obj.ten_vai_tro
+            user_dict['vai_tro'] = str(role_obj.ten_vai_tro)
         else:
             user_dict['vai_tro'] = 'Admin'
     if kh:
@@ -345,14 +354,14 @@ def login():
         try:
             addr = session.query(DiaChiModel).filter_by(ma_kh=kh.ma_kh).first()
             if addr:
-                user_dict['dia_chi'] = addr.dia_chi_cu_the
+                user_dict['dia_chi'] = str(addr.dia_chi_cu_the)
         except Exception:
             pass
 
     payload = {
         'user_id': str(user.ma_nguoi_dung),
         'ma_khach_hang': str(kh.ma_kh) if kh else str(user.ma_nguoi_dung),
-        'exp': datetime.utcnow() + timedelta(hours=2)
+        'exp': datetime.now(timezone.utc) + timedelta(hours=2)
     }
     token = jwt.encode(payload, current_app.config.get('SECRET_KEY', 'default_secret_key'), algorithm='HS256')
     return jsonify({
@@ -394,10 +403,10 @@ def change_password():
         if not user:
             return jsonify({'error': 'User not found'}), 404
             
-        if not check_password_hash(user.mat_khau_hash, current_pw):
+        if not check_password_hash(str(user.mat_khau_hash), current_pw):
             return jsonify({'error': 'Mật khẩu hiện tại không chính xác'}), 401
             
-        user.mat_khau_hash = generate_password_hash(new_pw)
+        setattr(user, 'mat_khau_hash', generate_password_hash(new_pw))
         db_session.commit()
         return jsonify({'message': 'Cập nhật mật khẩu mới thành công.'}), 200
     except Exception as e:
@@ -450,9 +459,9 @@ def update_profile():
                 kh.so_dien_thoai = so_dien_thoai.strip()
             if ho_ten:
                 parts = ho_ten.strip().split()
-                kh.ho = parts[0] if parts else 'Khách'
-                kh.ten = parts[-1] if len(parts) > 1 else 'Hàng'
-                kh.ten_dem = " ".join(parts[1:-1]) if len(parts) > 2 else None
+                setattr(kh, 'ho', parts[0] if parts else 'Khách')
+                setattr(kh, 'ten', parts[-1] if len(parts) > 1 else 'Hàng')
+                setattr(kh, 'ten_dem', " ".join(parts[1:-1]) if len(parts) > 2 else "")
 
         # Synchronize default delivery address in DiaChiModel
         res_address = None
@@ -477,11 +486,11 @@ def update_profile():
                 res_address = addr_obj.dia_chi_cu_the
 
         db_session.commit()
-        res_data = nguoi_dung_res.dump(user)
+        res_data = _dump_dict(nguoi_dung_res, user)
         if kh:
             res_data['ma_khach_hang'] = str(kh.ma_kh)
         if res_address:
-            res_data['dia_chi'] = res_address
+            res_data['dia_chi'] = str(res_address)
 
         return jsonify({
             'message': 'Cập nhật thông tin cá nhân thành công!',

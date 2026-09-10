@@ -412,7 +412,7 @@ Nhiệm vụ: Hãy phân tích câu hỏi của khách hàng và trả lời b�
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          model: 'llama-3.3-70b-versatile',
+          model: 'groq/compound-mini',
           messages: [
             { role: 'system', content: systemPrompt },
             { role: 'user', content: message }

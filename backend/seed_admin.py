@@ -36,8 +36,9 @@ def seed_admin():
             print("Admin user seeded successfully!")
         else:
             print("Admin user already exists. Updating password...")
-            admin_user.mat_khau_hash = generate_password_hash("123456")
+            setattr(admin_user, 'mat_khau_hash', generate_password_hash("123456"))
             session.commit()
+
             print("Admin user updated successfully!")
     except Exception as e:
         print(f"Error seeding admin: {e}")

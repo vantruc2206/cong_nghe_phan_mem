@@ -31,7 +31,7 @@ class Config:
 class DevelopmentConfig(Config):
     """Development configuration."""
     DEBUG = True
-    DATABASE_URI = os.environ.get('POSTGREE_DATABASE_URL')
+    DATABASE_URI = os.environ.get('POSTGREE_DATABASE_URL') or os.environ.get('DATABASE_URI') or 'postgresql://postgres:postgres@localhost:5432/drone_delivery'
 
 
 class TestingConfig(Config):
