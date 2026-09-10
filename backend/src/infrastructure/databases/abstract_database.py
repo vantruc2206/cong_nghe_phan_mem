@@ -13,5 +13,5 @@ class AbstractDatabase(ABC):
         self.SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=self.engine)
         self.session = self.SessionLocal()
     @abstractmethod
-    def init_database(app):
-        pass
+    def init_database(self, app=None):
+        pass

@@ -5,7 +5,7 @@ from infrastructure.models.app_giao_hang_model import GiaoHangModel
 from infrastructure.models.app_drone_model import DroneModel
 from infrastructure.models.app_tram_ha_canh_model import TramHaCanhModel
 from sqlalchemy import func, cast, Date
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 report_bp = Blueprint('report', __name__, url_prefix='/reports')
 
@@ -27,30 +27,30 @@ def get_summary():
     order_stats = (
         session.query(
             DonHangModel.trang_thai_don_hang,
-            func.count(DonHangModel.ma_don_hang).label('count')
+            func.count(DonHangModel.ma_don_hang)
         )
         .group_by(DonHangModel.trang_thai_don_hang)
         .all()
     )
-    order_by_status = {row.trang_thai_don_hang: row.count for row in order_stats}
+    order_by_status = {str(row[0]): int(row[1]) for row in order_stats}
 
     # Tổng số giao hàng theo trạng thái
     delivery_stats = (
         session.query(
             GiaoHangModel.trang_thai_giao_hang,
-            func.count(GiaoHangModel.ma_giao_hang).label('count')
+            func.count(GiaoHangModel.ma_giao_hang)
         )
         .group_by(GiaoHangModel.trang_thai_giao_hang)
         .all()
     )
-    delivery_by_status = {row.trang_thai_giao_hang: row.count for row in delivery_stats}
+    delivery_by_status = {str(row[0]): int(row[1]) for row in delivery_stats}
 
     # Đơn hàng theo ngày trong 7 ngày gần nhất
-    seven_days_ago = datetime.utcnow() - timedelta(days=7)
+    seven_days_ago = datetime.now(timezone.utc) - timedelta(days=7)
     daily_orders = (
         session.query(
             cast(DonHangModel.ngay_dat_hang, Date).label('date'),
-            func.count(DonHangModel.ma_don_hang).label('count')
+            func.count(DonHangModel.ma_don_hang)
         )
         .filter(DonHangModel.ngay_dat_hang >= seven_days_ago)
         .group_by(cast(DonHangModel.ngay_dat_hang, Date))
@@ -58,22 +58,24 @@ def get_summary():
         .all()
     )
     weekly_data = [
-        {'date': str(row.date), 'count': row.count}
+        {'date': str(row[0]), 'count': int(row[1])}
         for row in daily_orders
     ]
 
     # Thống kê drone
-    total_drones = session.query(func.count(DroneModel.ma_drone)).scalar() or 0
-    active_drones = (
+    total_drones = int(session.query(func.count(DroneModel.ma_drone)).scalar() or 0)
+    active_drones = int(
         session.query(func.count(DroneModel.ma_drone))
         .filter(DroneModel.trang_thai_drone.in_(['Sẵn sàng', 'Đang giao']))
         .scalar() or 0
     )
 
     # Thống kê trạm
-    total_stations = session.query(func.count(TramHaCanhModel.ma_tram)).scalar() or 0
+    total_stations = int(session.query(func.count(TramHaCanhModel.ma_tram)).scalar() or 0)
 
     total_orders = sum(order_by_status.values())
+
+
     completed = delivery_by_status.get('Hoàn thành', 0)
     failed = delivery_by_status.get('Thất bại', 0)
     in_progress = delivery_by_status.get('Đang giao', 0)

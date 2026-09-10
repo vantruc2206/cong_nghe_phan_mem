@@ -9,10 +9,10 @@ export type Screen =
   | 'tracking'
   | 'drones'
   | 'stations'
-  | 'drones'
   | 'reports'
   | 'ai-eta'
   | 'users'
+  | 'activity-log'
 
 export type Role = 'admin' | 'dispatcher' | 'operator' | 'manager'
 
