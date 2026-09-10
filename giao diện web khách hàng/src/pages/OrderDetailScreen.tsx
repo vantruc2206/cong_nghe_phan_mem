@@ -108,6 +108,9 @@ export const OrderDetailScreen: React.FC<OrderDetailScreenProps> = ({ orderId, o
   // Status Badge Helper
   const getStatusBadge = () => {
     const s = statusRaw;
+    if (s.includes('THẤT') || s.includes('FAIL')) {
+      return { label: 'Giao thất bại', cls: 'badge-failed' };
+    }
     if (s === 'ARRIVED' || s.includes('ĐẾN') || s.includes('DA_DEN')) {
       return { label: 'Đã đến điểm giao', cls: 'bg-emerald-500 text-white shadow-sm' };
     }
@@ -133,7 +136,7 @@ export const OrderDetailScreen: React.FC<OrderDetailScreenProps> = ({ orderId, o
 
   // 5-Stage Stepper Progression
   const getStepProgress = () => {
-    if (statusRaw.includes('CANCEL') || statusRaw.includes('HỦY') || statusRaw.includes('REJECT') || statusRaw.includes('CHỐI')) {
+    if (statusRaw.includes('CANCEL') || statusRaw.includes('HỦY') || statusRaw.includes('REJECT') || statusRaw.includes('CHỐI') || statusRaw.includes('THẤT') || statusRaw.includes('FAIL')) {
       return 0;
     }
     if (statusRaw === 'DELIVERED' || statusRaw.includes('HOÀN')) return 5;

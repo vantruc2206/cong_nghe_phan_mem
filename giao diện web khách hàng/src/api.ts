@@ -117,13 +117,13 @@ function normalizeOrderStatus(raw?: string): OrderStatus {
   if (!raw) return 'PENDING';
   const s = raw.toString().trim().toUpperCase();
   if (s.includes('CHỐI') || s.includes('TỪ CHỐI') || s.includes('REJECTED') || s.includes('DENIED')) return 'REJECTED';
+  if (s.includes('THẤT') || s.includes('FAIL') || s.includes('THẤT BẠI')) return 'FAILED';
+  if (s.includes('HỦY') || s.includes('CANCEL')) return 'CANCELLED';
   if (s.includes('ĐÃ ĐẾN') || s.includes('ĐẾN') || s.includes('DA_DEN') || s.includes('ARRIVED')) return 'ARRIVED';
   if (s.includes('CHỜ') || s.includes('PENDING')) return 'PENDING';
   if (s.includes('ĐÃ DUYỆT') || s === 'APPROVED' || s === 'DUYỆT') return 'APPROVED';
   if (s.includes('GIAO') || s.includes('TRANSIT') || s.includes('DELIVERING')) return 'IN_TRANSIT';
   if (s.includes('HOÀN') || s.includes('DELIVERED')) return 'DELIVERED';
-  if (s.includes('HỦY') || s.includes('CANCEL')) return 'CANCELLED';
-  if (s.includes('THẤT') || s.includes('FAIL')) return 'FAILED';
   return 'PENDING';
 }
 
@@ -166,8 +166,8 @@ export async function fetchCustomerOrders(customerId?: string): Promise<OrderIte
       ma_tram: item.ma_tram || undefined,
       ten_tram: item.ten_tram || undefined,
       trang_thai_giao_hang: item.trang_thai_giao_hang || undefined,
-      ly_do_tu_choi: item.ly_do_tu_choi || item.mo_ta_su_co || undefined,
-      mo_ta_su_co: item.mo_ta_su_co || item.ly_do_tu_choi || undefined,
+      ly_do_tu_choi: item.ly_do_tu_choi || item.ly_do_huy || item.mo_ta_su_co || undefined,
+      mo_ta_su_co: item.mo_ta_su_co || item.ly_do_huy || item.ly_do_tu_choi || undefined,
     };
   }).sort((a, b) => new Date(b.thoi_gian_tao || 0).getTime() - new Date(a.thoi_gian_tao || 0).getTime());
 
@@ -203,8 +203,8 @@ export async function getOrderDetail(orderId: string): Promise<OrderItem> {
     toa_do_giao: { lat, lng },
     vi_do: lat,
     kinh_do: lng,
-    ly_do_tu_choi: item.ly_do_tu_choi || item.mo_ta_su_co || undefined,
-    mo_ta_su_co: item.mo_ta_su_co || item.ly_do_tu_choi || undefined,
+    ly_do_tu_choi: item.ly_do_tu_choi || item.ly_do_huy || item.mo_ta_su_co || undefined,
+    mo_ta_su_co: item.mo_ta_su_co || item.ly_do_huy || item.ly_do_tu_choi || undefined,
   };
 }
 
